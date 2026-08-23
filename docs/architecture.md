@@ -2,7 +2,7 @@
 
 ## Stack and boundary
 
-The admin application is a server-rendered Laravel monolith under `/admin`. Blade renders TailAdmin views, Alpine.js provides local UI state, and Tailwind CSS 4 provides design tokens. The root URL currently redirects to the admin boundary and remains available for a future public application.
+The admin application is a server-rendered Laravel monolith under `/admin`. Blade renders TailAdmin views, Alpine.js provides local UI state, and Tailwind CSS 4 provides design tokens. The public boundary serves the homepage and published nested pages.
 
 ## Request flow
 
@@ -27,3 +27,4 @@ The sidebar and Blade `@can` directives improve usability, but route middleware,
 - `config/admin-menu.php` owns navigation metadata.
 - Services own role synchronization and audit event properties.
 - Repositories own filtering and pagination.
+- CMS content uses local public-disk media assets and database-managed public menus; cloud storage is not required.

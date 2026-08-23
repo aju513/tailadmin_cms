@@ -4,10 +4,24 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Repositories\Contracts\ActivityRepositoryInterface;
+use App\Repositories\Contracts\ContentRepositoryInterface;
+use App\Repositories\Contracts\HomepageSlideRepositoryInterface;
+use App\Repositories\Contracts\MediaAssetRepositoryInterface;
+use App\Repositories\Contracts\MenuRepositoryInterface;
+use App\Repositories\Contracts\PageRepositoryInterface;
 use App\Repositories\Contracts\RoleRepositoryInterface;
+use App\Repositories\Contracts\SiteSettingRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\ActivityRepository;
+use App\Repositories\Eloquent\ContentAuthorRepository;
+use App\Repositories\Eloquent\ContentCategoryRepository;
+use App\Repositories\Eloquent\ContentTagRepository;
+use App\Repositories\Eloquent\HomepageSlideRepository;
+use App\Repositories\Eloquent\MediaAssetRepository;
+use App\Repositories\Eloquent\MenuRepository;
+use App\Repositories\Eloquent\PageRepository;
 use App\Repositories\Eloquent\RoleRepository;
+use App\Repositories\Eloquent\SiteSettingRepository;
 use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -28,6 +42,17 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(ActivityRepositoryInterface::class, ActivityRepository::class);
+        $this->app->bind(PageRepositoryInterface::class, PageRepository::class);
+        $this->app->bind(MediaAssetRepositoryInterface::class, MediaAssetRepository::class);
+        $this->app->bind(SiteSettingRepositoryInterface::class, SiteSettingRepository::class);
+        $this->app->bind(MenuRepositoryInterface::class, MenuRepository::class);
+        $this->app->bind(HomepageSlideRepositoryInterface::class, HomepageSlideRepository::class);
+        $this->app->when(\App\Services\CategoryService::class)->needs(ContentRepositoryInterface::class)->give(ContentCategoryRepository::class);
+        $this->app->when(\App\Services\TagService::class)->needs(ContentRepositoryInterface::class)->give(ContentTagRepository::class);
+        $this->app->when(\App\Services\AuthorService::class)->needs(ContentRepositoryInterface::class)->give(ContentAuthorRepository::class);
+        $this->app->when(\App\Http\Controllers\Admin\CategoryController::class)->needs(ContentRepositoryInterface::class)->give(ContentCategoryRepository::class);
+        $this->app->when(\App\Http\Controllers\Admin\TagController::class)->needs(ContentRepositoryInterface::class)->give(ContentTagRepository::class);
+        $this->app->when(\App\Http\Controllers\Admin\AuthorController::class)->needs(ContentRepositoryInterface::class)->give(ContentAuthorRepository::class);
     }
 
     /**

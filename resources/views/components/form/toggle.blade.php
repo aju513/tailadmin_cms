@@ -13,10 +13,11 @@
 @php
     $id ??= str_replace(['[]', '[', ']', '.'], ['', '-', '', '-'], $name);
     $currentValue = old($name, $checked);
+    $isChecked = in_array($currentValue, [true, 1, '1', 'true', 'on', 'published'], true);
 @endphp
 
 <x-form.field :name="$name" :id="$id" :error="$error" :help="$help">
-    <div x-data="{ checked: @js((bool) $currentValue) }">
+    <div x-data="{ checked: @js($isChecked) }">
         @unless($disabled)<input type="hidden" name="{{ $name }}" value="{{ $offValue }}">@endunless
         <label for="{{ $id }}" class="flex cursor-pointer items-center gap-3 text-sm font-medium text-gray-700 select-none dark:text-gray-400 {{ $disabled ? 'cursor-not-allowed opacity-60' : '' }}">
             <span class="relative shrink-0">

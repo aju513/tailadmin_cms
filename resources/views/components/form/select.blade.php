@@ -43,12 +43,16 @@
             @disabled($disabled)
             {{ $attributes->merge(['class' => $selectClasses]) }}
         >
-            @if($placeholder)
-                <option value="">{{ $placeholder }}</option>
+            @if(trim((string) $slot) !== '')
+                {!! $slot !!}
+            @else
+                @if($placeholder)
+                    <option value="">{{ $placeholder }}</option>
+                @endif
+                @foreach($normalizedOptions as $option)
+                    <option value="{{ $option['value'] }}" @selected((string) $currentValue === (string) $option['value'])>{{ $option['label'] }}</option>
+                @endforeach
             @endif
-            @foreach($normalizedOptions as $option)
-                <option value="{{ $option['value'] }}" @selected((string) $currentValue === (string) $option['value'])>{{ $option['label'] }}</option>
-            @endforeach
         </select>
         <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-700 dark:text-gray-400" aria-hidden="true">
             <svg class="h-5 w-5 stroke-current" viewBox="0 0 20 20" fill="none"><path d="m4.8 7.4 5.2 5.2 5.2-5.2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
