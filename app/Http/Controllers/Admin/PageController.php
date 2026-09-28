@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ContentStatus;
 use App\Enums\PageType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Page\BulkDeletePageRequest;
+use App\Http\Requests\Page\BulkPageStatusRequest;
 use App\Http\Requests\Page\DeletePageRequest;
 use App\Http\Requests\Page\IndexPageRequest;
 use App\Http\Requests\Page\OrderPageRequest;
@@ -29,7 +31,7 @@ class PageController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.pages.create', ['page' => new Page(['status' => ContentStatus::Draft, 'page_type' => PageType::Standard]), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect(), 'title' => 'Create Page']);
+        return view('pages.admin.pages.create', ['page' => new Page(['status' => ContentStatus::Draft, 'page_type' => PageType::Article]), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect(), 'title' => 'Create Page']);
     }
 
     public function store(StorePageRequest $request): RedirectResponse
@@ -75,6 +77,20 @@ class PageController extends Controller
         $this->service->delete($page, $request->user());
 
         return redirect()->route('admin.pages.index')->with('success', 'Page deleted.');
+    }
+
+    public function bulkStatus(BulkPageStatusRequest $request): RedirectResponse
+    {
+        $this->service->bulkChangeStatus($request->validated('pages'), ContentStatus::from($request->validated('status')), $request->user());
+
+        return back()->with('success', 'Selected page statuses updated.');
+    }
+
+    public function bulkDestroy(BulkDeletePageRequest $request): RedirectResponse
+    {
+        $this->service->bulkDelete($request->validated('pages'), $request->user());
+
+        return back()->with('success', 'Selected pages deleted.');
     }
 
     public function order(OrderPageRequest $request): RedirectResponse

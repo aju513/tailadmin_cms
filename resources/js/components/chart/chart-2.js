@@ -7,7 +7,7 @@ export const initChartTwo = () => {
             series: [75.55],
             colors: ["#465FFF"],
             chart: {
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 type: "radialBar",
                 height: 330,
                 sparkline: {

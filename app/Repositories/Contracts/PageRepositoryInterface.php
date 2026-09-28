@@ -20,6 +20,9 @@ interface PageRepositoryInterface
 
     public function delete(Page $page): void;
 
+    /** @param array<int, int|string> $ids */
+    public function findByIds(array $ids): Collection;
+
     public function descendants(Page $page): Collection;
 
     public function allForParentSelect(?Page $except = null): Collection;

@@ -4,28 +4,32 @@ namespace App\Enums;
 
 enum PageType: string
 {
-    case Standard = 'standard';
     case Article = 'article';
-    case Contact = 'contact';
-    case Sitemap = 'sitemap';
+    case News = 'news';
+    case Notices = 'notices';
+    case Resource = 'resource';
     case Team = 'team';
-    case Photo = 'photo';
-    case Video = 'video';
-    case Faq = 'faq';
-    case Legal = 'legal';
+    case ContactUs = 'contact_us';
+    case Sitemap = 'sitemap';
+    case Hall = 'hall';
+    case Faqs = 'faqs';
+    case Videos = 'videos';
+    case Gallery = 'gallery';
 
     public function label(): string
     {
         return match ($this) {
-            self::Standard => 'Standard Page',
             self::Article => 'Article',
-            self::Contact => 'Contact',
-            self::Sitemap => 'Sitemap',
+            self::News => 'News',
+            self::Notices => 'Notices',
+            self::Resource => 'Resource',
             self::Team => 'Team',
-            self::Photo => 'Photo Gallery',
-            self::Video => 'Video',
-            self::Faq => 'FAQ',
-            self::Legal => 'Legal Document',
+            self::ContactUs => 'Contact Us',
+            self::Sitemap => 'Sitemap',
+            self::Hall => 'Hall',
+            self::Faqs => 'FAQs',
+            self::Videos => 'Videos',
+            self::Gallery => 'Gallery',
         };
     }
 }

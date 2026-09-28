@@ -4,9 +4,9 @@ The CMS provides a small government website content foundation. Blog/news is int
 
 ## Implemented modules
 
-- Pages with nested parent/child hierarchy, generated public paths, drag-and-drop ordering, automatic slugs, and validated page types for Standard Page, Article, Contact, Sitemap, Team, Photo Gallery, Video, FAQ, and Legal Document classifications.
+- Pages with nested parent/child hierarchy, generated public paths, drag-and-drop ordering, automatic slugs, and validated page types: Article, News, Notices, Resource, Team, Contact Us, Sitemap, Hall, FAQs, Videos, and Gallery.
 - Local media library for images and office documents.
-- Dynamic menu positions with separate Header Menu and Footer Menu managers; any additional database-defined locations are grouped as Dynamic Menus. Pages can be multi-selected and assigned to a menu in one operation. Header and footer links are rendered from their active menu records on the public site.
+- Menu positions default to Main Menu and Footer Menu; additional database-defined locations appear under Dynamic Menus. The main position retains the internal `header` location for existing routes and data. Each menu position page always shows its searchable page-assignment dropdown and assigned-item list, including when every page is already assigned. There is no separate menu-item creation or edit screen. The dropdown lists pages in path hierarchy. Selected pages keep the nearest assigned ancestor as their menu parent, including when that ancestor is assigned later. Main and footer links render recursively on the public site.
 - Site identity and contact settings.
 - Homepage slides.
 - Reusable categories, tags, and author records for future content modules.
@@ -17,11 +17,15 @@ Categories, tags, and authors are independent resources. They do not publish a b
 
 Pages store a `slug` and a generated `path`. A top-level page such as `about` has the public URL `/about`. A child page with slug `history` has `/about/history`. Parent changes and slug changes update descendant paths in the page service transaction.
 
-Pages use `draft` and `published` statuses. The admin form exposes this as a toggle, and public routes only resolve published pages. Publishing requires `pages.publish`; route middleware, FormRequests, and the service all enforce authorization.
+Pages use `draft` and `published` statuses. The admin form exposes this as a toggle, and public routes only resolve published pages. Publishing requires `pages.publish`; route middleware, FormRequests, and the service all enforce authorization. Page title, summary, and body use Spatie Laravel Translatable with English content in JSON columns. Nepali translations are controlled by `config/settings.php` (`nepali`, default `false`). When enabled, the editor shows English and Nepali tabs, Nepali fields are optional and fall back to English on public pages, and public language links use `?lang=en` and `?lang=ne` with the chosen language persisted in the visitor session. When disabled, the editor and public pages use the original single-language English experience. Existing page text is migrated to English in either mode.
 
 Page types are metadata classifications used by the admin list and filter. They do not change public rendering until a dedicated module is introduced for that type.
 
-The page editor includes rich-text summary and content fields, plus separate local uploads for banner and social media images. Banner images are shown on public page headers; social media images are exposed as Open Graph sharing metadata. The page index displays nested rows with `--` indentation and persists drag-and-drop ordering among siblings.
+The page editor includes English and Nepali tabs, each with title, CKEditor summary, and CKEditor content fields. Page type, parent, and status are shared above the language tabs. Menu assignment is handled on the menu position pages. A second tab group below the language tabs holds the shared Banner Image, Social Media Image, and SEO fields. The editor provides formatting, list, link, table, source, and custom block quote section tools; embedded file-manager uploads are not configured. Banner images are shown on public page headers; social media images are exposed as Open Graph sharing metadata. The page index displays nested rows with `--` indentation and persists drag-and-drop ordering among siblings.
+
+The language tabs use locally stored public domain SVG flags of England and Nepal from Wikimedia Commons.
+
+The page index provides row selection and bulk Publish, Unpublish, and Bulk delete actions. Bulk changes validate the selected page IDs and run in one transaction. Publishing uses `pages.publish`; deleting uses `pages.delete`. Each changed page retains its individual activity entry. The table shows an unlabeled order handle and row checkbox, status, page title, and created date beside the row actions.
 
 Page content is currently rendered as administrator-provided HTML. A production deployment should sanitize rich text at the input boundary before allowing untrusted editors to publish it.
 

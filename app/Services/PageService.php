@@ -83,6 +83,46 @@ class PageService
     }
 
     /** @param array<int, int|string> $ids */
+    public function bulkChangeStatus(array $ids, ContentStatus $status, Authenticatable $actor): void
+    {
+        $this->assertCanPublish($actor);
+
+        DB::transaction(function () use ($ids, $status, $actor): void {
+            $pages = $this->pages->findByIds($ids);
+            if ($pages->count() !== count($ids)) {
+                throw ValidationException::withMessages(['pages' => 'One or more selected pages could not be found.']);
+            }
+
+            foreach ($pages as $page) {
+                if ($page->status === $status) {
+                    continue;
+                }
+
+                if ($status === ContentStatus::Published) {
+                    $this->publish($page, $actor);
+                } else {
+                    $this->unpublish($page, $actor);
+                }
+            }
+        });
+    }
+
+    /** @param array<int, int|string> $ids */
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        DB::transaction(function () use ($ids, $actor): void {
+            $pages = $this->pages->findByIds($ids);
+            if ($pages->count() !== count($ids)) {
+                throw ValidationException::withMessages(['pages' => 'One or more selected pages could not be found.']);
+            }
+
+            foreach ($pages as $page) {
+                $this->delete($page, $actor);
+            }
+        });
+    }
+
+    /** @param array<int, int|string> $ids */
     public function reorder(array $ids, Authenticatable $actor): void
     {
         DB::transaction(function () use ($ids, $actor): void {
@@ -93,7 +133,21 @@ class PageService
 
     private function prepare(array $data, Authenticatable $actor, ?Page $page = null): array
     {
-        $data['slug'] = Str::slug($data['title']);
+        $translations = Arr::pull($data, 'translations');
+        if (! config('settings.nepali')) {
+            $translations = ['en' => [
+                'title' => $data['title'] ?? '',
+                'summary' => $data['summary'] ?? null,
+                'body' => $data['body'] ?? null,
+            ]];
+        }
+        foreach (['title', 'summary', 'body'] as $field) {
+            $data[$field] = ['en' => $translations['en'][$field] ?? ''];
+            if (filled($translations['ne'][$field] ?? null)) {
+                $data[$field]['ne'] = $translations['ne'][$field];
+            }
+        }
+        $data['slug'] = Str::slug($data['title']['en']);
         $data['parent_id'] = $data['parent_id'] ?? null;
         $data['parent_id'] = $data['parent_id'] ?: null;
         if ($page && (int) $data['parent_id'] === $page->id) {
@@ -107,7 +161,7 @@ class PageService
         $data['updated_by'] = $actor->getAuthIdentifier();
         $data['created_by'] ??= $actor->getAuthIdentifier();
         $data['status'] = $data['status'] ?? ContentStatus::Draft;
-        $data['page_type'] = $data['page_type'] ?? PageType::Standard;
+        $data['page_type'] = $data['page_type'] ?? PageType::Article;
         if (($data['status'] instanceof ContentStatus ? $data['status'] : ContentStatus::from($data['status'])) === ContentStatus::Published) {
             $this->assertCanPublish($actor);
         }
@@ -122,7 +176,7 @@ class PageService
             'social_media_image' => ['id' => 'social_media_id', 'alt' => 'social_media_alt_text'],
         ] as $fileKey => $mapping) {
             if (($data[$fileKey] ?? null) instanceof \Illuminate\Http\UploadedFile) {
-                $asset = $this->media->store($data[$fileKey], $actor, $data['title'] ?? null, $data[$mapping['alt']] ?? null);
+                $asset = $this->media->store($data[$fileKey], $actor, $data['translations']['en']['title'] ?? $data['title'] ?? null, $data[$mapping['alt']] ?? null);
                 $data[$mapping['id']] = $asset->id;
             }
         }

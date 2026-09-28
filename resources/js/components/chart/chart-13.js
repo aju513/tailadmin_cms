@@ -249,7 +249,7 @@ export function initChartThirteen() {
             },
             colors: ["#465FFF"],
             chart: {
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 height: 335,
                 id: "area-datetime",
                 type: "area",

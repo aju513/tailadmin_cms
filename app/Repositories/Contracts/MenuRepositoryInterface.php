@@ -20,9 +20,5 @@ interface MenuRepositoryInterface
     /** @param array<int, int|string> $pageIds */
     public function assignPages(Menu $menu, array $pageIds): int;
 
-    public function createItem(array $data): MenuItem;
-
-    public function updateItem(MenuItem $item, array $data): MenuItem;
-
     public function deleteItem(MenuItem $item): void;
 }

@@ -1,3 +1,4 @@
+@php($page = $page ?? null)
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -20,7 +21,9 @@
             </a>
             @if($mainMenu?->items?->isNotEmpty())
                 <nav aria-label="Main navigation"><ul class="flex flex-wrap gap-4 text-sm">
-                    @foreach($mainMenu->items as $item)<li><a class="hover:text-brand-600" href="{{ $item->url() }}">{{ $item->label }}</a></li>@endforeach
+                    @foreach($mainMenu->items as $item)
+                        @include('public.partials.menu-item', ['item' => $item])
+                    @endforeach
                 </ul></nav>
             @endif
         </div>
@@ -33,7 +36,7 @@
                 <nav aria-label="Footer navigation">
                     <ul class="flex flex-wrap gap-x-5 gap-y-2">
                         @foreach($footerMenu->items as $item)
-                            <li><a class="transition hover:text-brand-600" href="{{ $item->url() }}">{{ $item->label }}</a></li>
+                            @include('public.partials.menu-item', ['item' => $item])
                         @endforeach
                     </ul>
                 </nav>

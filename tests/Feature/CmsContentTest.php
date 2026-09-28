@@ -6,6 +6,7 @@ use App\Models\ContentCategory;
 use App\Models\ContentTag;
 use App\Models\MediaAsset;
 use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Models\Page;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -15,6 +16,10 @@ use Spatie\Permission\Models\Role;
 beforeEach(function (): void {
     $this->artisan('admin:permissions-sync')->assertSuccessful();
     $this->admin = User::findOrFail(1);
+});
+
+test('public homepage renders without a page model', function (): void {
+    $this->get(route('public.home'))->assertOk();
 });
 
 test('pages support nested paths and only published pages are public', function (): void {
@@ -34,26 +39,49 @@ test('pages support nested paths and only published pages are public', function 
     $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'title' => 'Internal Draft', 'status' => 'draft', 'body' => 'Not public',
     ])->assertRedirect(route('admin.pages.index'));
-    $draft = Page::where('title', 'Internal Draft')->firstOrFail();
+    $draft = Page::where('slug', 'internal-draft')->firstOrFail();
     $this->get(route('public.page', ['path' => $draft->path]))->assertNotFound();
 });
 
 test('pages store and filter by page type', function (): void {
-    $this->actingAs($this->admin)->get(route('admin.pages.create'))
+    $response = $this->actingAs($this->admin)->get(route('admin.pages.create'))
         ->assertOk()
         ->assertSee('Page type')
-        ->assertSee('Contact');
+        ->assertSee('Contact')
+        ->assertSee('vendor/ckeditor/ckeditor.js')
+        ->assertSee('vendor/ckeditor/admin-init.js')
+        ->assertSee('name="translations[en][summary]"', false)
+        ->assertSee('name="translations[ne][summary]"', false)
+        ->assertSee('name="translations[en][body]"', false)
+        ->assertSee('name="translations[ne][body]"', false)
+        ->assertSee('page-tab-en')
+        ->assertSee('page-tab-ne')
+        ->assertSee('page-shared-tab-banner')
+        ->assertSee('page-shared-tab-social')
+        ->assertSee('page-shared-tab-seo')
+        ->assertSee('images/flags/en.svg')
+        ->assertSee('images/flags/np.svg')
+        ->assertDontSee('Shared by English and Nepali pages.')
+        ->assertDontSee('SEO (shared)')
+        ->assertDontSee('HTML is submitted; sanitize rich text on the server before storing or rendering it.')
+        ->assertSee('js-rich-text-editor');
+
+    $html = $response->getContent();
+    preg_match('/window\.CKEDITOR_BASEPATH\s*=\s*("[^"]*");/', $html, $basePathMatch);
+    expect($basePathMatch)->toHaveKey(1)
+        ->and(json_decode($basePathMatch[1], true))->toEndWith('/vendor/ckeditor/');
+    expect(strpos($html, 'name="translations[ne][body]"'))->toBeLessThan(strpos($html, 'vendor/ckeditor/admin-init.js'));
 
     $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'title' => 'Contact Page',
-        'page_type' => PageType::Contact->value,
+        'page_type' => PageType::ContactUs->value,
         'status' => 'draft',
     ])->assertRedirect(route('admin.pages.index'));
 
-    $page = Page::query()->where('title', 'Contact Page')->firstOrFail();
-    expect($page->page_type)->toBe(PageType::Contact);
+    $page = Page::query()->where('slug', 'contact-page')->firstOrFail();
+    expect($page->page_type)->toBe(PageType::ContactUs);
 
-    $this->actingAs($this->admin)->get(route('admin.pages.index', ['page_type' => PageType::Contact->value]))
+    $this->actingAs($this->admin)->get(route('admin.pages.index', ['page_type' => PageType::ContactUs->value]))
         ->assertOk()
         ->assertSee('Contact Page')
         ->assertSee('Contact');
@@ -68,6 +96,58 @@ test('renaming a nested page updates descendant paths', function (): void {
     ])->assertRedirect(route('admin.pages.index'));
 
     expect($child->refresh()->path)->toBe('new-parent/child');
+});
+
+test('page translations are saved, edited, and displayed by language', function (): void {
+    $this->actingAs($this->admin)->post(route('admin.pages.store'), [
+        'translations' => [
+            'en' => ['title' => 'Welcome Office', 'summary' => '<p>English summary</p>', 'body' => '<p>English body</p>'],
+            'ne' => ['title' => 'स्वागत कार्यालय', 'summary' => '<p>नेपाली सारांश</p>', 'body' => '<p>नेपाली सामग्री</p>'],
+        ],
+        'status' => 'published',
+        'meta_title' => 'Shared SEO title',
+    ])->assertRedirect(route('admin.pages.index'));
+
+    $page = Page::query()->where('slug', 'welcome-office')->firstOrFail();
+    expect($page->getTranslation('title', 'en'))->toBe('Welcome Office')
+        ->and($page->getTranslation('title', 'ne'))->toBe('स्वागत कार्यालय')
+        ->and($page->getTranslation('summary', 'ne'))->toBe('<p>नेपाली सारांश</p>')
+        ->and($page->getTranslation('body', 'ne'))->toBe('<p>नेपाली सामग्री</p>')
+        ->and($page->meta_title)->toBe('Shared SEO title');
+
+    $this->actingAs($this->admin)->get(route('admin.pages.index', ['search' => 'स्वागत']))
+        ->assertOk()->assertSee('Welcome Office');
+
+    $this->get(route('public.page', ['path' => $page->path]))->assertOk()->assertSee('English body');
+    $this->get(route('public.page', ['path' => $page->path, 'lang' => 'ne']))->assertOk()->assertSee('स्वागत कार्यालय')->assertSee('नेपाली सामग्री')->assertSee('lang="ne"', false);
+    $this->get(route('public.page', ['path' => $page->path]))->assertOk()->assertSee('नेपाली सामग्री');
+    $this->actingAs($this->admin)->get(route('admin.pages.edit', $page))->assertOk()->assertSee('स्वागत कार्यालय');
+
+    $this->actingAs($this->admin)->put(route('admin.pages.update', $page), [
+        'translations' => [
+            'en' => ['title' => 'Welcome Office', 'summary' => 'English summary', 'body' => 'English body'],
+            'ne' => ['title' => 'नयाँ शीर्षक', 'summary' => 'नयाँ सारांश', 'body' => 'नयाँ सामग्री'],
+        ],
+        'status' => 'published',
+    ])->assertRedirect(route('admin.pages.index'));
+
+    expect($page->refresh()->path)->toBe('welcome-office')
+        ->and($page->getTranslation('title', 'ne'))->toBe('नयाँ शीर्षक');
+});
+
+test('missing Nepali content falls back to English and English title is required', function (): void {
+    $this->actingAs($this->admin)->post(route('admin.pages.store'), [
+        'translations' => ['en' => ['title' => '', 'body' => 'Body']], 'status' => 'draft',
+    ])->assertSessionHasErrors('translations.en.title');
+
+    $this->actingAs($this->admin)->post(route('admin.pages.store'), [
+        'translations' => ['en' => ['title' => 'English Only', 'body' => '<p>Fallback body</p>']], 'status' => 'published',
+    ])->assertRedirect(route('admin.pages.index'));
+
+    $page = Page::query()->where('slug', 'english-only')->firstOrFail();
+    $this->get(route('public.page', ['path' => $page->path, 'lang' => 'ne']))
+        ->assertOk()->assertSee('English Only')->assertSee('Fallback body');
+    $this->get(route('public.page', ['path' => $page->path, 'lang' => 'fr']))->assertNotFound();
 });
 
 test('page forms expose nested pages as parent options', function (): void {
@@ -115,6 +195,88 @@ test('pages can be reordered and receive banner and social media uploads', funct
         ->and($page->socialMedia->alt_text)->toBe('Services social image');
 });
 
+test('page index shows compact columns and selected-page actions', function (): void {
+    Page::factory()->create(['title' => 'Selected Page']);
+
+    $this->actingAs($this->admin)->get(route('admin.pages.index'))
+        ->assertOk()
+        ->assertSee('Bulk delete')
+        ->assertSee('Publish')
+        ->assertSee('Unpublish')
+        ->assertDontSee('Select all pages')
+        ->assertDontSee('>Order</th>', false)
+        ->assertSee('Created date / Actions')
+        ->assertDontSee('title="Edit page"', false)
+        ->assertDontSee('group-hover:block')
+        ->assertSee('Selected Page')
+        ->assertDontSee('S.N.')
+        ->assertDontSee('<th class="px-3 py-3">Type</th>', false)
+        ->assertDontSee('<th class="px-3 py-3">Path</th>', false);
+});
+
+test('selected pages can be published, unpublished, and deleted together', function (): void {
+    $first = Page::factory()->create();
+    $second = Page::factory()->create();
+
+    $this->actingAs($this->admin)->patch(route('admin.pages.bulk-status'), [
+        'pages' => [$first->id, $second->id], 'status' => 'published',
+    ])->assertRedirect();
+
+    expect($first->refresh()->status->value)->toBe('published')
+        ->and($first->published_at)->not->toBeNull()
+        ->and($second->refresh()->status->value)->toBe('published');
+
+    $this->actingAs($this->admin)->patch(route('admin.pages.bulk-status'), [
+        'pages' => [$first->id, $second->id], 'status' => 'draft',
+    ])->assertRedirect();
+
+    expect($first->refresh()->status->value)->toBe('draft')
+        ->and($first->published_at)->toBeNull()
+        ->and($second->refresh()->status->value)->toBe('draft');
+
+    $this->actingAs($this->admin)->delete(route('admin.pages.bulk-destroy'), [
+        'pages' => [$first->id, $second->id],
+    ])->assertRedirect();
+
+    expect(Page::query()->whereKey([$first->id, $second->id])->count())->toBe(0);
+});
+
+test('bulk page actions reject invalid selections and unauthorized users', function (): void {
+    $page = Page::factory()->create();
+
+    $this->actingAs($this->admin)->patch(route('admin.pages.bulk-status'), [
+        'pages' => [$page->id, $page->id], 'status' => 'published',
+    ])->assertSessionHasErrors('pages.1');
+
+    $this->actingAs($this->admin)->patch(route('admin.pages.bulk-status'), [
+        'pages' => [$page->id], 'status' => 'invalid',
+    ])->assertSessionHasErrors('status');
+
+    $this->actingAs($this->admin)->delete(route('admin.pages.bulk-destroy'), [
+        'pages' => [$page->id, 999999],
+    ])->assertSessionHasErrors('pages.1');
+
+    expect(Page::query()->whereKey($page->id)->exists())->toBeTrue();
+
+    $role = Role::create(['name' => 'page-viewer', 'guard_name' => 'web']);
+    $role->givePermissionTo('pages.manage');
+    $viewer = User::factory()->create();
+    $viewer->assignRole($role);
+
+    $this->actingAs($viewer)->get(route('admin.pages.index'))
+        ->assertOk()
+        ->assertDontSee('Bulk delete')
+        ->assertDontSee('name="status" value="published"', false);
+
+    $this->actingAs($viewer)->patch(route('admin.pages.bulk-status'), [
+        'pages' => [$page->id], 'status' => 'published',
+    ])->assertForbidden();
+
+    $this->actingAs($viewer)->delete(route('admin.pages.bulk-destroy'), [
+        'pages' => [$page->id],
+    ])->assertForbidden();
+});
+
 test('categories tags and authors have independent admin CRUD surfaces', function (): void {
     $this->actingAs($this->admin)->post(route('admin.categories.store'), ['name' => 'Notices', 'status' => 1])->assertRedirect(route('admin.categories.index'));
     $this->actingAs($this->admin)->post(route('admin.tags.store'), ['name' => 'Public Service', 'status' => 1])->assertRedirect(route('admin.tags.index'));
@@ -139,27 +301,24 @@ test('media uploads use the local public disk', function (): void {
     Storage::disk('public')->assertExists($asset->path);
 });
 
-test('header and footer menus remain separate dynamic public positions', function (): void {
-    Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Header Menu']);
+test('main and footer menus remain separate dynamic public positions', function (): void {
+    Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
     Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer Menu']);
     $footer = Menu::query()->where('location', 'footer')->firstOrFail();
     $page = Page::create(['title' => 'Footer Link Page', 'slug' => 'footer-link-page', 'path' => 'footer-link-page', 'status' => 'published']);
 
     $this->actingAs($this->admin)->get(route('admin.menus.index'))
         ->assertOk()
-        ->assertSee('Header Menu')
+        ->assertSee('Main Menu')
         ->assertSee('Footer Menu')
         ->assertSee('Dynamic Menus');
 
-    $this->actingAs($this->admin)->post(route('admin.menus.store'), [
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), [
         'menu_id' => $footer->id,
-        'label' => 'Footer Link',
-        'page_id' => $page->id,
-        'sort_order' => 1,
-        'is_visible' => 1,
-    ])->assertRedirect(route('admin.menus.index'));
+        'page_ids' => [$page->id],
+    ])->assertRedirect(route('admin.menus.footer'));
 
-    $this->get(route('public.home'))->assertOk()->assertSee('Footer Link');
+    $this->get(route('public.home'))->assertOk()->assertSee('Footer Link Page');
 
     $header = Menu::query()->where('location', 'header')->firstOrFail();
     $secondPage = Page::create(['title' => 'Second Header Page', 'slug' => 'second-header-page', 'path' => 'second-header-page', 'status' => 'published']);
@@ -169,6 +328,60 @@ test('header and footer menus remain separate dynamic public positions', functio
     ])->assertRedirect(route('admin.menus.header'));
 
     expect($header->items()->whereIn('page_id', [$page->id, $secondPage->id])->count())->toBe(2);
+});
+
+test('menu position pages always show the assignment dropdown', function (): void {
+    $main = Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+    Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer Menu']);
+
+    $this->actingAs($this->admin)->get(route('admin.menus.header'))
+        ->assertOk()->assertSee('Assign pages')->assertSee('Search and select pages')->assertSee('name="page_ids[]"', false);
+
+    $page = Page::create(['title' => 'Menu Selectable', 'slug' => 'menu-selectable', 'path' => 'menu-selectable', 'status' => 'published']);
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), ['menu_id' => $main->id, 'page_ids' => [$page->id]])->assertRedirect(route('admin.menus.header'));
+    $this->actingAs($this->admin)->get(route('admin.menus.header'))
+        ->assertOk()->assertSee('Assign pages')->assertSee('Search and select pages')->assertSee('name="page_ids[]"', false);
+    $this->actingAs($this->admin)->get(route('admin.menus.footer'))
+        ->assertOk()->assertSee('Assign pages')->assertSee('name="page_ids[]"', false);
+    $this->actingAs($this->admin)->get(route('admin.pages.create'))->assertOk()->assertDontSee('Show in menus');
+});
+
+test('assigning nested pages keeps their menu hierarchy even when the parent is assigned later', function (): void {
+    $menu = Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+    $parent = Page::create(['title' => 'About', 'slug' => 'about', 'path' => 'about', 'status' => 'published']);
+    $child = Page::create(['title' => 'Team', 'parent_id' => $parent->id, 'slug' => 'team', 'path' => 'about/team', 'status' => 'published']);
+    $grandchild = Page::create(['title' => 'Leadership', 'parent_id' => $child->id, 'slug' => 'leadership', 'path' => 'about/team/leadership', 'status' => 'published']);
+
+    $this->actingAs($this->admin)->get(route('admin.menus.header'))->assertOk()->assertSee('Team (about', false);
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), ['menu_id' => $menu->id, 'page_ids' => [$grandchild->id, $child->id]])->assertRedirect();
+    $childItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $child->id)->firstOrFail();
+    $grandchildItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $grandchild->id)->firstOrFail();
+    expect($childItem->parent_id)->toBeNull();
+    expect($grandchildItem->parent_id)->toBe($childItem->id);
+
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), ['menu_id' => $menu->id, 'page_ids' => [$parent->id]])->assertRedirect();
+    $parentItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $parent->id)->firstOrFail();
+    expect($childItem->fresh()->parent_id)->toBe($parentItem->id);
+    expect($grandchildItem->fresh()->parent_id)->toBe($childItem->id);
+    $this->get(route('public.home'))->assertOk()->assertSeeInOrder(['About', 'Team', 'Leadership']);
+
+    $this->actingAs($this->admin)->delete(route('admin.menus.destroy', $parentItem))->assertRedirect();
+    expect($childItem->fresh()->parent_id)->toBeNull();
+    expect($grandchildItem->fresh()->parent_id)->toBe($childItem->id);
+});
+
+test('menu positions assign pages on their own screen without separate item forms', function (): void {
+    $main = Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+    $footer = Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer Menu']);
+    $page = Page::create(['title' => 'Menu Target', 'slug' => 'menu-target', 'path' => 'menu-target', 'status' => 'published']);
+
+    $this->actingAs($this->admin)->get(route('admin.menus.header'))
+        ->assertOk()->assertSee('Assign Menu')->assertDontSee('Add menu item');
+    $this->actingAs($this->admin)->get('/admin/menus/create')->assertNotFound();
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), ['menu_id' => $main->id, 'page_ids' => [$page->id]])->assertRedirect(route('admin.menus.header'));
+    $this->actingAs($this->admin)->get(route('admin.menus.header'))->assertSee('Menu Target')->assertSee('Delete');
+    expect($main->items()->where('page_id', $page->id)->exists())->toBeTrue();
+    expect($footer->items()->where('page_id', $page->id)->exists())->toBeFalse();
 });
 
 test('content permissions are enforced for non-administrators', function (): void {

@@ -18,6 +18,6 @@ class PageFactory extends Factory
         $title = fake()->unique()->sentence(3);
         $slug = Str::slug($title);
 
-        return ['title' => $title, 'page_type' => PageType::Standard, 'slug' => $slug, 'path' => $slug, 'body' => '<p>'.fake()->paragraph().'</p>', 'status' => ContentStatus::Draft, 'sort_order' => 0];
+        return ['title' => ['en' => $title], 'page_type' => PageType::Article, 'slug' => $slug, 'path' => $slug, 'body' => ['en' => '<p>'.fake()->paragraph().'</p>'], 'status' => ContentStatus::Draft, 'sort_order' => 0];
     }
 }

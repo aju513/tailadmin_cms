@@ -33,6 +33,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/pages/create', [PageController::class, 'create'])->middleware('can:pages.create')->name('pages.create');
     Route::post('/pages', [PageController::class, 'store'])->middleware('can:pages.create')->name('pages.store');
     Route::post('/pages/order', [PageController::class, 'order'])->middleware('can:pages.edit')->name('pages.order');
+    Route::patch('/pages/bulk-status', [PageController::class, 'bulkStatus'])->middleware('can:pages.publish')->name('pages.bulk-status');
+    Route::delete('/pages/bulk', [PageController::class, 'bulkDestroy'])->middleware('can:pages.delete')->name('pages.bulk-destroy');
     Route::get('/pages/{page}/edit', [PageController::class, 'edit'])->middleware('can:pages.edit')->name('pages.edit');
     Route::put('/pages/{page}', [PageController::class, 'update'])->middleware('can:pages.edit')->name('pages.update');
     Route::post('/pages/{page}/publish', [PageController::class, 'publish'])->middleware('can:pages.publish')->name('pages.publish');
@@ -67,10 +69,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/menus/header', [MenuController::class, 'header'])->middleware('can:menus.manage')->name('menus.header');
     Route::get('/menus/footer', [MenuController::class, 'footer'])->middleware('can:menus.manage')->name('menus.footer');
     Route::post('/menus/assign', [MenuController::class, 'assign'])->middleware('can:menus.manage')->name('menus.assign');
-    Route::get('/menus/create', [MenuController::class, 'create'])->middleware('can:menus.manage')->name('menus.create');
-    Route::post('/menus', [MenuController::class, 'store'])->middleware('can:menus.manage')->name('menus.store');
-    Route::get('/menus/{menuItem}/edit', [MenuController::class, 'edit'])->middleware('can:menus.manage')->name('menus.edit');
-    Route::put('/menus/{menuItem}', [MenuController::class, 'update'])->middleware('can:menus.manage')->name('menus.update');
     Route::delete('/menus/{menuItem}', [MenuController::class, 'destroy'])->middleware('can:menus.manage')->name('menus.destroy');
 
     Route::get('/homepage-slides', [HomepageSlideController::class, 'index'])->middleware('can:homepage-slides.manage')->name('homepage-slides.index');

@@ -11,7 +11,12 @@ class UpdatePageRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {
-        $this->merge(['page_type' => $this->input('page_type', PageType::Standard->value)]);
+        $translations = config('settings.nepali') ? $this->input('translations') : null;
+        if ($translations === null && $this->has('title')) {
+            $translations = ['en' => ['title' => $this->input('title'), 'summary' => $this->input('summary'), 'body' => $this->input('body')]];
+        }
+
+        $this->merge(['page_type' => $this->input('page_type', PageType::Article->value), 'translations' => $translations]);
     }
 
     public function authorize(): bool
@@ -22,11 +27,17 @@ class UpdatePageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'translations' => ['required', 'array:en,ne'],
+            'translations.en' => ['required', 'array:title,summary,body'],
+            'translations.en.title' => ['required', 'string', 'max:255'],
+            'translations.en.summary' => ['nullable', 'string', 'max:10000'],
+            'translations.en.body' => ['nullable', 'string'],
+            'translations.ne' => ['nullable', 'array:title,summary,body'],
+            'translations.ne.title' => ['nullable', 'string', 'max:255'],
+            'translations.ne.summary' => ['nullable', 'string', 'max:10000'],
+            'translations.ne.body' => ['nullable', 'string'],
             'page_type' => ['required', Rule::enum(PageType::class)],
             'parent_id' => ['nullable', 'integer', 'exists:pages,id'],
-            'summary' => ['nullable', 'string', 'max:10000'],
-            'body' => ['nullable', 'string'],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:1000'],

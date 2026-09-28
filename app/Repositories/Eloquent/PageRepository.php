@@ -13,7 +13,7 @@ class PageRepository implements PageRepositoryInterface
     public function paginateForIndex(array $filters): LengthAwarePaginator
     {
         return Page::query()->with('parent')->when($filters['search'] ?? null, function ($query, string $search): void {
-            $query->where(fn ($query) => $query->where('title', 'like', "%{$search}%")->orWhere('path', 'like', "%{$search}%"));
+            $query->where(fn ($query) => $query->where('title->en', 'like', "%{$search}%")->orWhere('title->ne', 'like', "%{$search}%")->orWhere('path', 'like', "%{$search}%"));
         })->when($filters['status'] ?? null, fn ($query, string $status) => $query->where('status', $status))
             ->when($filters['page_type'] ?? null, fn ($query, string $pageType) => $query->where('page_type', $pageType))
             ->orderBy('path')->paginate(15)->withQueryString();
@@ -23,11 +23,11 @@ class PageRepository implements PageRepositoryInterface
     {
         $pages = Page::query()
             ->when($filters['search'] ?? null, function ($query, string $search): void {
-                $query->where(fn ($query) => $query->where('title', 'like', "%{$search}%")->orWhere('path', 'like', "%{$search}%"));
+                $query->where(fn ($query) => $query->where('title->en', 'like', "%{$search}%")->orWhere('title->ne', 'like', "%{$search}%")->orWhere('path', 'like', "%{$search}%"));
             })
             ->when($filters['status'] ?? null, fn ($query, string $status) => $query->where('status', $status))
             ->when($filters['page_type'] ?? null, fn ($query, string $pageType) => $query->where('page_type', $pageType))
-            ->orderBy('sort_order')->orderBy('title')->get();
+            ->orderBy('sort_order')->orderBy('title->en')->get();
 
         if (($filters['search'] ?? null) || ($filters['status'] ?? null) || ($filters['page_type'] ?? null)) {
             return $pages;
@@ -67,6 +67,11 @@ class PageRepository implements PageRepositoryInterface
     public function delete(Page $page): void
     {
         $page->delete();
+    }
+
+    public function findByIds(array $ids): Collection
+    {
+        return Page::query()->whereKey($ids)->get();
     }
 
     public function descendants(Page $page): Collection

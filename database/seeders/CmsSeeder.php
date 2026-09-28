@@ -10,8 +10,8 @@ class CmsSeeder extends Seeder
 {
     public function run(): void
     {
-        Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Header Navigation']);
-        Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer Navigation']);
+        Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+        Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer Menu']);
 
         foreach ([
             'site_name' => config('app.name'),

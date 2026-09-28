@@ -24,7 +24,7 @@ export function initChartSix() {
             ],
             colors: ["#2a31d8", "#465fff", "#7592ff", "#c2d6ff"],
             chart: {
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 type: "bar",
                 stacked: true,
                 height: 315,
@@ -60,7 +60,7 @@ export function initChartSix() {
                 show: true,
                 position: "top",
                 horizontalAlign: "left",
-                fontFamily: "Outfit",
+                fontFamily: "Plus Jakarta Sans",
                 fontSize: "14px",
                 fontWeight: 400,
                 markers: {

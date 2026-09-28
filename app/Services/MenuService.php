@@ -7,7 +7,6 @@ use App\Models\MenuItem;
 use App\Repositories\Contracts\MenuRepositoryInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
 class MenuService
 {
@@ -39,26 +38,11 @@ class MenuService
         });
     }
 
-    public function saveItem(array $data, Authenticatable $actor, ?MenuItem $item = null): MenuItem
-    {
-        if (blank($data['page_id'] ?? null) && blank($data['external_url'] ?? null)) {
-            throw ValidationException::withMessages(['page_id' => 'Choose a page or provide an external URL.']);
-        }
-        if (filled($data['page_id'] ?? null) && filled($data['external_url'] ?? null)) {
-            throw ValidationException::withMessages(['page_id' => 'Choose either a page or an external URL, not both.']);
-        }
-
-        return DB::transaction(function () use ($data, $actor, $item): MenuItem {
-            $saved = $item ? $this->menus->updateItem($item, $data) : $this->menus->createItem($data);
-            activity('content')->causedBy($actor)->performedOn($saved)->event($item ? 'menu-item.updated' : 'menu-item.created')->log($item ? 'Menu item updated' : 'Menu item created');
-
-            return $saved;
-        });
-    }
-
     public function delete(MenuItem $item, Authenticatable $actor): void
     {
-        $this->menus->deleteItem($item);
-        activity('content')->causedBy($actor)->event('menu-item.deleted')->withProperties(['menu_item_id' => $item->id])->log('Menu item deleted');
+        DB::transaction(function () use ($item, $actor): void {
+            $this->menus->deleteItem($item);
+            activity('content')->causedBy($actor)->event('menu-item.deleted')->withProperties(['menu_item_id' => $item->id])->log('Menu item deleted');
+        });
     }
 }

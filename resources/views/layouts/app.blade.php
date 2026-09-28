@@ -9,6 +9,12 @@
     <title>{{ $title ?? 'Dashboard' }} | {{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    @php($richTextEditorVersion = filemtime(public_path('vendor/ckeditor/ckeditor.js')))
+    <script>
+        window.CKEDITOR_BASEPATH = @json(rtrim(asset('vendor/ckeditor'), '/').'/');
+    </script>
+    <script src="{{ asset('vendor/ckeditor/ckeditor.js') }}?v={{ $richTextEditorVersion }}"></script>
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -144,8 +150,9 @@
 
     </div>
 
-</body>
-
 @stack('scripts')
+<script src="{{ asset('vendor/ckeditor/admin-init.js') }}?v={{ filemtime(public_path('vendor/ckeditor/admin-init.js')) }}"></script>
+
+</body>
 
 </html>

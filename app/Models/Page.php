@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
 
 class Page extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    public array $translatable = ['title', 'summary', 'body'];
 
     protected $fillable = ['parent_id', 'title', 'page_type', 'slug', 'path', 'summary', 'body', 'status', 'published_at', 'meta_title', 'meta_description', 'banner_media_id', 'social_media_id', 'sort_order', 'created_by', 'updated_by', 'published_by'];
 

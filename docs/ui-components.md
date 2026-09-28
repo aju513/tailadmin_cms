@@ -30,9 +30,11 @@ CRUD forms must compose the reusable `x-form.*` components below instead of dupl
 | `x-form.toggle` | A boolean on/off field | `<x-form.toggle name="is_active" label="Active" :checked="true" />` |
 | `x-form.checkbox` | Single or array checkbox values | `<x-form.checkbox name="features[]" value="reports" label="Reports" />` |
 | `x-form.file-upload` | Accessible drag-and-drop file input with previews and client-side feedback | `<x-form.file-upload name="images[]" label="Images" accept="image/*" :multiple="true" />` |
-| `x-form.editor` | Small rich-text editor with bold, italic, and list actions | `<x-form.editor name="body" label="Body" />` |
+| `x-form.editor` | CKEditor rich-text editor with formatting, lists, links, tables, source view, and a custom block quote section action | `<x-form.editor name="body" label="Body" />` |
 
-All components accept `label`, `value`/`checked`, `required`, `disabled`, `help`, and `error` where applicable. They preserve old input, display validation feedback, support dark mode, and accept additional HTML attributes. The editor submits HTML and must be sanitized server-side. File-upload forms must use `enctype="multipart/form-data"`; the component's client-side checks are only a usability aid, so every upload must be validated again in its FormRequest. Existing specialized components such as `x-form.input.radio` and file inputs should also be preferred when their control type is needed.
+All components accept `label`, `value`/`checked`, `required`, `disabled`, `help`, and `error` where applicable. They preserve old input, display validation feedback, support dark mode, and accept additional HTML attributes. The editor submits HTML through its backing textarea and must be sanitized server-side. CKEditor assets are vendored under `public/vendor/ckeditor`; this setup does not include a file manager or upload endpoint. File-upload forms must use `enctype="multipart/form-data"`; the component's client-side checks are only a usability aid, so every upload must be validated again in its FormRequest. Existing specialized components such as `x-form.input.radio` and file inputs should also be preferred when their control type is needed.
+
+The shared TailAdmin font is Plus Jakarta Sans, including the rich-text editing area.
 
 The `field` component is the shared wrapper used by the controls for labels, required markers, help text, and validation errors. Add new controls by composing it rather than recreating those concerns.
 

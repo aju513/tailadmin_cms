@@ -20,7 +20,7 @@ export function initChartEight() {
             },
             colors: ["#465FFF", "#9CB9FF"],
             chart: {
-                fontFamily: "Outfit, sans-serif",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
                 height: 310,
                 type: "area",
                 toolbar: {
