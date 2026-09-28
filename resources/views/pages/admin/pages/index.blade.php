@@ -28,22 +28,6 @@
 </x-common.page-breadcrumb>
 
 <x-common.component-card title="Page manager" desc="Drag rows to reorder pages. Nested pages are shown with -- indentation.">
-    <form method="GET" action="{{ route('admin.pages.index') }}" class="mb-6 grid gap-3 sm:grid-cols-[1fr_180px_220px_auto]">
-        <input name="search" value="{{ request('search') }}" placeholder="Search title or path" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:text-white">
-        <select name="status" class="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-            <option value="">All statuses</option>
-            <option value="draft" @selected(request('status') === 'draft')>Draft</option>
-            <option value="published" @selected(request('status') === 'published')>Published</option>
-        </select>
-        <select name="page_type" class="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-            <option value="">All page types</option>
-            @foreach($pageTypes as $pageType)
-                <option value="{{ $pageType->value }}" @selected(request('page_type') === $pageType->value)>{{ $pageType->label() }}</option>
-            @endforeach
-        </select>
-        <button class="rounded-lg border border-gray-300 px-4 text-sm font-medium dark:border-gray-700 dark:text-white">Filter</button>
-    </form>
-
     <div x-data="pageOrdering('{{ route('admin.pages.order') }}')">
             <div x-show="message" x-text="message" class="mb-4 rounded-lg bg-success-50 px-4 py-3 text-sm text-success-700" x-cloak></div>
             <div class="overflow-x-auto">

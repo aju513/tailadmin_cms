@@ -34,20 +34,14 @@ return [
         'order' => 23,
     ],
     [
-        'key' => 'team-members',
-        'label' => 'Team Members',
+        'key' => 'team',
+        'label' => 'Team',
         'icon' => 'users',
-        'route' => 'admin.team-members.index',
-        'permission' => 'team-members.manage',
         'order' => 25,
-    ],
-    [
-        'key' => 'team-categories',
-        'label' => 'Team Categories',
-        'icon' => 'pages',
-        'route' => 'admin.team-categories.index',
-        'permission' => 'team-categories.manage',
-        'order' => 26,
+        'children' => [
+            ['key' => 'team-members', 'label' => 'Team Members', 'icon' => 'users', 'route' => 'admin.team-members.index', 'permission' => 'team-members.manage', 'order' => 10],
+            ['key' => 'team-categories', 'label' => 'Team Categories', 'icon' => 'pages', 'route' => 'admin.team-categories.index', 'permission' => 'team-categories.manage', 'order' => 20],
+        ],
     ],
     [
         'key' => 'menus',

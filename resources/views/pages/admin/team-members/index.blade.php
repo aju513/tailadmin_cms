@@ -10,17 +10,6 @@
 </x-common.page-breadcrumb>
 
 <x-common.component-card title="Team member directory" desc="Add and manage the people featured as part of your team.">
-    <form method="GET" action="{{ route('admin.team-members.index') }}" class="mb-5 grid gap-3 sm:grid-cols-[1fr_180px_180px_auto]">
-        <input name="search" value="{{ request('search') }}" placeholder="Search name or designation" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-        <select name="category_id" class="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white"><option value="">All categories</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected((string) request('category_id') === (string) $category->id)>{{ $category->name }}</option>@endforeach</select>
-        <select name="status" class="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-            <option value="">All statuses</option>
-            <option value="active" @selected(request('status') === 'active')>Active</option>
-            <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
-        </select>
-        <button class="rounded-lg border border-gray-300 px-4 text-sm font-medium transition hover:border-brand-500 hover:bg-brand-50 dark:border-gray-700 dark:text-white dark:hover:bg-brand-500/10">Filter</button>
-    </form>
-
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
             <thead><tr class="text-left text-xs uppercase text-gray-500"><th class="px-4 py-3">Member</th><th class="px-4 py-3">Category / Designation</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Created</th><th class="px-4 py-3 text-right">Actions</th></tr></thead>
