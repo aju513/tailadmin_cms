@@ -22,4 +22,7 @@
     <section><h2 class="text-2xl font-semibold">Information</h2><div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @forelse($featuredPages as $page)<a href="{{ route('public.page', ['path' => $page->path]) }}" class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:border-brand-400"><h3 class="font-semibold">{{ $page->title }}</h3>@if($page->summary)<p class="mt-2 text-sm text-gray-600">{{ strip_tags($page->summary) }}</p>@endif</a>@empty<p class="text-gray-600">Content is being prepared.</p>@endforelse
     </div></section>
+    @if($latestNews->isNotEmpty())
+        <section class="mt-12"><div class="mb-5 flex items-center justify-between gap-4"><h2 class="text-2xl font-semibold">Latest news</h2><a href="{{ route('public.news.index') }}" class="text-sm font-medium text-brand-600 hover:underline">View all news →</a></div><div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">@foreach($latestNews as $item)@include('public.news._card', ['item' => $item])@endforeach</div></section>
+    @endif
 @endsection

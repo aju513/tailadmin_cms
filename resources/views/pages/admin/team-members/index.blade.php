@@ -10,8 +10,9 @@
 </x-common.page-breadcrumb>
 
 <x-common.component-card title="Team member directory" desc="Add and manage the people featured as part of your team.">
-    <form method="GET" action="{{ route('admin.team-members.index') }}" class="mb-5 grid gap-3 sm:grid-cols-[1fr_200px_auto]">
+    <form method="GET" action="{{ route('admin.team-members.index') }}" class="mb-5 grid gap-3 sm:grid-cols-[1fr_180px_180px_auto]">
         <input name="search" value="{{ request('search') }}" placeholder="Search name or designation" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+        <select name="category_id" class="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white"><option value="">All categories</option>@foreach($categories as $category)<option value="{{ $category->id }}" @selected((string) request('category_id') === (string) $category->id)>{{ $category->name }}</option>@endforeach</select>
         <select name="status" class="h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white">
             <option value="">All statuses</option>
             <option value="active" @selected(request('status') === 'active')>Active</option>
@@ -22,7 +23,7 @@
 
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-            <thead><tr class="text-left text-xs uppercase text-gray-500"><th class="px-4 py-3">Member</th><th class="px-4 py-3">Designation</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Created</th><th class="px-4 py-3 text-right">Actions</th></tr></thead>
+            <thead><tr class="text-left text-xs uppercase text-gray-500"><th class="px-4 py-3">Member</th><th class="px-4 py-3">Category / Designation</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Created</th><th class="px-4 py-3 text-right">Actions</th></tr></thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 @forelse($members as $member)
                     <tr @can('team-members.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.team-members.edit', $member) }}'" title="Open {{ $member->name }} for editing" @endcan class="group transition @can('team-members.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan">
@@ -36,7 +37,7 @@
                                 <span class="font-medium text-gray-800 dark:text-white">{{ $member->name }}</span>
                             </div>
                         </td>
-                        <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-300">{{ $member->designation }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-300">{{ $member->category?->name ?? 'Uncategorized' }}<br><span class="text-xs text-gray-500">{{ $member->designation }}</span></td>
                         <td class="px-4 py-4"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $member->is_active ? 'bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300' }}">{{ $member->is_active ? 'Active' : 'Inactive' }}</span></td>
                         <td class="px-4 py-4 text-sm text-gray-500">{{ $member->created_at->format('M d, Y') }}</td>
                         <td class="px-4 py-4"><div class="flex justify-end gap-2">

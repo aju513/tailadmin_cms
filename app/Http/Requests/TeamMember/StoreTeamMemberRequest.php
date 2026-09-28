@@ -16,6 +16,7 @@ class StoreTeamMemberRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'designation' => ['required', 'string', 'max:255'],
+            'category_id' => ['nullable', 'integer', 'exists:team_categories,id'],
             'bio' => ['nullable', 'string', 'max:10000'],
             'photo' => ['required', 'image', 'max:5120'],
             'photo_alt_text' => ['nullable', 'string', 'max:255'],

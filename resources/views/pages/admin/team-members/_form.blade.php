@@ -1,6 +1,7 @@
 <div class="grid gap-6 md:grid-cols-2">
     <x-form.input name="name" label="Member name" :value="old('name', $member->name)" required />
     <x-form.input name="designation" label="Designation" :value="old('designation', $member->designation)" required />
+    <x-form.select name="category_id" label="Team category" :options="$categories" :value="$member->category_id" />
 
     <div class="space-y-3 md:col-span-2">
         @if($member->photoMedia)

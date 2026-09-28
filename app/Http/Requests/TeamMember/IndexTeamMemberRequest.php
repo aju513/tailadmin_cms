@@ -17,6 +17,7 @@ class IndexTeamMemberRequest extends FormRequest
         return [
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', Rule::in(['active', 'inactive'])],
+            'category_id' => ['nullable', 'integer', 'exists:team_categories,id'],
         ];
     }
 }

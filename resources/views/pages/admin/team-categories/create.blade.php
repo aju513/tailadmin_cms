@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('content')<x-common.page-breadcrumb pageTitle="Create Team Category" /><form method="POST" action="{{ route('admin.team-categories.store') }}">@csrf<x-common.component-card title="Team category details">@include('pages.admin.team-categories._form',['submitLabel'=>'Create category'])</x-common.component-card></form>@endsection

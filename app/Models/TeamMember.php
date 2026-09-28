@@ -10,7 +10,7 @@ class TeamMember extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'designation', 'bio', 'photo_media_id', 'is_active', 'sort_order', 'created_by', 'updated_by'];
+    protected $fillable = ['name', 'designation', 'category_id', 'bio', 'photo_media_id', 'is_active', 'sort_order', 'created_by', 'updated_by'];
 
     protected function casts(): array
     {
@@ -20,6 +20,11 @@ class TeamMember extends Model
     public function photoMedia(): BelongsTo
     {
         return $this->belongsTo(MediaAsset::class, 'photo_media_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(TeamCategory::class, 'category_id');
     }
 
     public function creator(): BelongsTo

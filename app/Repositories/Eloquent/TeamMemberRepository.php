@@ -11,12 +11,13 @@ class TeamMemberRepository implements TeamMemberRepositoryInterface
     public function paginate(array $filters = []): LengthAwarePaginator
     {
         return TeamMember::query()
-            ->with('photoMedia')
+            ->with(['photoMedia', 'category'])
             ->when($filters['search'] ?? null, fn ($query, $search) => $query->where(function ($query) use ($search): void {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('designation', 'like', "%{$search}%");
             }))
             ->when(isset($filters['status']), fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->when($filters['category_id'] ?? null, fn ($query, $id) => $query->where('category_id', $id))
             ->orderBy('sort_order')
             ->orderBy('name')
             ->paginate(15)

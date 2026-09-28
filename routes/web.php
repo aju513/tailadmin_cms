@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HomepageSlideController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -13,15 +15,25 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TeamCategoryController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UiKitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PublicHomeController;
+use App\Http\Controllers\PublicNewsController;
+use App\Http\Controllers\PublicNoticeController;
 use App\Http\Controllers\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', PublicHomeController::class)->name('public.home');
+Route::get('/news', [PublicNewsController::class, 'index'])->name('public.news.index');
+Route::get('/news/category/{slug}', [PublicNewsController::class, 'category'])->name('public.news.category');
+Route::get('/news/tag/{slug}', [PublicNewsController::class, 'tag'])->name('public.news.tag');
+Route::get('/news/author/{slug}', [PublicNewsController::class, 'author'])->name('public.news.author');
+Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('public.news.show');
+Route::get('/notices', [PublicNoticeController::class, 'index'])->name('public.notices.index');
+Route::get('/notices/{slug}', [PublicNoticeController::class, 'show'])->name('public.notices.show');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(function (): void {
     Route::get('/password/change', [PasswordController::class, 'edit'])->name('password.edit');
@@ -42,6 +54,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::post('/pages/{page}/unpublish', [PageController::class, 'unpublish'])->middleware('can:pages.publish')->name('pages.unpublish');
     Route::delete('/pages/{page}', [PageController::class, 'destroy'])->middleware('can:pages.delete')->name('pages.destroy');
     Route::get('/pages/{page}', [PageController::class, 'show'])->middleware('can:pages.show')->name('pages.show');
+
+    Route::get('/news', [NewsController::class, 'index'])->middleware('can:news.manage')->name('news.index');
+    Route::get('/news/create', [NewsController::class, 'create'])->middleware('can:news.create')->name('news.create');
+    Route::post('/news', [NewsController::class, 'store'])->middleware('can:news.create')->name('news.store');
+    Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->middleware('can:news.edit')->name('news.edit');
+    Route::put('/news/{news}', [NewsController::class, 'update'])->middleware('can:news.edit')->name('news.update');
+    Route::delete('/news/{news}', [NewsController::class, 'destroy'])->middleware('can:news.delete')->name('news.destroy');
+    Route::get('/news/{news}', [NewsController::class, 'show'])->middleware('can:news.show')->name('news.show');
+    Route::get('/notices', [NoticeController::class, 'index'])->middleware('can:notices.manage')->name('notices.index');
+    Route::get('/notices/create', [NoticeController::class, 'create'])->middleware('can:notices.create')->name('notices.create');
+    Route::post('/notices', [NoticeController::class, 'store'])->middleware('can:notices.create')->name('notices.store');
+    Route::get('/notices/{notice}/edit', [NoticeController::class, 'edit'])->middleware('can:notices.edit')->name('notices.edit');
+    Route::put('/notices/{notice}', [NoticeController::class, 'update'])->middleware('can:notices.edit')->name('notices.update');
+    Route::delete('/notices/{notice}', [NoticeController::class, 'destroy'])->middleware('can:notices.delete')->name('notices.destroy');
 
     Route::get('/categories', [CategoryController::class, 'index'])->middleware('can:categories.manage')->name('categories.index');
     Route::get('/categories/create', [CategoryController::class, 'create'])->middleware('can:categories.create')->name('categories.create');
@@ -68,6 +94,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/team-members/{teamMember}/edit', [TeamMemberController::class, 'edit'])->middleware('can:team-members.edit')->name('team-members.edit');
     Route::put('/team-members/{teamMember}', [TeamMemberController::class, 'update'])->middleware('can:team-members.edit')->name('team-members.update');
     Route::delete('/team-members/{teamMember}', [TeamMemberController::class, 'destroy'])->middleware('can:team-members.delete')->name('team-members.destroy');
+    Route::get('/team-categories', [TeamCategoryController::class, 'index'])->middleware('can:team-categories.manage')->name('team-categories.index');
+    Route::get('/team-categories/create', [TeamCategoryController::class, 'create'])->middleware('can:team-categories.create')->name('team-categories.create');
+    Route::post('/team-categories', [TeamCategoryController::class, 'store'])->middleware('can:team-categories.create')->name('team-categories.store');
+    Route::get('/team-categories/{teamCategory}/edit', [TeamCategoryController::class, 'edit'])->middleware('can:team-categories.edit')->name('team-categories.edit');
+    Route::put('/team-categories/{teamCategory}', [TeamCategoryController::class, 'update'])->middleware('can:team-categories.edit')->name('team-categories.update');
+    Route::delete('/team-categories/{teamCategory}', [TeamCategoryController::class, 'destroy'])->middleware('can:team-categories.delete')->name('team-categories.destroy');
 
     Route::get('/media', [MediaController::class, 'index'])->middleware('can:media.manage')->name('media.index');
     Route::post('/media', [MediaController::class, 'store'])->middleware('can:media.create')->name('media.store');

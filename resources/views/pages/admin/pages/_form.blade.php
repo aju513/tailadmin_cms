@@ -23,7 +23,7 @@
             <button type="button" id="page-tab-en" role="tab" aria-controls="page-panel-en" :aria-selected="activeLanguage === 'en'" @click="activeLanguage = 'en'; $nextTick(() => window.dispatchEvent(new Event('page-language-changed')))" :class="activeLanguage === 'en' ? 'border-brand-500 bg-white text-brand-600 dark:bg-gray-800' : 'border-transparent text-gray-500'" class="inline-flex items-center gap-2 border-b-2 px-5 py-4 text-sm font-medium"><img src="{{ asset('images/flags/en.svg') }}" alt="" class="h-4 w-6 object-contain"> English</button>
             <button type="button" id="page-tab-ne" role="tab" aria-controls="page-panel-ne" :aria-selected="activeLanguage === 'ne'" @click="activeLanguage = 'ne'; $nextTick(() => window.dispatchEvent(new Event('page-language-changed')))" :class="activeLanguage === 'ne' ? 'border-brand-500 bg-white text-brand-600 dark:bg-gray-800' : 'border-transparent text-gray-500'" class="inline-flex items-center gap-2 border-b-2 px-5 py-4 text-sm font-medium"><img src="{{ asset('images/flags/np.svg') }}" alt="" class="h-4 w-5 object-contain"> नेपाली</button>
         </nav>
-
+        
         <section id="page-panel-en" role="tabpanel" aria-labelledby="page-tab-en" x-show="activeLanguage === 'en'" class="space-y-6 p-5 sm:p-6">
             <div class="grid gap-6 md:grid-cols-2">
                 <x-form.input name="translations[en][title]" label="Page title (English)" :value="old('translations.en.title', $page->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" required data-page-title />

@@ -5,6 +5,7 @@
     <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? ($settings['site_name'] ?? config('app.name')) }}</title>
     @if(!empty($page?->meta_description))<meta name="description" content="{{ $page->meta_description }}">@endif
+    @if(!empty($page?->meta_keywords))<meta name="keywords" content="{{ $page->meta_keywords }}">@endif
     @if($page?->socialMedia)
         <meta property="og:title" content="{{ $title ?? $page->title }}">
         @if($page->meta_description)<meta property="og:description" content="{{ $page->meta_description }}">@endif

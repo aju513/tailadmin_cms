@@ -8,6 +8,7 @@ use App\Http\Requests\TeamMember\IndexTeamMemberRequest;
 use App\Http\Requests\TeamMember\StoreTeamMemberRequest;
 use App\Http\Requests\TeamMember\UpdateTeamMemberRequest;
 use App\Models\TeamMember;
+use App\Repositories\Contracts\TeamCategoryRepositoryInterface;
 use App\Repositories\Contracts\TeamMemberRepositoryInterface;
 use App\Services\TeamMemberService;
 use Illuminate\Http\RedirectResponse;
@@ -15,13 +16,14 @@ use Illuminate\View\View;
 
 class TeamMemberController extends Controller
 {
-    public function __construct(private readonly TeamMemberRepositoryInterface $members, private readonly TeamMemberService $service) {}
+    public function __construct(private readonly TeamMemberRepositoryInterface $members, private readonly TeamMemberService $service, private readonly TeamCategoryRepositoryInterface $categories) {}
 
     public function index(IndexTeamMemberRequest $request): View
     {
         return view('pages.admin.team-members.index', [
             'members' => $this->members->paginate($request->validated()),
             'title' => 'Team Members',
+            'categories' => $this->categories->active(),
         ]);
     }
 
@@ -30,6 +32,7 @@ class TeamMemberController extends Controller
         return view('pages.admin.team-members.create', [
             'member' => new TeamMember(['is_active' => false]),
             'title' => 'Add Team Member',
+            'categories' => $this->categories->active(),
         ]);
     }
 
@@ -45,6 +48,7 @@ class TeamMemberController extends Controller
         return view('pages.admin.team-members.edit', [
             'member' => $teamMember->load('photoMedia'),
             'title' => 'Edit Team Member',
+            'categories' => $this->categories->active(),
         ]);
     }
 

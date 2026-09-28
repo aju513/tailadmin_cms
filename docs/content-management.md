@@ -1,6 +1,6 @@
 # Content management
 
-The CMS provides a small government website content foundation. Blog/news is intentionally not part of this implementation.
+The CMS provides a small government website content foundation. News articles are a dedicated resource, separate from hierarchical pages.
 
 ## Implemented modules
 
@@ -11,8 +11,18 @@ The CMS provides a small government website content foundation. Blog/news is int
 - Homepage slides.
 - Team member directory with names, designations, biographies, photos, and active status.
 - Reusable categories, tags, and author records for future content modules.
+- News articles with draft/published status, a featured article, categories, authors, tags, thumbnail/banner/social images, SEO fields, and public listings.
+- Notices with title, generated slug, description, display order, draft/published status, optional downloadable media, and SEO title/description. Notices are managed at `/admin/notices` and published at `/notices`.
 
-Categories, tags, and authors are independent resources. They do not publish a blog by themselves and can be attached to future content types without introducing travel-specific concepts.
+Categories, tags, and authors are independent resources shared by news and future content types. They do not publish an article by themselves.
+
+## News
+
+News is managed at `/admin/news` and published at `/news` and `/news/{slug}`. Category, tag, and author listing routes use `/news/category/{slug}`, `/news/tag/{slug}`, and `/news/author/{slug}`. The public listing provides a featured story, category selector, search, article cards, and pagination. Article pages show the author, publication date, tags, banner, story, and recent articles. The homepage shows the three latest published articles.
+
+The editor follows the existing page form pattern with article text, optional category/author/tags, a publish toggle, images stored through the media library, and SEO fields. The URL slug is generated from the title if left empty and must be unique. `news.publish` is required to publish or edit a published article. A future publish date holds the article off the public site until that date. Only a currently published article can be featured; the service clears the previous flag in a transaction. Removing an article leaves media library assets available for reuse.
+
+The reference travel blog's package offers, view counter, inquiry panel, and travel-specific links are not part of news. News body and excerpt, like page content, are rendered as administrator-provided HTML. Sanitize rich text before granting publishing to untrusted editors.
 
 ## Pages
 
