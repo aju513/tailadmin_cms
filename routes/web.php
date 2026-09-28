@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UiKitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
@@ -60,6 +61,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/authors/{author}/edit', [AuthorController::class, 'edit'])->middleware('can:authors.edit')->name('authors.edit');
     Route::put('/authors/{author}', [AuthorController::class, 'update'])->middleware('can:authors.edit')->name('authors.update');
     Route::delete('/authors/{author}', [AuthorController::class, 'destroy'])->middleware('can:authors.delete')->name('authors.destroy');
+
+    Route::get('/team-members', [TeamMemberController::class, 'index'])->middleware('can:team-members.manage')->name('team-members.index');
+    Route::get('/team-members/create', [TeamMemberController::class, 'create'])->middleware('can:team-members.create')->name('team-members.create');
+    Route::post('/team-members', [TeamMemberController::class, 'store'])->middleware('can:team-members.create')->name('team-members.store');
+    Route::get('/team-members/{teamMember}/edit', [TeamMemberController::class, 'edit'])->middleware('can:team-members.edit')->name('team-members.edit');
+    Route::put('/team-members/{teamMember}', [TeamMemberController::class, 'update'])->middleware('can:team-members.edit')->name('team-members.update');
+    Route::delete('/team-members/{teamMember}', [TeamMemberController::class, 'destroy'])->middleware('can:team-members.delete')->name('team-members.destroy');
 
     Route::get('/media', [MediaController::class, 'index'])->middleware('can:media.manage')->name('media.index');
     Route::post('/media', [MediaController::class, 'store'])->middleware('can:media.create')->name('media.store');

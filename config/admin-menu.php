@@ -18,6 +18,14 @@ return [
         'order' => 20,
     ],
     [
+        'key' => 'team-members',
+        'label' => 'Team Members',
+        'icon' => 'users',
+        'route' => 'admin.team-members.index',
+        'permission' => 'team-members.manage',
+        'order' => 25,
+    ],
+    [
         'key' => 'menus',
         'label' => 'Menus',
         'icon' => 'menus',

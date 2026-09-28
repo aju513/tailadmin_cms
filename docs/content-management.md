@@ -9,6 +9,7 @@ The CMS provides a small government website content foundation. Blog/news is int
 - Menu positions default to Main Menu and Footer Menu; additional database-defined locations appear under Dynamic Menus. The main position retains the internal `header` location for existing routes and data. Each position has a searchable page-assignment control and an assigned-item manager with serial numbers, sibling-level drag ordering, row selection, single deletion, and bulk deletion. The assignment control remains available when every page is already assigned, and there is no separate menu-item creation or edit screen. Pages retain their hierarchy, dragging only changes order within the same parent, and surviving descendants reconnect to their nearest assigned ancestor after deletion. Main and footer links render recursively on the public site.
 - Site identity and contact settings.
 - Homepage slides.
+- Team member directory with names, designations, biographies, photos, and active status.
 - Reusable categories, tags, and author records for future content modules.
 
 Categories, tags, and authors are independent resources. They do not publish a blog by themselves and can be attached to future content types without introducing travel-specific concepts.
@@ -33,7 +34,9 @@ Page content is currently rendered as administrator-provided HTML. A production 
 
 CMS uploads always use Laravel's local `public` disk and are stored under `storage/app/public/cms`. Run `php artisan storage:link` once per environment. No S3 bucket or cloud storage configuration is required.
 
-Allowed uploads are validated as images, PDFs, and common office documents with a 10 MB media-library limit. Homepage slide images have a 5 MB limit.
+Allowed uploads are validated as images, PDFs, and common office documents with a 10 MB media-library limit. Homepage slide images and team member photos have a 5 MB limit.
+
+Team member records are managed through the permission-protected admin directory. Photos use the shared media library and local public disk; deleting a member keeps the photo available in the library for reuse.
 
 ## Feature workflow
 

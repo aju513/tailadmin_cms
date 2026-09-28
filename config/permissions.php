@@ -16,6 +16,10 @@ return [
         'pages.publish' => ['view_title' => 'Publish pages', 'description' => 'Allows publishing and unpublishing pages.'],
     ],
     'content' => [
+        'team-members.manage' => ['view_title' => 'Manage team members', 'description' => 'Allows viewing and filtering the team member directory.'],
+        'team-members.create' => ['view_title' => 'Create team members', 'description' => 'Allows adding team members.'],
+        'team-members.edit' => ['view_title' => 'Edit team members', 'description' => 'Allows changing team member details and status.'],
+        'team-members.delete' => ['view_title' => 'Delete team members', 'description' => 'Allows removing team members.'],
         'categories.manage' => ['view_title' => 'Manage categories', 'description' => 'Allows managing content categories.'],
         'categories.create' => ['view_title' => 'Create categories', 'description' => 'Allows creating content categories.'],
         'categories.edit' => ['view_title' => 'Edit categories', 'description' => 'Allows editing content categories.'],

@@ -8,6 +8,7 @@ use App\Models\MediaAsset;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Page;
+use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -295,6 +296,78 @@ test('categories tags and authors have independent admin CRUD surfaces', functio
     expect(ContentCategory::where('slug', 'notices')->exists())->toBeTrue()
         ->and(ContentTag::where('slug', 'public-service')->exists())->toBeTrue()
         ->and(ContentAuthor::where('slug', 'office-editor')->exists())->toBeTrue();
+});
+
+test('team members can be created searched edited and deleted from the admin', function (): void {
+    Storage::fake('public');
+
+    $this->actingAs($this->admin)->get(route('admin.team-members.index'))
+        ->assertOk()
+        ->assertSee('Team member directory')
+        ->assertSee('Add team member')
+        ->assertSee('Team Members')
+        ->assertSee(route('admin.team-members.index'));
+
+    $this->actingAs($this->admin)->post(route('admin.team-members.store'), [
+        'name' => 'Asha Sharma',
+        'designation' => 'Program Director',
+        'bio' => 'Leads community programs.',
+        'photo' => UploadedFile::fake()->image('asha.jpg'),
+        'photo_alt_text' => 'Asha Sharma',
+        'is_active' => '1',
+    ])->assertRedirect(route('admin.team-members.index'));
+
+    $member = TeamMember::query()->with('photoMedia')->firstOrFail();
+    expect($member->name)->toBe('Asha Sharma')
+        ->and($member->designation)->toBe('Program Director')
+        ->and($member->is_active)->toBeTrue()
+        ->and($member->photoMedia->alt_text)->toBe('Asha Sharma');
+    Storage::disk('public')->assertExists($member->photoMedia->path);
+
+    $this->actingAs($this->admin)->get(route('admin.team-members.index', ['search' => 'Program', 'status' => 'active']))
+        ->assertOk()
+        ->assertSee('Asha Sharma')
+        ->assertSee('Program Director');
+
+    $photoId = $member->photo_media_id;
+    $this->actingAs($this->admin)->get(route('admin.team-members.edit', $member))
+        ->assertOk()
+        ->assertSee('Asha Sharma')
+        ->assertSee('Member photo');
+
+    $this->actingAs($this->admin)->put(route('admin.team-members.update', $member), [
+        'name' => 'Asha Sharma',
+        'designation' => 'Executive Director',
+        'bio' => 'Updated biography.',
+        'is_active' => '0',
+    ])->assertRedirect(route('admin.team-members.index'));
+
+    expect($member->fresh()->designation)->toBe('Executive Director')
+        ->and($member->fresh()->bio)->toBe('Updated biography.')
+        ->and($member->fresh()->is_active)->toBeFalse()
+        ->and($member->fresh()->photo_media_id)->toBe($photoId);
+
+    $this->actingAs($this->admin)->delete(route('admin.team-members.destroy', $member))
+        ->assertRedirect()
+        ->assertSessionHas('success');
+    expect(TeamMember::query()->whereKey($member->id)->exists())->toBeFalse();
+    Storage::disk('public')->assertExists($member->photoMedia->path);
+});
+
+test('team member requests validate required fields and enforce permissions', function (): void {
+    $this->actingAs($this->admin)->post(route('admin.team-members.store'), [
+        'name' => '',
+        'designation' => '',
+    ])->assertSessionHasErrors(['name', 'designation', 'photo']);
+
+    $role = Role::create(['name' => 'team-member-viewer', 'guard_name' => 'web']);
+    $role->givePermissionTo('team-members.manage');
+    $viewer = User::factory()->create();
+    $viewer->assignRole($role);
+
+    $this->actingAs($viewer)->get(route('admin.team-members.index'))->assertOk();
+    $this->actingAs($viewer)->get(route('admin.team-members.create'))->assertForbidden();
+    $this->actingAs($viewer)->post(route('admin.team-members.store'), [])->assertForbidden();
 });
 
 test('media uploads use the local public disk', function (): void {
