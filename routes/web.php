@@ -69,6 +69,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/menus/header', [MenuController::class, 'header'])->middleware('can:menus.manage')->name('menus.header');
     Route::get('/menus/footer', [MenuController::class, 'footer'])->middleware('can:menus.manage')->name('menus.footer');
     Route::post('/menus/assign', [MenuController::class, 'assign'])->middleware('can:menus.manage')->name('menus.assign');
+    Route::patch('/menus/order', [MenuController::class, 'order'])->middleware('can:menus.manage')->name('menus.order');
+    Route::delete('/menus/bulk', [MenuController::class, 'bulkDestroy'])->middleware('can:menus.manage')->name('menus.bulk-destroy');
     Route::delete('/menus/{menuItem}', [MenuController::class, 'destroy'])->middleware('can:menus.manage')->name('menus.destroy');
 
     Route::get('/homepage-slides', [HomepageSlideController::class, 'index'])->middleware('can:homepage-slides.manage')->name('homepage-slides.index');

@@ -44,6 +44,8 @@ test('pages support nested paths and only published pages are public', function 
 });
 
 test('pages store and filter by page type', function (): void {
+    config()->set('settings.nepali', true);
+
     $response = $this->actingAs($this->admin)->get(route('admin.pages.create'))
         ->assertOk()
         ->assertSee('Page type')
@@ -58,7 +60,11 @@ test('pages store and filter by page type', function (): void {
         ->assertSee('page-tab-ne')
         ->assertSee('page-shared-tab-banner')
         ->assertSee('page-shared-tab-social')
-        ->assertSee('page-shared-tab-seo')
+        ->assertSee('SEO Details')
+        ->assertSee('name="meta_title"', false)
+        ->assertSee('name="meta_description"', false)
+        ->assertDontSee('page-shared-tab-seo')
+        ->assertDontSee('page-shared-panel-seo')
         ->assertSee('images/flags/en.svg')
         ->assertSee('images/flags/np.svg')
         ->assertDontSee('Shared by English and Nepali pages.')
@@ -99,6 +105,8 @@ test('renaming a nested page updates descendant paths', function (): void {
 });
 
 test('page translations are saved, edited, and displayed by language', function (): void {
+    config()->set('settings.nepali', true);
+
     $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'translations' => [
             'en' => ['title' => 'Welcome Office', 'summary' => '<p>English summary</p>', 'body' => '<p>English body</p>'],
@@ -136,6 +144,8 @@ test('page translations are saved, edited, and displayed by language', function 
 });
 
 test('missing Nepali content falls back to English and English title is required', function (): void {
+    config()->set('settings.nepali', true);
+
     $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'translations' => ['en' => ['title' => '', 'body' => 'Body']], 'status' => 'draft',
     ])->assertSessionHasErrors('translations.en.title');
@@ -382,6 +392,101 @@ test('menu positions assign pages on their own screen without separate item form
     $this->actingAs($this->admin)->get(route('admin.menus.header'))->assertSee('Menu Target')->assertSee('Delete');
     expect($main->items()->where('page_id', $page->id)->exists())->toBeTrue();
     expect($footer->items()->where('page_id', $page->id)->exists())->toBeFalse();
+});
+
+test('menu manager renders reference controls and reorders sibling groups', function (): void {
+    $menu = Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+    $parent = Page::create(['title' => 'About', 'slug' => 'about-menu', 'path' => 'about-menu', 'status' => 'published']);
+    $otherRoot = Page::create(['title' => 'Contact', 'slug' => 'contact-menu', 'path' => 'contact-menu', 'status' => 'published']);
+    $firstChild = Page::create(['title' => 'History', 'parent_id' => $parent->id, 'slug' => 'history-menu', 'path' => 'about-menu/history-menu', 'status' => 'published']);
+    $secondChild = Page::create(['title' => 'Team', 'parent_id' => $parent->id, 'slug' => 'team-menu', 'path' => 'about-menu/team-menu', 'status' => 'published']);
+
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), [
+        'menu_id' => $menu->id,
+        'page_ids' => [$parent->id, $otherRoot->id, $firstChild->id, $secondChild->id],
+    ])->assertRedirect(route('admin.menus.header'));
+
+    $this->actingAs($this->admin)->get(route('admin.menus.header'))
+        ->assertOk()
+        ->assertSee('Main Menu Manager')
+        ->assertSee('S.N.')
+        ->assertSee('Order')
+        ->assertSee('Bulk Delete')
+        ->assertSee('data-drag-handle', false);
+
+    $parentItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $parent->id)->firstOrFail();
+    $otherRootItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $otherRoot->id)->firstOrFail();
+    $firstChildItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $firstChild->id)->firstOrFail();
+    $secondChildItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $secondChild->id)->firstOrFail();
+
+    $this->actingAs($this->admin)->patchJson(route('admin.menus.order'), [
+        'menu_id' => $menu->id,
+        'parent_id' => null,
+        'menu_items' => [$otherRootItem->id, $parentItem->id],
+    ])->assertOk()->assertJson(['message' => 'Menu order updated.']);
+
+    $this->actingAs($this->admin)->patchJson(route('admin.menus.order'), [
+        'menu_id' => $menu->id,
+        'parent_id' => $parentItem->id,
+        'menu_items' => [$secondChildItem->id, $firstChildItem->id],
+    ])->assertOk();
+
+    expect($otherRootItem->fresh()->sort_order)->toBe(0)
+        ->and($parentItem->fresh()->sort_order)->toBe(1)
+        ->and($secondChildItem->fresh()->sort_order)->toBe(0)
+        ->and($firstChildItem->fresh()->sort_order)->toBe(1);
+
+    $this->actingAs($this->admin)->patchJson(route('admin.menus.order'), [
+        'menu_id' => $menu->id,
+        'parent_id' => null,
+        'menu_items' => [$parentItem->id],
+    ])->assertUnprocessable()->assertJsonValidationErrors('menu_items');
+
+    $this->actingAs($this->admin)->patchJson(route('admin.menus.order'), [
+        'menu_id' => $menu->id,
+        'parent_id' => null,
+        'menu_items' => [$parentItem->id, $firstChildItem->id],
+    ])->assertUnprocessable()->assertJsonValidationErrors('menu_items');
+});
+
+test('menu manager bulk deletes selections and preserves surviving descendants', function (): void {
+    $menu = Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+    $parent = Page::create(['title' => 'Parent Link', 'slug' => 'parent-link', 'path' => 'parent-link', 'status' => 'published']);
+    $child = Page::create(['title' => 'Child Link', 'parent_id' => $parent->id, 'slug' => 'child-link', 'path' => 'parent-link/child-link', 'status' => 'published']);
+    $grandchild = Page::create(['title' => 'Surviving Link', 'parent_id' => $child->id, 'slug' => 'surviving-link', 'path' => 'parent-link/child-link/surviving-link', 'status' => 'published']);
+
+    $this->actingAs($this->admin)->post(route('admin.menus.assign'), [
+        'menu_id' => $menu->id,
+        'page_ids' => [$parent->id, $child->id, $grandchild->id],
+    ])->assertRedirect();
+
+    $parentItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $parent->id)->firstOrFail();
+    $childItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $child->id)->firstOrFail();
+    $grandchildItem = MenuItem::query()->where('menu_id', $menu->id)->where('page_id', $grandchild->id)->firstOrFail();
+
+    $this->actingAs($this->admin)->delete(route('admin.menus.bulk-destroy'), [
+        'menu_id' => $menu->id,
+        'menu_items' => [$parentItem->id, $childItem->id],
+    ])->assertRedirect()->assertSessionHas('success');
+
+    expect(MenuItem::query()->whereKey([$parentItem->id, $childItem->id])->count())->toBe(0)
+        ->and($grandchildItem->fresh()->parent_id)->toBeNull();
+
+    $this->actingAs($this->admin)->delete(route('admin.menus.bulk-destroy'), [
+        'menu_id' => $menu->id,
+        'menu_items' => [$grandchildItem->id, $grandchildItem->id],
+    ])->assertSessionHasErrors('menu_items.1');
+
+    $viewer = User::factory()->create();
+    $this->actingAs($viewer)->patchJson(route('admin.menus.order'), [
+        'menu_id' => $menu->id,
+        'parent_id' => null,
+        'menu_items' => [$grandchildItem->id],
+    ])->assertForbidden();
+    $this->actingAs($viewer)->delete(route('admin.menus.bulk-destroy'), [
+        'menu_id' => $menu->id,
+        'menu_items' => [$grandchildItem->id],
+    ])->assertForbidden();
 });
 
 test('content permissions are enforced for non-administrators', function (): void {

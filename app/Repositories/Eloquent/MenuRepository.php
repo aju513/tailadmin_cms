@@ -95,6 +95,47 @@ class MenuRepository implements MenuRepositoryInterface
         return $created;
     }
 
+    public function itemsByIds(Menu $menu, array $itemIds): Collection
+    {
+        return $menu->items()->whereKey($itemIds)->get();
+    }
+
+    public function siblingIds(Menu $menu, ?int $parentId): array
+    {
+        return $menu->items()
+            ->where('parent_id', $parentId)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    public function reorderItems(Menu $menu, ?int $parentId, array $itemIds): void
+    {
+        foreach ($itemIds as $sortOrder => $itemId) {
+            $menu->items()
+                ->whereKey($itemId)
+                ->where('parent_id', $parentId)
+                ->update(['sort_order' => $sortOrder]);
+        }
+    }
+
+    public function deleteItems(Menu $menu, array $itemIds): void
+    {
+        foreach ($itemIds as $itemId) {
+            $item = $menu->items()->whereKey($itemId)->first();
+            if (! $item) {
+                continue;
+            }
+
+            $item->children()->update(['parent_id' => $item->parent_id]);
+            $item->delete();
+        }
+
+        $this->assignPages($menu, []);
+    }
+
     public function deleteItem(MenuItem $item): void
     {
         $menu = $item->menu;

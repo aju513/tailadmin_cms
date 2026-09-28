@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Menu\AssignMenuPagesRequest;
+use App\Http\Requests\Menu\BulkDeleteMenuItemsRequest;
 use App\Http\Requests\Menu\DeleteMenuItemRequest;
+use App\Http\Requests\Menu\OrderMenuItemsRequest;
 use App\Models\MenuItem;
 use App\Services\MenuService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -54,5 +57,19 @@ class MenuController extends Controller
         $this->menus->delete($menuItem, $request->user());
 
         return back()->with('success', 'Menu item deleted.');
+    }
+
+    public function order(OrderMenuItemsRequest $request): JsonResponse
+    {
+        $this->menus->reorder($request->validated(), $request->user());
+
+        return response()->json(['message' => 'Menu order updated.']);
+    }
+
+    public function bulkDestroy(BulkDeleteMenuItemsRequest $request): RedirectResponse
+    {
+        $this->menus->bulkDelete($request->validated(), $request->user());
+
+        return back()->with('success', 'Selected menu items deleted.');
     }
 }

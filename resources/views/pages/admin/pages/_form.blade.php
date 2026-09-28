@@ -1,4 +1,8 @@
-<div x-data="{ activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}', activeShared: '{{ $errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : ($errors->hasAny(['meta_title', 'meta_description']) ? 'seo' : 'banner') }}' }" class="space-y-6">
+<div x-data="{ activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}', activeShared: '{{ $errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner' }}' }" class="space-y-6">
+    <div class="sticky top-20 z-30 -mx-4 flex justify-end border-b border-gray-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 sm:-mx-6 sm:px-6">
+        <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-600">{{ $submitLabel }}</button>
+    </div>
+
     <div class="grid gap-6 md:grid-cols-2">
         <x-form.select name="page_type" label="Page type" required>
             @foreach($pageTypes as $pageType)
@@ -67,7 +71,6 @@
         <nav class="flex flex-wrap border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900" role="tablist" aria-label="Shared page settings">
             <button type="button" id="page-shared-tab-banner" role="tab" aria-controls="page-shared-panel-banner" :aria-selected="activeShared === 'banner'" @click="activeShared = 'banner'" :class="activeShared === 'banner' ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500'" class="border-b-2 px-5 py-4 text-sm font-medium">Banner Image</button>
             <button type="button" id="page-shared-tab-social" role="tab" aria-controls="page-shared-panel-social" :aria-selected="activeShared === 'social'" @click="activeShared = 'social'" :class="activeShared === 'social' ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500'" class="border-b-2 px-5 py-4 text-sm font-medium">Social Media Image</button>
-            <button type="button" id="page-shared-tab-seo" role="tab" aria-controls="page-shared-panel-seo" :aria-selected="activeShared === 'seo'" @click="activeShared = 'seo'" :class="activeShared === 'seo' ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500'" class="border-b-2 px-5 py-4 text-sm font-medium">SEO</button>
         </nav>
 
         <section id="page-shared-panel-banner" role="tabpanel" aria-labelledby="page-shared-tab-banner" x-show="activeShared === 'banner'" class="space-y-6 p-5 sm:p-6">
@@ -80,13 +83,17 @@
             <x-form.file-upload name="social_media_image" label="Upload social media image" accept="image/*" :max-size="5242880" />
             <x-form.input name="social_media_alt_text" label="Social media alt text" :value="old('social_media_alt_text', $page->socialMedia?->alt_text)" />
         </section>
-        <section id="page-shared-panel-seo" role="tabpanel" aria-labelledby="page-shared-tab-seo" x-show="activeShared === 'seo'" x-cloak class="space-y-5 p-5 sm:p-6">
-            <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $page->meta_title)" data-page-seo-title />
-            <x-form.textarea name="meta_description" label="SEO description" :value="old('meta_description', $page->meta_description)" />
-        </section>
     </div>
 
-    <div class="flex justify-end"><button class="rounded-lg bg-brand-500 px-5 py-3 text-sm font-medium text-white">{{ $submitLabel }}</button></div>
+    <section class="space-y-5 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 sm:p-6" aria-labelledby="page-seo-heading">
+        <div>
+            <h2 id="page-seo-heading" class="text-base font-semibold text-gray-800 dark:text-white">SEO Details</h2>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Search engine title and description for this page.</p>
+        </div>
+        <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $page->meta_title)" data-page-seo-title />
+        <x-form.textarea name="meta_description" label="SEO description" :value="old('meta_description', $page->meta_description)" />
+    </section>
+
 </div>
 
 @push('scripts')

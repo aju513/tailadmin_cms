@@ -134,13 +134,6 @@ class PageService
     private function prepare(array $data, Authenticatable $actor, ?Page $page = null): array
     {
         $translations = Arr::pull($data, 'translations');
-        if (! config('settings.nepali')) {
-            $translations = ['en' => [
-                'title' => $data['title'] ?? '',
-                'summary' => $data['summary'] ?? null,
-                'body' => $data['body'] ?? null,
-            ]];
-        }
         foreach (['title', 'summary', 'body'] as $field) {
             $data[$field] = ['en' => $translations['en'][$field] ?? ''];
             if (filled($translations['ne'][$field] ?? null)) {
