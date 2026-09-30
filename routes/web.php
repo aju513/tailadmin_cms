@@ -139,6 +139,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::put('/resource-categories/{resourceCategory}', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'update'])->middleware('can:resource-categories.edit')->name('resource-categories.update');
     Route::delete('/resource-categories/{resourceCategory}', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'destroy'])->middleware('can:resource-categories.delete')->name('resource-categories.destroy');
 
+    Route::post('/resource-categories/order', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'order'])->middleware('can:resource-categories.edit')->name('resource-categories.order');
+    Route::post('/notice-categories/order', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'order'])->middleware('can:notice-categories.edit')->name('notice-categories.order');
+    Route::get('/notice-categories', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'index'])->middleware('can:notice-categories.manage')->name('notice-categories.index');
+    Route::get('/notice-categories/create', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'create'])->middleware('can:notice-categories.create')->name('notice-categories.create');
+    Route::post('/notice-categories', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'store'])->middleware('can:notice-categories.create')->name('notice-categories.store');
+    Route::get('/notice-categories/{noticeCategory}/edit', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'edit'])->middleware('can:notice-categories.edit')->name('notice-categories.edit');
+    Route::put('/notice-categories/{noticeCategory}', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'update'])->middleware('can:notice-categories.edit')->name('notice-categories.update');
+    Route::delete('/notice-categories/{noticeCategory}', [\App\Http\Controllers\Admin\NoticeCategoryController::class, 'destroy'])->middleware('can:notice-categories.delete')->name('notice-categories.destroy');
+
     Route::get('/media', [MediaController::class, 'index'])->middleware('can:media.manage')->name('media.index');
     Route::post('/media', [MediaController::class, 'store'])->middleware('can:media.create')->name('media.store');
     Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('can:media.delete')->name('media.destroy');

@@ -3,7 +3,6 @@
 namespace App\Repositories\Eloquent;
 
 use App\Enums\ContentStatus;
-use App\Enums\NoticeType;
 use App\Models\Notice;
 use App\Repositories\Contracts\NoticeRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -13,22 +12,23 @@ class NoticeRepository implements NoticeRepositoryInterface
 {
     public function paginateAdmin(array $filters): LengthAwarePaginator
     {
-        return Notice::query()->with('fileMedia')
+        return Notice::query()->with('fileMedia', 'category')
             ->when($filters['search'] ?? null, fn ($query, $search) => $query->where('title', 'like', '%'.$search.'%'))
             ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
-            ->when($filters['notice_type'] ?? null, fn ($query, $type) => $query->where('notice_type', $type))
+            ->when($filters['notice_category_id'] ?? null, fn ($query, $type) => $query->where('notice_category_id', $type))
             ->orderBy('sort_order')->latest('id')->paginate(15)->withQueryString();
     }
 
     private function publishedQuery(): Builder
     {
-        return Notice::query()->with('fileMedia')->where('status', ContentStatus::Published)
-            ->whereNotNull('published_at')->where('published_at', '<=', now());
+        return Notice::query()->with('fileMedia', 'category')->where('status', ContentStatus::Published)
+            ->whereNotNull('published_at')->where('published_at', '<=', now())
+            ->whereHas('category', fn ($query) => $query->where('is_active', true));
     }
 
-    public function paginatePublished(?NoticeType $type = null, string $pageName = 'page'): LengthAwarePaginator
+    public function paginatePublished(?int $categoryId = null, string $pageName = 'page'): LengthAwarePaginator
     {
-        return $this->publishedQuery()->when($type, fn ($query) => $query->where('notice_type', $type->value))
+        return $this->publishedQuery()->when($categoryId, fn ($query) => $query->where('notice_category_id', $categoryId))
             ->orderBy('sort_order')->latest('published_at')->latest('id')->paginate(15, ['*'], $pageName)->withQueryString();
     }
 
@@ -44,7 +44,7 @@ class NoticeRepository implements NoticeRepositoryInterface
 
     public function details(Notice $notice): Notice
     {
-        return $notice->load('fileMedia');
+        return $notice->load('fileMedia', 'category');
     }
 
     public function create(array $data): Notice

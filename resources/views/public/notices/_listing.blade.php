@@ -1,7 +1,7 @@
 <div class="space-y-4">
     @forelse($items as $item)
         <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <p class="mb-2 text-xs font-medium text-gray-500">{{ $item->notice_type->label() }}</p>
+            <p class="mb-2 text-xs font-medium text-gray-500">{{ $item->category?->name }}</p>
             <h2 class="text-lg font-semibold"><a href="{{ route('public.notices.show', $item->slug) }}" class="hover:text-brand-600">{{ $item->title }}</a></h2>
             @if($item->description)<p class="mt-2 text-sm text-gray-600">{{ \Illuminate\Support\Str::limit(strip_tags($item->description), 220) }}</p>@endif
             <time class="mt-3 block text-xs text-gray-500">{{ $item->published_at?->format('d M Y') }}</time>

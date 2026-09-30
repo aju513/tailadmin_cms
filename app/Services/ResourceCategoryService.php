@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\ResourceCategory;
 use App\Repositories\Contracts\ResourceCategoryRepositoryInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -15,14 +15,14 @@ class ResourceCategoryService
 {
     public function __construct(private readonly ResourceCategoryRepositoryInterface $categories) {}
 
-    public function index(array $filters): LengthAwarePaginator
+    public function index(array $filters): Collection
     {
-        return $this->categories->paginate($filters);
+        return $this->categories->ordered($filters);
     }
 
-    public function options(): array
+    public function options(bool $activeOnly = false): array
     {
-        return $this->categories->options();
+        return $this->categories->options($activeOnly);
     }
 
     public function lockSelection(int $id): ResourceCategory
@@ -32,7 +32,7 @@ class ResourceCategoryService
 
     public function newRecord(): ResourceCategory
     {
-        return new ResourceCategory(['sort_order' => 0]);
+        return new ResourceCategory(['is_active' => true]);
     }
 
     public function details(ResourceCategory $category): ResourceCategory
@@ -50,6 +50,8 @@ class ResourceCategoryService
             if ($data['slug'] === '' || $this->categories->slugExists($data['slug'], $category)) {
                 throw ValidationException::withMessages(['slug' => 'Enter a unique URL slug using letters or numbers.']);
             }
+            $data['is_active'] = (bool) $data['is_active'];
+            $data['sort_order'] = $category?->sort_order ?? $this->categories->nextSortOrder();
             $data['created_by'] = $category?->created_by ?? $actor->getAuthIdentifier();
             $data['updated_by'] = $actor->getAuthIdentifier();
             $saved = $category ? $this->categories->update($category, $data) : $this->categories->create($data);
@@ -57,6 +59,25 @@ class ResourceCategoryService
                 ->event($category ? 'resource-category.updated' : 'resource-category.created')->log('Resource category saved');
 
             return $saved;
+        });
+    }
+
+    public function reorder(array $ids, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('resource-categories.edit');
+        DB::transaction(function () use ($ids, $actor): void {
+            $records = $this->categories->lockAll();
+            $expected = $records->modelKeys();
+            $received = array_map('intval', $ids);
+            sort($expected);
+            $comparison = $received;
+            sort($comparison);
+            if ($comparison !== $expected) {
+                throw ValidationException::withMessages(['categories' => 'The category list changed. Reload before reordering.']);
+            }
+            $this->categories->reorder($received);
+            activity('content')->causedBy($actor)->event('resource-category.reordered')
+                ->withProperties(['category_ids' => $received])->log('Resource categories reordered');
         });
     }
 

@@ -17,11 +17,16 @@ class Page extends Model
 
     public array $translatable = ['title', 'summary', 'body'];
 
-    protected $fillable = ['notice_type', 'parent_id', 'resource_category_id', 'title', 'page_type', 'slug', 'path', 'summary', 'body', 'status', 'published_at', 'meta_title', 'meta_description', 'banner_media_id', 'social_media_id', 'sort_order', 'created_by', 'updated_by', 'published_by'];
+    protected $fillable = ['notice_category_id', 'notice_type', 'parent_id', 'resource_category_id', 'title', 'page_type', 'slug', 'path', 'summary', 'body', 'status', 'published_at', 'meta_title', 'meta_description', 'banner_media_id', 'social_media_id', 'sort_order', 'created_by', 'updated_by', 'published_by'];
 
     protected function casts(): array
     {
         return ['notice_type' => NoticeType::class, 'page_type' => PageType::class, 'status' => ContentStatus::class, 'published_at' => 'datetime'];
+    }
+
+    public function noticeCategory(): BelongsTo
+    {
+        return $this->belongsTo(NoticeCategory::class, 'notice_category_id');
     }
 
     public function resourceCategory(): BelongsTo

@@ -3,7 +3,7 @@
 @section('content')
 <nav class="mb-6 text-sm text-gray-500"><a href="{{ route('public.home') }}">Home</a><span class="mx-2">/</span><a href="{{ route('public.notices.index') }}">Notices</a><span class="mx-2">/</span>{{ $item->title }}</nav>
 <article class="rounded-2xl bg-white p-6 shadow-sm sm:p-10">
-    <p class="mb-3 text-sm text-gray-500">{{ $item->notice_type->label() }}</p>
+    <p class="mb-3 text-sm text-gray-500">{{ $item->category?->name }}</p>
     <h1 class="text-3xl font-bold">{{ $item->title }}</h1>
     <time class="mt-3 block text-sm text-gray-500">{{ $item->published_at?->format('d M Y H:i') }}</time>
     @if($item->deadline_at)

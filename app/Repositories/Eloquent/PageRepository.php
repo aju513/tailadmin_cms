@@ -49,7 +49,7 @@ class PageRepository implements PageRepositoryInterface
 
     public function publicByPath(string $path): Page
     {
-        return Page::query()->with(['children', 'bannerMedia', 'socialMedia'])->where('path', $path)->where('status', ContentStatus::Published)->firstOrFail();
+        return Page::query()->with(['children', 'bannerMedia', 'socialMedia', 'noticeCategory'])->where('path', $path)->where('status', ContentStatus::Published)->firstOrFail();
     }
 
     public function create(array $data): Page

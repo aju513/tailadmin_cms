@@ -9,7 +9,12 @@ class ResourceCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description', 'sort_order', 'created_by', 'updated_by'];
+    protected $fillable = ['is_active', 'name', 'slug', 'description', 'sort_order', 'created_by', 'updated_by'];
+
+    protected function casts(): array
+    {
+        return ['is_active' => 'boolean'];
+    }
 
     public function getRouteKeyName(): string
     {

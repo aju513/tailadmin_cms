@@ -6,14 +6,14 @@ use App\Models\Page;
 use App\Models\ResourceDocument;
 use App\Models\ResourceCategory;
 use App\Repositories\Contracts\ResourceCategoryRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class ResourceCategoryRepository implements ResourceCategoryRepositoryInterface
 {
-    public function paginate(array $filters): LengthAwarePaginator
+    public function ordered(array $filters): Collection
     {
         return ResourceCategory::query()->when($filters['search'] ?? null, fn ($query, $search) => $query->where('name', 'like', '%'.$search.'%'))
-            ->orderBy('sort_order')->latest('id')->paginate(15)->withQueryString();
+            ->orderBy('sort_order')->orderBy('id')->get();
     }
 
     public function lock(ResourceCategory $record): ResourceCategory
@@ -48,9 +48,28 @@ class ResourceCategoryRepository implements ResourceCategoryRepositoryInterface
         $record->delete();
     }
 
-    public function options(): array
+    public function options(bool $activeOnly = false): array
     {
-        return ResourceCategory::query()->orderBy('sort_order')->orderBy('name')->pluck('name', 'id')->all();
+        return ResourceCategory::query()->when($activeOnly, fn ($query) => $query->where('is_active', true))
+            ->orderBy('sort_order')->orderBy('id')->get()
+            ->mapWithKeys(fn ($category) => [$category->id => $category->name.($category->is_active ? '' : ' (Unpublished)')])->all();
+    }
+
+    public function lockAll(): Collection
+    {
+        return ResourceCategory::query()->orderBy('id')->lockForUpdate()->get();
+    }
+
+    public function reorder(array $ids): void
+    {
+        foreach ($ids as $position => $id) {
+            ResourceCategory::query()->whereKey($id)->update(['sort_order' => $position]);
+        }
+    }
+
+    public function nextSortOrder(): int
+    {
+        return ((int) ResourceCategory::query()->max('sort_order')) + 1;
     }
 
     public function inUse(ResourceCategory $record): bool

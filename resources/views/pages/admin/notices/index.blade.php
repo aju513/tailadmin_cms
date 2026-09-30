@@ -11,7 +11,7 @@
 <x-common.component-card title="Manage notices">
     <form method="GET" action="{{ route('admin.notices.index') }}" class="mb-6 flex flex-wrap items-end gap-3">
         <div class="flex-1"><x-form.input name="search" label="Search" :value="request('search')" placeholder="Search by title" /></div>
-        <div class="w-56"><x-form.select name="notice_type" label="Notice type" :options="$types" :value="request('notice_type')" placeholder="All types" /></div>
+        <div class="w-56"><x-form.select name="notice_category_id" label="Notice category" :options="$categories" :value="request('notice_category_id')" placeholder="All categories" /></div>
         <x-ui.button type="submit" variant="outline">Search</x-ui.button>
     </form>
     <div class="overflow-x-auto">
@@ -26,7 +26,7 @@
             @forelse($items as $item)
                 <tr class="text-sm text-gray-600 dark:text-gray-300">
                     <td class="px-4 py-4"><div class="flex items-center gap-3">
-                        <div><div class="font-medium text-gray-800 dark:text-white/90">{{ $item->title }}</div><div class="mt-1 text-xs text-gray-500">{{ $item->notice_type->label() }}</div></div>
+                        <div><div class="font-medium text-gray-800 dark:text-white/90">{{ $item->title }}</div><div class="mt-1 text-xs text-gray-500">{{ $item->category?->name }}</div></div>
                     </div></td>
                     <td class="px-4 py-4">@if($item->deadline_at)
                             {{ $item->deadline_at->format('d M Y H:i') }}

@@ -12,7 +12,7 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
-- [Notice types and page connections](notices.md): notice classifications, deadlines, and automatic Notices page listings.
+- [Notice types and page connections](notices.md): managed notice categories, deadlines, and automatic Notices page listings.
 
 - [Resources and page connections](resources.md): document catalogue, categories, automatic Resource page listings, and downloads.
 

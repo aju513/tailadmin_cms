@@ -20,12 +20,12 @@ class NoticeController extends Controller
 
     public function index(IndexNoticeRequest $request): View
     {
-        return view('pages.admin.notices.index', ['items' => $this->service->index($request->validated()), 'types' => $this->service->typeOptions(), 'title' => 'Notices']);
+        return view('pages.admin.notices.index', ['items' => $this->service->index($request->validated()), 'categories' => $this->service->categoryOptions(), 'title' => 'Notices']);
     }
 
     public function create(CreateNoticeRequest $request): View
     {
-        return view('pages.admin.notices.create', ['item' => $this->service->newRecord(), 'types' => $this->service->typeOptions(), 'title' => 'Add Notice']);
+        return view('pages.admin.notices.create', ['item' => $this->service->newRecord(), 'categories' => $this->service->categoryOptions(), 'title' => 'Add Notice']);
     }
 
     public function store(StoreNoticeRequest $request): RedirectResponse
@@ -37,7 +37,7 @@ class NoticeController extends Controller
 
     public function edit(EditNoticeRequest $request, Notice $notice): View
     {
-        return view('pages.admin.notices.edit', ['item' => $this->service->details($notice), 'types' => $this->service->typeOptions(), 'title' => 'Edit Notice']);
+        return view('pages.admin.notices.edit', ['item' => $this->service->details($notice), 'categories' => $this->service->categoryOptions(), 'title' => 'Edit Notice']);
     }
 
     public function update(UpdateNoticeRequest $request, Notice $notice): RedirectResponse

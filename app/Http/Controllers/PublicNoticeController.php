@@ -20,7 +20,7 @@ class PublicNoticeController extends Controller
 
     public function index(IndexPublicNoticeRequest $request): View
     {
-        return view('public.notices.index', [...$this->shell(), 'items' => $this->notices->publicIndex($request->validated()), 'types' => $this->notices->typeOptions(), 'title' => 'Notices']);
+        return view('public.notices.index', [...$this->shell(), 'items' => $this->notices->publicIndex($request->validated()), 'categories' => $this->notices->categoryOptions(true), 'title' => 'Notices']);
     }
 
     public function show(ShowPublicNoticeRequest $request, string $slug): View

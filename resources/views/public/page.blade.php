@@ -21,7 +21,7 @@
     @endif
     @if($notices ?? null)
         <section class="mt-8" aria-label="Notices">
-            <h2 class="mb-5 text-2xl font-semibold">{{ $page->notice_type?->label() ?? 'Notices' }}</h2>
+            <h2 class="mb-5 text-2xl font-semibold">{{ $page->noticeCategory?->name ?? 'Notices' }}</h2>
             @include('public.notices._listing', ['items' => $notices])
         </section>
     @endif

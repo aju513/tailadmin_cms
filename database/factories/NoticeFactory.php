@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\ContentStatus;
-use App\Enums\NoticeType;
+use App\Models\NoticeCategory;
 use App\Models\Notice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,7 +15,7 @@ class NoticeFactory extends Factory
     {
         return [
             'title' => fake()->sentence(4), 'slug' => fake()->unique()->slug(),
-            'description' => fake()->paragraph(), 'notice_type' => NoticeType::General,
+            'description' => fake()->paragraph(), 'notice_category_id' => NoticeCategory::factory(),
             'deadline_at' => null, 'status' => ContentStatus::Draft, 'sort_order' => 0,
         ];
     }

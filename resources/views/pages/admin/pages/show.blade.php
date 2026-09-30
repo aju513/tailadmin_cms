@@ -8,7 +8,7 @@
             <p><strong>Resource category:</strong> {{ $page->resourceCategory?->name ?? 'All categories' }}</p>
         @endif
         @if($page->page_type === \App\Enums\PageType::Notices)
-            <p><strong>Notice type:</strong> {{ $page->notice_type?->label() ?? 'All types' }}</p>
+            <p><strong>Notice category:</strong> {{ $page->noticeCategory?->name ?? 'All categories' }}</p>
         @endif
         <p><strong>Status:</strong> {{ ucfirst($page->status->value) }}</p>
         <p><strong>Summary:</strong> {{ $page->summary ?: '—' }}</p>

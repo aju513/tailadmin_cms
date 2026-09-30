@@ -79,4 +79,8 @@ Resource Pages now select a resource category or All categories, and automatical
 
 ## Notice types
 
-Notices now support fixed types and optional deadlines, and Notices Pages select a type or All types. See [Notice types and page connections](notices.md).
+Notices now use editable categories and optional deadlines, and Notices Pages select a category or All categories. See [Notice types and page connections](notices.md).
+
+## Category editors and ordering
+
+Resource Categories and Notice Categories use full-width CKEditor descriptions and Published toggles. Numeric display-order inputs are removed; reorder rows using drag handles or arrow buttons in the manager. Inactive categories hide associated public content.

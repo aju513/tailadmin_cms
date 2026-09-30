@@ -10,6 +10,8 @@ use App\Http\Requests\ResourceCategory\IndexResourceCategoryRequest;
 use App\Http\Requests\ResourceCategory\StoreResourceCategoryRequest;
 use App\Http\Requests\ResourceCategory\UpdateResourceCategoryRequest;
 use App\Models\ResourceCategory;
+use App\Http\Requests\ResourceCategory\OrderResourceCategoryRequest;
+use Illuminate\Http\JsonResponse;
 use App\Services\ResourceCategoryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -46,6 +48,13 @@ class ResourceCategoryController extends Controller
         $record = $this->service->save($request->validated(), $request->user(), $resourceCategory);
 
         return redirect()->route('admin.resource-categories.edit', $record)->with('success', 'Resource category updated.');
+    }
+
+    public function order(OrderResourceCategoryRequest $request): JsonResponse
+    {
+        $this->service->reorder($request->validated('categories'), $request->user());
+
+        return response()->json(['message' => 'Category order updated.']);
     }
 
     public function destroy(DeleteResourceCategoryRequest $request, ResourceCategory $resourceCategory): RedirectResponse

@@ -15,7 +15,7 @@ class ResourceCategoryFactory extends Factory
             'name' => fake()->sentence(3),
             'slug' => fake()->unique()->slug(),
             'description' => fake()->paragraph(),
-            'sort_order' => 0,
+            'sort_order' => 0, 'is_active' => true,
 
 
         ];

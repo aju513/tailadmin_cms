@@ -22,7 +22,7 @@ The travel reference supplies presentation patterns: Add/Manage navigation, medi
 | --- | --- |
 | Homepage, About Us, and organizational information | Existing Pages, homepage slides, menus, and site settings supply editorial content and navigation. Add homepage section settings only when integrating each actual section. |
 | Our Team | Use the existing Team Members and Team Categories resources. |
-| News and Notice Board | Use News and [typed Notices](notices.md). Notices Pages select General Notices, Tender Notices, Press Releases, Application Announcements, or All types. |
+| News and Notice Board | Use News and [typed Notices](notices.md). Notices Pages select General Notices, Tender Notices, Press Releases, Application Announcements, or All categories. |
 | Legal Documents and Downloads | Use the [Resources catalogue](resources.md) with categories, titles, publication dates, descriptions, attachments, and ordering. Resource Pages select a category or All categories and automatically list published documents. |
 | Training | The current navigation links to the external TMIS system. Preserve that configurable external link; do not duplicate its training management or assume access to its data. |
 | Online Application Form | Treat submissions and their approval workflow as a future independent module; a page can introduce the form but does not replace submission persistence, validation, and permissions. |

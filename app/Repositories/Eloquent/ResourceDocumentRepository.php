@@ -54,7 +54,7 @@ class ResourceDocumentRepository implements ResourceDocumentRepositoryInterface
         return ResourceDocument::query()->with('category', 'fileMedia')
             ->where('status', ContentStatus::Published)
             ->whereNotNull('published_at')->where('published_at', '<=', now())
-            ->whereHas('fileMedia');
+            ->whereHas('fileMedia')->whereHas('category', fn ($query) => $query->where('is_active', true));
     }
 
     public function published(?int $categoryId): LengthAwarePaginator

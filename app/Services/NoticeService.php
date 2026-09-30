@@ -18,23 +18,23 @@ use Throwable;
 
 class NoticeService
 {
-    public function __construct(private readonly NoticeRepositoryInterface $records, private readonly MediaAssetService $media) {}
+    public function __construct(private readonly NoticeRepositoryInterface $records, private readonly MediaAssetService $media, private readonly NoticeCategoryService $categories) {}
 
     public function index(array $filters): LengthAwarePaginator
     {
         return $this->records->paginateAdmin($filters);
     }
 
-    public function typeOptions(): array
+    public function categoryOptions(bool $activeOnly = false): array
     {
-        return \App\Enums\NoticeType::options();
+        return $this->categories->options($activeOnly);
     }
 
     public function publicIndex(array $filters = []): LengthAwarePaginator
     {
-        $type = filled($filters['notice_type'] ?? null) ? \App\Enums\NoticeType::from($filters['notice_type']) : null;
+        $categoryId = filled($filters['notice_category_id'] ?? null) ? (int) $filters['notice_category_id'] : null;
 
-        return $this->records->paginatePublished($type);
+        return $this->records->paginatePublished($categoryId);
     }
 
     public function publicDetails(string $slug): Notice
@@ -45,13 +45,13 @@ class NoticeService
     public function forPage(\App\Models\Page $page): ?LengthAwarePaginator
     {
         return $page->page_type === \App\Enums\PageType::Notices
-            ? $this->records->paginatePublished($page->notice_type, 'notices_page')
+            ? $this->records->paginatePublished($page->notice_category_id, 'notices_page')
             : null;
     }
 
     public function newRecord(): Notice
     {
-        return new Notice(['status' => ContentStatus::Draft, 'notice_type' => \App\Enums\NoticeType::General, 'sort_order' => 0]);
+        return new Notice(['status' => ContentStatus::Draft, 'notice_category_id' => array_key_first($this->categories->options(true)), 'sort_order' => 0]);
     }
 
     public function details(Notice $record): Notice
@@ -67,6 +67,7 @@ class NoticeService
         try {
             return DB::transaction(function () use ($data, $actor, $record, &$uploads): Notice {
                 $record = $record ? $this->records->lock($record) : null;
+                $this->categories->lockSelection((int) $data['notice_category_id']);
                 $status = ContentStatus::from($data['status']);
                 if ($status === ContentStatus::Published || $record?->status === ContentStatus::Published) {
                     Gate::forUser($actor)->authorize('notices.publish');
@@ -82,7 +83,6 @@ class NoticeService
                     $uploads[] = $asset;
                     $data['file_media_id'] = $asset->id;
                 }
-                $data['notice_type'] ??= $record?->notice_type?->value ?? 'general';
                 $data['sort_order'] ??= $record?->sort_order ?? $this->records->nextSortOrder();
                 $data['created_by'] = $record?->created_by ?? $actor->getAuthIdentifier();
                 $data['updated_by'] = $actor->getAuthIdentifier();
@@ -92,7 +92,7 @@ class NoticeService
 
                 activity('content')->causedBy($actor)->performedOn($saved)
                     ->event($record ? 'notice.updated' : 'notice.created')
-                    ->withProperties(['notice_id' => $saved->id, 'slug' => $saved->slug, 'notice_type' => $saved->notice_type->value])
+                    ->withProperties(['notice_id' => $saved->id, 'slug' => $saved->slug, 'notice_category_id' => $saved->notice_category_id])
                     ->log($record ? 'Notice updated' : 'Notice created');
 
                 return $saved;

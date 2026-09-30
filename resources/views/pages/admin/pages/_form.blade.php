@@ -13,7 +13,7 @@
             <x-form.select name="resource_category_id" label="Resource category" :options="$resourceCategories" :value="$page->resource_category_id" placeholder="All categories" x-bind:disabled="pageType !== 'resource'" help="Select a category to show its published documents, or All categories to show the whole catalogue." />
         </div>
         <div x-show="pageType === 'notices'" x-cloak>
-            <x-form.select name="notice_type" label="Notice type" :options="\App\Enums\NoticeType::options()" :value="$page->notice_type?->value" placeholder="All types" x-bind:disabled="pageType !== 'notices'" help="Show published notices of this type, or All types to show every notice." />
+            <x-form.select name="notice_category_id" label="Notice category" :options="$noticeCategories" :value="$page->notice_category_id" placeholder="All categories" x-bind:disabled="pageType !== 'notices'" help="Show published notices of this category, or All categories to show every active category." />
         </div>
         <x-form.select name="parent_id" label="Parent page">
             <option value="">__SELF</option>

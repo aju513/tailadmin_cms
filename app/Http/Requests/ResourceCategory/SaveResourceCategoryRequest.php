@@ -12,8 +12,8 @@ abstract class SaveResourceCategoryRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash:ascii', Rule::unique('resource_categories', 'slug')->ignore($this->route('resourceCategory')?->id)],
-            'description' => ['nullable', 'string', 'max:5000'],
-            'sort_order' => ['required', 'integer', 'min:0', 'max:2147483647'],
+            'description' => ['nullable', 'string', 'max:20000'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 }

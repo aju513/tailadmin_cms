@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class PageService
 {
-    public function __construct(private readonly PageRepositoryInterface $pages, private readonly MediaAssetService $media, private readonly ResourceCategoryService $resourceCategories) {}
+    public function __construct(private readonly PageRepositoryInterface $pages, private readonly MediaAssetService $media, private readonly ResourceCategoryService $resourceCategories, private readonly NoticeCategoryService $noticeCategories) {}
 
     public function create(array $data, Authenticatable $actor): Page
     {
@@ -156,7 +156,11 @@ class PageService
         $data['status'] = $data['status'] ?? ContentStatus::Draft;
         $data['page_type'] = $data['page_type'] ?? PageType::Article;
         $pageType = $data['page_type'] instanceof PageType ? $data['page_type'] : PageType::from($data['page_type']);
-        $data['notice_type'] = $pageType === PageType::Notices ? ($data['notice_type'] ?? null) : null;
+        $data['notice_category_id'] = $pageType === PageType::Notices ? ($data['notice_category_id'] ?? null) : null;
+        $data['notice_type'] = null;
+        if ($data['notice_category_id']) {
+            $this->noticeCategories->lockSelection((int) $data['notice_category_id']);
+        }
         $data['resource_category_id'] = $pageType === PageType::Resource ? ($data['resource_category_id'] ?? null) : null;
         if ($data['resource_category_id']) {
             $this->resourceCategories->lockSelection((int) $data['resource_category_id']);

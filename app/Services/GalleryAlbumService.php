@@ -7,7 +7,6 @@ use App\Models\GalleryAlbum;
 use App\Repositories\Contracts\GalleryAlbumRepositoryInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -52,28 +51,18 @@ class GalleryAlbumService
                     throw ValidationException::withMessages(['slug' => 'Enter a unique URL slug using letters or numbers.']);
                 }
 
-                $photos = Arr::pull($data, 'photos', []);
                 $removeIds = Arr::pull($data, 'remove_photo_ids', []);
                 $newPhotos = Arr::pull($data, 'new_photos', []) ?? [];
                 if ($record) {
-                    $this->records->savePhotos($record, $photos, $removeIds);
+                    $this->records->savePhotos($record, [], $removeIds);
                 }
                 if (($record ? $this->records->photoCount($record) : 0) + count($newPhotos) > 100) {
-                    throw ValidationException::withMessages(['new_photos' => 'An album can contain at most 100 photos.']);
+                    throw ValidationException::withMessages(['new_photos' => 'A gallery can contain at most 100 images.']);
                 }
 
-                $cover = Arr::pull($data, 'cover');
-                if (Arr::pull($data, 'remove_cover', false)) {
-                    $data['cover_media_id'] = null;
-                }
-                if ($cover instanceof UploadedFile) {
-                    $asset = $this->media->store($cover, $actor, $data['title'], $data['title']);
-                    $uploads[] = $asset;
-                    $data['cover_media_id'] = $asset->id;
-                }
                 $data['created_by'] = $record?->created_by ?? $actor->getAuthIdentifier();
                 $data['updated_by'] = $actor->getAuthIdentifier();
-                $data['published_at'] = $status === ContentStatus::Published ? ($data['published_at'] ?? $record?->published_at ?? now()) : null;
+                $data['published_at'] = $status === ContentStatus::Published ? ($record?->published_at ?? now()) : null;
                 $data['published_by'] = $status === ContentStatus::Published ? ($record?->published_by ?? $actor->getAuthIdentifier()) : null;
                 $saved = $record ? $this->records->update($record, $data) : $this->records->create($data);
 
@@ -85,7 +74,7 @@ class GalleryAlbumService
 
                 activity('content')->causedBy($actor)->performedOn($saved)
                     ->event($record ? 'gallery.updated' : 'gallery.created')
-                    ->log($record ? 'Album updated' : 'Album created');
+                    ->log($record ? 'Gallery updated' : 'Gallery created');
 
                 return $saved;
             });
@@ -105,7 +94,7 @@ class GalleryAlbumService
             if ($record->status === ContentStatus::Published) {
                 Gate::forUser($actor)->authorize('gallery.publish');
             }
-            activity('content')->causedBy($actor)->performedOn($record)->event('gallery.deleted')->log('Album deleted');
+            activity('content')->causedBy($actor)->performedOn($record)->event('gallery.deleted')->log('Gallery deleted');
             $this->records->delete($record);
         });
     }

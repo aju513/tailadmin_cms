@@ -37,7 +37,7 @@ class StorePageRequest extends FormRequest
             'translations.ne.summary' => ['nullable', 'string', 'max:10000'],
             'translations.ne.body' => ['nullable', 'string'],
             'page_type' => ['required', Rule::enum(PageType::class)],
-            'notice_type' => ['exclude_unless:page_type,notices', 'nullable', Rule::enum(\App\Enums\NoticeType::class)],
+            'notice_category_id' => ['exclude_unless:page_type,notices', 'nullable', 'integer', 'exists:notice_categories,id'],
             'resource_category_id' => ['exclude_unless:page_type,resource', 'nullable', 'integer', 'exists:resource_categories,id'],
             'parent_id' => ['nullable', 'integer', 'exists:pages,id'],
             'status' => ['required', Rule::enum(ContentStatus::class)],

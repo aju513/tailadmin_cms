@@ -3,11 +3,14 @@
 namespace App\Repositories\Contracts;
 
 use App\Models\ResourceCategory;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 interface ResourceCategoryRepositoryInterface
 {
-    public function paginate(array $filters): LengthAwarePaginator;
+    public function ordered(array $filters): Collection;
+    public function lockAll(): Collection;
+    public function reorder(array $ids): void;
+    public function nextSortOrder(): int;
     public function lock(ResourceCategory $record): ResourceCategory;
     public function find(int $id): ResourceCategory;
     public function slugExists(string $slug, ?ResourceCategory $record): bool;
@@ -15,7 +18,7 @@ interface ResourceCategoryRepositoryInterface
     public function update(ResourceCategory $record, array $data): ResourceCategory;
     public function delete(ResourceCategory $record): void;
 
-    public function options(): array;
+    public function options(bool $activeOnly = false): array;
     public function inUse(ResourceCategory $record): bool;
 
 }

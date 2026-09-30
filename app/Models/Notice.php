@@ -12,11 +12,16 @@ class Notice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['notice_type', 'deadline_at', 'title', 'slug', 'description', 'file_media_id', 'meta_title', 'meta_description', 'status', 'sort_order', 'published_at', 'created_by', 'updated_by', 'published_by'];
+    protected $fillable = ['notice_category_id', 'notice_type', 'deadline_at', 'title', 'slug', 'description', 'file_media_id', 'meta_title', 'meta_description', 'status', 'sort_order', 'published_at', 'created_by', 'updated_by', 'published_by'];
 
     protected function casts(): array
     {
         return ['notice_type' => NoticeType::class, 'deadline_at' => 'datetime', 'status' => ContentStatus::class, 'published_at' => 'datetime'];
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(NoticeCategory::class, 'notice_category_id');
     }
 
     public function getRouteKeyName(): string

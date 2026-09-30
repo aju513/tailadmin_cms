@@ -41,6 +41,8 @@ return [
         'children' => [
             ['key' => 'notice-create', 'label' => 'Add Notice', 'icon' => 'create', 'route' => 'admin.notices.create', 'permission' => 'notices.create', 'order' => 10],
             ['key' => 'notices-manage', 'label' => 'Manage Notices', 'icon' => 'pages', 'route' => 'admin.notices.index', 'active_routes' => ['admin.notices.index', 'admin.notices.edit'], 'permission' => 'notices.manage', 'order' => 20],
+            ['key' => 'notice-categories-create', 'label' => 'Add Notice Category', 'icon' => 'create', 'route' => 'admin.notice-categories.create', 'permission' => 'notice-categories.create', 'order' => 30],
+            ['key' => 'notice-categories-manage', 'label' => 'Manage Notice Categories', 'icon' => 'categories', 'route' => 'admin.notice-categories.index', 'active_routes' => ['admin.notice-categories.index', 'admin.notice-categories.edit'], 'permission' => 'notice-categories.manage', 'order' => 40],
         ],
     ],
     [
@@ -94,8 +96,8 @@ return [
             ['key' => 'homepage-slides', 'label' => 'Home Slides', 'icon' => 'slides', 'route' => 'admin.homepage-slides.index', 'permission' => 'homepage-slides.manage', 'order' => 10],
             ['key' => 'videos-create', 'label' => 'Add Video', 'icon' => 'create', 'route' => 'admin.videos.create', 'permission' => 'videos.create', 'order' => 20],
             ['key' => 'videos', 'label' => 'Manage Videos', 'icon' => 'media', 'route' => 'admin.videos.index', 'active_routes' => ['admin.videos.index', 'admin.videos.edit'], 'permission' => 'videos.manage', 'order' => 25],
-            ['key' => 'gallery-create', 'label' => 'Add Photo Album', 'icon' => 'create', 'route' => 'admin.gallery.create', 'permission' => 'gallery.create', 'order' => 30],
-            ['key' => 'gallery', 'label' => 'Manage Photo Gallery', 'icon' => 'media', 'route' => 'admin.gallery.index', 'active_routes' => ['admin.gallery.index', 'admin.gallery.edit'], 'permission' => 'gallery.manage', 'order' => 35],
+            ['key' => 'gallery-create', 'label' => 'Add Gallery', 'icon' => 'create', 'route' => 'admin.gallery.create', 'permission' => 'gallery.create', 'order' => 30],
+            ['key' => 'gallery', 'label' => 'Manage Galleries', 'icon' => 'media', 'route' => 'admin.gallery.index', 'active_routes' => ['admin.gallery.index', 'admin.gallery.edit'], 'permission' => 'gallery.manage', 'order' => 35],
             ['key' => 'media-library', 'label' => 'Media Library', 'icon' => 'media', 'route' => 'admin.media.index', 'permission' => 'media.manage', 'order' => 40],
         ],
     ],
