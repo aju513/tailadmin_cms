@@ -73,25 +73,4 @@ return [
             ['key' => 'settings', 'label' => 'General Settings', 'icon' => 'settings', 'route' => 'admin.settings.edit', 'permission' => 'settings.manage', 'order' => 10],
         ],
     ],
-    [
-        'key' => 'users-management',
-        'label' => 'Users Management',
-        'icon' => 'users',
-        'order' => 60,
-        'children' => [
-            ['key' => 'users', 'label' => 'Users', 'icon' => 'users', 'route' => 'admin.users.index', 'permission' => 'users.manage', 'order' => 10],
-        ],
-    ],
-    [
-        'key' => 'system',
-        'label' => 'System',
-        'icon' => 'system',
-        'order' => 70,
-        'children' => [
-            ['key' => 'roles', 'label' => 'Roles', 'icon' => 'roles', 'route' => 'admin.roles.index', 'permission' => 'roles.manage', 'order' => 10],
-            ['key' => 'permissions', 'label' => 'Permissions', 'icon' => 'permissions', 'route' => 'admin.permissions.index', 'permission' => 'permissions.view', 'order' => 20],
-            ['key' => 'activity-log', 'label' => 'Activity Log', 'icon' => 'activity-log', 'route' => 'admin.activity.index', 'permission' => 'activity-log.view', 'order' => 30],
-            ['key' => 'ui-kit', 'label' => 'UI Kit', 'icon' => 'ui-kit', 'route' => 'admin.ui-kit', 'permission' => 'ui-kit.view', 'order' => 40],
-        ],
-    ],
 ];

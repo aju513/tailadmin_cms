@@ -45,6 +45,8 @@ The command validates duplicate names and all menu references, then performs an 
 
 `config/admin-menu.php` defines ordered items with these keys:
 
+The Users Management and System groups are omitted from the sidebar. Their existing named routes and server-side permissions remain available for authorized direct access. To show these groups again, restore their entries in the configuration and regenerate the menu.
+
 ```php
     [
         'key' => 'users',
