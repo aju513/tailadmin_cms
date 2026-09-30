@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\HomepageSlideController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
@@ -39,6 +40,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/password/change', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('/password/change', [PasswordController::class, 'update'])->name('password.update');
     Route::get('/', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
+
+    Route::get('/halls', [HallController::class, 'index'])->middleware('can:halls.manage')->name('halls.index');
+    Route::get('/halls/create', [HallController::class, 'create'])->middleware('can:halls.create')->name('halls.create');
+    Route::post('/halls', [HallController::class, 'store'])->middleware('can:halls.create')->name('halls.store');
+    Route::get('/halls/{hall}/edit', [HallController::class, 'edit'])->middleware('can:halls.edit')->name('halls.edit');
+    Route::put('/halls/{hall}', [HallController::class, 'update'])->middleware('can:halls.edit')->name('halls.update');
+    Route::delete('/halls/{hall}', [HallController::class, 'destroy'])->middleware('can:halls.delete')->name('halls.destroy');
+    Route::get('/halls/{hall}', [HallController::class, 'show'])->middleware('can:halls.show')->name('halls.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 

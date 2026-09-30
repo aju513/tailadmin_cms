@@ -52,6 +52,16 @@ return [
         ],
     ],
     [
+        'key' => 'halls',
+        'label' => 'Halls',
+        'icon' => 'hall',
+        'order' => 27,
+        'children' => [
+            ['key' => 'hall-create', 'label' => 'Add Hall', 'icon' => 'create', 'route' => 'admin.halls.create', 'permission' => 'halls.create', 'order' => 10],
+            ['key' => 'halls-manage', 'label' => 'Manage Halls', 'icon' => 'hall', 'route' => 'admin.halls.index', 'active_routes' => ['admin.halls.index', 'admin.halls.edit', 'admin.halls.show'], 'permission' => 'halls.manage', 'order' => 20],
+        ],
+    ],
+    [
         'key' => 'menus',
         'label' => 'Menus',
         'icon' => 'menus',

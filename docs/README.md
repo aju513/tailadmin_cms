@@ -12,6 +12,8 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Halls and bookings](halls-and-bookings.md): implemented hall fields and admin screens, booking phases, availability rules, and setup commands.
+
 - [Analytics dashboard](dashboard.md): Google Analytics, Search Console, credentials, reporting periods, and unavailable states.
 
 - [Architecture](architecture.md): layers, data flow, routes, and boundaries.

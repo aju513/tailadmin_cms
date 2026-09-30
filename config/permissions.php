@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'halls' => [
+        'halls.manage' => ['view_title' => 'Manage halls', 'description' => 'Allows viewing, filtering, and paginating the hall directory.'],
+        'halls.show' => ['view_title' => 'View halls', 'description' => 'Allows viewing individual hall details.'],
+        'halls.create' => ['view_title' => 'Create halls', 'description' => 'Allows creating halls and attaching hall images.'],
+        'halls.edit' => ['view_title' => 'Edit halls', 'description' => 'Allows editing hall details, rental rates, and operational availability.'],
+        'halls.delete' => ['view_title' => 'Delete halls', 'description' => 'Allows deleting halls.'],
+        'halls.publish' => ['view_title' => 'Publish halls', 'description' => 'Allows publishing, unpublishing, and editing published halls.'],
+    ],
     'dashboard' => [
         'dashboard.view' => [
             'view_title' => 'View dashboard',
