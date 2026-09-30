@@ -19,6 +19,9 @@ Alpine.start();
 
 // Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-dashboard-chart]')) {
+        import('./components/dashboard').then(module => module.initDashboard());
+    }
     // Map imports
     if (document.querySelector('#mapOne')) {
         import('./components/map').then(module => module.initMap());

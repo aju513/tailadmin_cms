@@ -14,6 +14,6 @@ abstract class SaveTeamCategoryRequest extends FormRequest
             $u->ignore($this->route('team_category')->id);
         }
 
-return ['name' => ['required', 'string', 'max:255'], 'slug' => ['nullable', 'string', 'max:255', 'alpha_dash:ascii', $u], 'description' => ['nullable', 'string', 'max:10000'], 'status' => ['nullable', 'boolean'], 'sort_order' => ['nullable', 'integer', 'min:0']];
+        return ['name' => ['required', 'string', 'max:255'], 'slug' => ['nullable', 'string', 'max:255', 'alpha_dash:ascii', $u], 'description' => ['nullable', 'string', 'max:10000'], 'status' => ['nullable', 'boolean'], 'sort_order' => ['nullable', 'integer', 'min:0']];
     }
 }

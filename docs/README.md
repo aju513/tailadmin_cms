@@ -12,6 +12,8 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Analytics dashboard](dashboard.md): Google Analytics, Search Console, credentials, reporting periods, and unavailable states.
+
 - [Architecture](architecture.md): layers, data flow, routes, and boundaries.
 - [Authentication and authorization](authentication-authorization.md): Fortify, users, roles, safeguards, and auditing.
 - [Permissions and menus](menus-permissions.md): configuration schemas and regeneration commands.

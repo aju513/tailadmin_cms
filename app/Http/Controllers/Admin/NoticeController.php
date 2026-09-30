@@ -51,6 +51,6 @@ class NoticeController extends Controller
     {
         $this->service->delete($notice, $request->user());
 
-        return back()->with('success','Notice deleted.');
+        return back()->with('success', 'Notice deleted.');
     }
 }

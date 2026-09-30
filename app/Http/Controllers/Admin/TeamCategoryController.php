@@ -50,6 +50,6 @@ class TeamCategoryController extends Controller
     {
         $this->service->delete($teamCategory, $request->user());
 
-        return back()->with('success','Team category deleted.');
+        return back()->with('success', 'Team category deleted.');
     }
 }
