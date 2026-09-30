@@ -37,9 +37,23 @@ return [
         'key' => 'notices',
         'label' => 'Notices',
         'icon' => 'pages',
-        'route' => 'admin.notices.index',
-        'permission' => 'notices.manage',
         'order' => 23,
+        'children' => [
+            ['key' => 'notice-create', 'label' => 'Add Notice', 'icon' => 'create', 'route' => 'admin.notices.create', 'permission' => 'notices.create', 'order' => 10],
+            ['key' => 'notices-manage', 'label' => 'Manage Notices', 'icon' => 'pages', 'route' => 'admin.notices.index', 'active_routes' => ['admin.notices.index', 'admin.notices.edit'], 'permission' => 'notices.manage', 'order' => 20],
+        ],
+    ],
+    [
+        'key' => 'resources',
+        'label' => 'Resources',
+        'icon' => 'pages',
+        'order' => 24,
+        'children' => [
+            ['key' => 'resources-create', 'label' => 'Add Resource', 'icon' => 'create', 'route' => 'admin.resources.create', 'permission' => 'resources.create', 'order' => 10],
+            ['key' => 'resources-manage', 'label' => 'Manage Resources', 'icon' => 'pages', 'route' => 'admin.resources.index', 'active_routes' => ['admin.resources.index', 'admin.resources.edit'], 'permission' => 'resources.manage', 'order' => 20],
+            ['key' => 'resource-categories-create', 'label' => 'Add Resource Category', 'icon' => 'create', 'route' => 'admin.resource-categories.create', 'permission' => 'resource-categories.create', 'order' => 30],
+            ['key' => 'resource-categories-manage', 'label' => 'Manage Resource Categories', 'icon' => 'categories', 'route' => 'admin.resource-categories.index', 'active_routes' => ['admin.resource-categories.index', 'admin.resource-categories.edit'], 'permission' => 'resource-categories.manage', 'order' => 40],
+        ],
     ],
     [
         'key' => 'team',
@@ -78,8 +92,11 @@ return [
         'order' => 40,
         'children' => [
             ['key' => 'homepage-slides', 'label' => 'Home Slides', 'icon' => 'slides', 'route' => 'admin.homepage-slides.index', 'permission' => 'homepage-slides.manage', 'order' => 10],
-            ['key' => 'videos', 'label' => 'Videos', 'icon' => 'media', 'route' => 'admin.media.index', 'permission' => 'media.manage', 'order' => 20],
-            ['key' => 'gallery', 'label' => 'Gallery', 'icon' => 'media', 'route' => 'admin.media.index', 'permission' => 'media.manage', 'order' => 30],
+            ['key' => 'videos-create', 'label' => 'Add Video', 'icon' => 'create', 'route' => 'admin.videos.create', 'permission' => 'videos.create', 'order' => 20],
+            ['key' => 'videos', 'label' => 'Manage Videos', 'icon' => 'media', 'route' => 'admin.videos.index', 'active_routes' => ['admin.videos.index', 'admin.videos.edit'], 'permission' => 'videos.manage', 'order' => 25],
+            ['key' => 'gallery-create', 'label' => 'Add Photo Album', 'icon' => 'create', 'route' => 'admin.gallery.create', 'permission' => 'gallery.create', 'order' => 30],
+            ['key' => 'gallery', 'label' => 'Manage Photo Gallery', 'icon' => 'media', 'route' => 'admin.gallery.index', 'active_routes' => ['admin.gallery.index', 'admin.gallery.edit'], 'permission' => 'gallery.manage', 'order' => 35],
+            ['key' => 'media-library', 'label' => 'Media Library', 'icon' => 'media', 'route' => 'admin.media.index', 'permission' => 'media.manage', 'order' => 40],
         ],
     ],
     [

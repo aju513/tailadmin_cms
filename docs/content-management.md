@@ -68,3 +68,15 @@ php artisan storage:link
 php artisan admin:permissions-sync
 php artisan admin:menu-regenerate
 ```
+
+## Photo gallery and videos
+
+Dedicated album and video management now lives under Media. See [Photo gallery and videos](media-catalogues.md) for fields, permissions, upload limits, and setup commands.
+
+## Resources and downloads
+
+Resource Pages now select a resource category or All categories, and automatically display matching published documents. See [Resources and page connections](resources.md).
+
+## Notice types
+
+Notices now support fixed types and optional deadlines, and Notices Pages select a type or All types. See [Notice types and page connections](notices.md).

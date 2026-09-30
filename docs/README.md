@@ -12,6 +12,13 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Notice types and page connections](notices.md): notice classifications, deadlines, and automatic Notices page listings.
+
+- [Resources and page connections](resources.md): document catalogue, categories, automatic Resource page listings, and downloads.
+
+- [Photo gallery and videos](media-catalogues.md): dedicated Media catalogue pages, album photos, publication permissions, and setup.
+
+
 - [Halls and bookings](halls-and-bookings.md): implemented hall fields and admin screens, booking phases, availability rules, and setup commands.
 
 - [Analytics dashboard](dashboard.md): Google Analytics, Search Console, credentials, reporting periods, and unavailable states.

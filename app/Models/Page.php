@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ContentStatus;
+use App\Enums\NoticeType;
 use App\Enums\PageType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,11 +17,16 @@ class Page extends Model
 
     public array $translatable = ['title', 'summary', 'body'];
 
-    protected $fillable = ['parent_id', 'title', 'page_type', 'slug', 'path', 'summary', 'body', 'status', 'published_at', 'meta_title', 'meta_description', 'banner_media_id', 'social_media_id', 'sort_order', 'created_by', 'updated_by', 'published_by'];
+    protected $fillable = ['notice_type', 'parent_id', 'resource_category_id', 'title', 'page_type', 'slug', 'path', 'summary', 'body', 'status', 'published_at', 'meta_title', 'meta_description', 'banner_media_id', 'social_media_id', 'sort_order', 'created_by', 'updated_by', 'published_by'];
 
     protected function casts(): array
     {
-        return ['page_type' => PageType::class, 'status' => ContentStatus::class, 'published_at' => 'datetime'];
+        return ['notice_type' => NoticeType::class, 'page_type' => PageType::class, 'status' => ContentStatus::class, 'published_at' => 'datetime'];
+    }
+
+    public function resourceCategory(): BelongsTo
+    {
+        return $this->belongsTo(ResourceCategory::class);
     }
 
     public function parent(): BelongsTo

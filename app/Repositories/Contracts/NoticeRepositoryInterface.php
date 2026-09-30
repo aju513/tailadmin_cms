@@ -3,15 +3,20 @@
 namespace App\Repositories\Contracts;
 
 use App\Models\Notice;
+use App\Enums\NoticeType;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface NoticeRepositoryInterface
 {
     public function paginateAdmin(array $filters): LengthAwarePaginator;
 
-    public function paginatePublished(): LengthAwarePaginator;
+    public function paginatePublished(?NoticeType $type = null, string $pageName = 'page'): LengthAwarePaginator;
 
     public function publishedBySlug(string $slug): Notice;
+
+    public function lock(Notice $notice): Notice;
+
+    public function details(Notice $notice): Notice;
 
     public function create(array $data): Notice;
 

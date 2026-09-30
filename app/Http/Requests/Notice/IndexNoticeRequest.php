@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Notice;
 
 use App\Enums\ContentStatus;
+use App\Enums\NoticeType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,6 +16,6 @@ class IndexNoticeRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['search' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::enum(ContentStatus::class)]];
+        return ['notice_type' => ['nullable', Rule::enum(NoticeType::class)], 'search' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::enum(ContentStatus::class)]];
     }
 }

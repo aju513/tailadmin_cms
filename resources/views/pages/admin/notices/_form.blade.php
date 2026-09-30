@@ -2,6 +2,9 @@
     <div class="grid gap-6 md:grid-cols-2">
         <x-form.input name="title" label="Notice title" :value="old('title', $item->title)" required />
         <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" help="Leave blank to generate from the title." />
+        <x-form.select name="notice_type" label="Notice type" :options="$types" :value="$item->notice_type?->value ?? 'general'" required />
+        <x-form.input name="deadline_at" label="Deadline (optional)" type="datetime-local" :value="$item->deadline_at?->format('Y-m-d\TH:i')" help="For tender submissions or applications. Leave blank when there is no deadline." />
+        <x-form.input name="sort_order" label="Display order" type="number" :value="$item->sort_order ?? 0" min="0" required />
         <x-form.date-picker name="published_at" label="Publish date" :value="old('published_at', $item->published_at?->format('Y-m-d'))" />
     </div>
     <x-form.editor name="description" label="Description" :value="old('description', $item->description)" placeholder="Write the notice description..." />
@@ -19,5 +22,4 @@
         <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $item->meta_title)" />
         <x-form.textarea name="meta_description" label="SEO description" :value="old('meta_description', $item->meta_description)" />
     </div>
-    <div class="flex justify-end gap-3"><a href="{{ route('admin.notices.index') }}" class="rounded-lg border border-gray-300 px-5 py-3 text-sm">Cancel</a><button class="rounded-lg bg-brand-500 px-5 py-3 text-sm font-medium text-white">{{ $submitLabel }}</button></div>
 </div>

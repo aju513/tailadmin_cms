@@ -27,6 +27,9 @@ use App\Http\Controllers\PublicNoticeController;
 use App\Http\Controllers\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/resources/{slug}/download', [\App\Http\Controllers\PublicResourceController::class, 'download'])->name('public.resources.download');
+Route::get('/resources/{slug}', [\App\Http\Controllers\PublicResourceController::class, 'show'])->name('public.resources.show');
+
 Route::get('/', PublicHomeController::class)->name('public.home');
 Route::get('/news', [PublicNewsController::class, 'index'])->name('public.news.index');
 Route::get('/news/category/{slug}', [PublicNewsController::class, 'category'])->name('public.news.category');
@@ -109,6 +112,32 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/team-categories/{teamCategory}/edit', [TeamCategoryController::class, 'edit'])->middleware('can:team-categories.edit')->name('team-categories.edit');
     Route::put('/team-categories/{teamCategory}', [TeamCategoryController::class, 'update'])->middleware('can:team-categories.edit')->name('team-categories.update');
     Route::delete('/team-categories/{teamCategory}', [TeamCategoryController::class, 'destroy'])->middleware('can:team-categories.delete')->name('team-categories.destroy');
+
+    Route::get('/gallery', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'index'])->middleware('can:gallery.manage')->name('gallery.index');
+    Route::get('/gallery/create', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'create'])->middleware('can:gallery.create')->name('gallery.create');
+    Route::post('/gallery', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'store'])->middleware('can:gallery.create')->name('gallery.store');
+    Route::get('/gallery/{galleryAlbum}/edit', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'edit'])->middleware('can:gallery.edit')->name('gallery.edit');
+    Route::put('/gallery/{galleryAlbum}', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'update'])->middleware('can:gallery.edit')->name('gallery.update');
+    Route::delete('/gallery/{galleryAlbum}', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'destroy'])->middleware('can:gallery.delete')->name('gallery.destroy');
+    Route::get('/videos', [\App\Http\Controllers\Admin\VideoController::class, 'index'])->middleware('can:videos.manage')->name('videos.index');
+    Route::get('/videos/create', [\App\Http\Controllers\Admin\VideoController::class, 'create'])->middleware('can:videos.create')->name('videos.create');
+    Route::post('/videos', [\App\Http\Controllers\Admin\VideoController::class, 'store'])->middleware('can:videos.create')->name('videos.store');
+    Route::get('/videos/{video}/edit', [\App\Http\Controllers\Admin\VideoController::class, 'edit'])->middleware('can:videos.edit')->name('videos.edit');
+    Route::put('/videos/{video}', [\App\Http\Controllers\Admin\VideoController::class, 'update'])->middleware('can:videos.edit')->name('videos.update');
+    Route::delete('/videos/{video}', [\App\Http\Controllers\Admin\VideoController::class, 'destroy'])->middleware('can:videos.delete')->name('videos.destroy');
+
+    Route::get('/resources', [\App\Http\Controllers\Admin\ResourceDocumentController::class, 'index'])->middleware('can:resources.manage')->name('resources.index');
+    Route::get('/resources/create', [\App\Http\Controllers\Admin\ResourceDocumentController::class, 'create'])->middleware('can:resources.create')->name('resources.create');
+    Route::post('/resources', [\App\Http\Controllers\Admin\ResourceDocumentController::class, 'store'])->middleware('can:resources.create')->name('resources.store');
+    Route::get('/resources/{resourceDocument}/edit', [\App\Http\Controllers\Admin\ResourceDocumentController::class, 'edit'])->middleware('can:resources.edit')->name('resources.edit');
+    Route::put('/resources/{resourceDocument}', [\App\Http\Controllers\Admin\ResourceDocumentController::class, 'update'])->middleware('can:resources.edit')->name('resources.update');
+    Route::delete('/resources/{resourceDocument}', [\App\Http\Controllers\Admin\ResourceDocumentController::class, 'destroy'])->middleware('can:resources.delete')->name('resources.destroy');
+    Route::get('/resource-categories', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'index'])->middleware('can:resource-categories.manage')->name('resource-categories.index');
+    Route::get('/resource-categories/create', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'create'])->middleware('can:resource-categories.create')->name('resource-categories.create');
+    Route::post('/resource-categories', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'store'])->middleware('can:resource-categories.create')->name('resource-categories.store');
+    Route::get('/resource-categories/{resourceCategory}/edit', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'edit'])->middleware('can:resource-categories.edit')->name('resource-categories.edit');
+    Route::put('/resource-categories/{resourceCategory}', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'update'])->middleware('can:resource-categories.edit')->name('resource-categories.update');
+    Route::delete('/resource-categories/{resourceCategory}', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'destroy'])->middleware('can:resource-categories.delete')->name('resource-categories.destroy');
 
     Route::get('/media', [MediaController::class, 'index'])->middleware('can:media.manage')->name('media.index');
     Route::post('/media', [MediaController::class, 'store'])->middleware('can:media.create')->name('media.store');

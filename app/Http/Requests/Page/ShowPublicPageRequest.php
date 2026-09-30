@@ -15,7 +15,7 @@ class ShowPublicPageRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['lang' => ['nullable', Rule::in(['en', 'ne'])]];
+        return ['notices_page' => ['nullable', 'integer', 'min:1', 'max:100000'], 'resources_page' => ['nullable', 'integer', 'min:1', 'max:100000'], 'lang' => ['nullable', Rule::in(['en', 'ne'])]];
     }
 
     protected function failedValidation(Validator $validator): void

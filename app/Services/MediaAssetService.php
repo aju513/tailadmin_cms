@@ -16,7 +16,16 @@ class MediaAssetService
         $disk = 'public';
         $path = $file->store('cms', $disk);
 
-        return $this->media->create(['disk' => $disk, 'path' => $path, 'original_name' => $file->getClientOriginalName(), 'mime_type' => $file->getMimeType() ?: 'application/octet-stream', 'size' => $file->getSize(), 'title' => $title, 'alt_text' => $altText, 'uploaded_by' => $actor?->getAuthIdentifier()]);
+        if ($path === false) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['file' => 'The upload could not be stored. Please try again.']);
+        }
+
+        try {
+            return $this->media->create(['disk' => $disk, 'path' => $path, 'original_name' => $file->getClientOriginalName(), 'mime_type' => $file->getMimeType() ?: 'application/octet-stream', 'size' => $file->getSize(), 'title' => $title, 'alt_text' => $altText, 'uploaded_by' => $actor?->getAuthIdentifier()]);
+        } catch (\Throwable $exception) {
+            Storage::disk($disk)->delete($path);
+            throw $exception;
+        }
     }
 
     public function delete(MediaAsset $asset): void

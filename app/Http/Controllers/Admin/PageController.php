@@ -22,7 +22,7 @@ use Illuminate\View\View;
 
 class PageController extends Controller
 {
-    public function __construct(private readonly PageRepositoryInterface $pages, private readonly PageService $service) {}
+    public function __construct(private readonly PageRepositoryInterface $pages, private readonly PageService $service, private readonly \App\Services\ResourceCategoryService $resourceCategories) {}
 
     public function index(IndexPageRequest $request): View
     {
@@ -31,7 +31,7 @@ class PageController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.pages.create', ['page' => new Page(['status' => ContentStatus::Draft, 'page_type' => PageType::Article]), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect(), 'title' => 'Create Page']);
+        return view('pages.admin.pages.create', ['page' => new Page(['status' => ContentStatus::Draft, 'page_type' => PageType::Article]), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect(), 'resourceCategories' => $this->resourceCategories->options(), 'title' => 'Create Page']);
     }
 
     public function store(StorePageRequest $request): RedirectResponse
@@ -43,12 +43,12 @@ class PageController extends Controller
 
     public function show(ShowPageRequest $request, Page $page): View
     {
-        return view('pages.admin.pages.show', ['page' => $page->load('children', 'bannerMedia', 'socialMedia', 'parent'), 'title' => 'Page Details']);
+        return view('pages.admin.pages.show', ['page' => $page->load('children', 'bannerMedia', 'socialMedia', 'parent', 'resourceCategory'), 'title' => 'Page Details']);
     }
 
     public function edit(Page $page): View
     {
-        return view('pages.admin.pages.edit', ['page' => $page->load('bannerMedia', 'socialMedia'), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect($page), 'title' => 'Edit Page']);
+        return view('pages.admin.pages.edit', ['page' => $page->load('bannerMedia', 'socialMedia'), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect($page), 'resourceCategories' => $this->resourceCategories->options(), 'title' => 'Edit Page']);
     }
 
     public function update(UpdatePageRequest $request, Page $page): RedirectResponse

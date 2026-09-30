@@ -1,1 +1,11 @@
-@extends('layouts.public') @section('content')<nav class="mb-6 text-sm text-gray-500"><a href="{{ route('public.home') }}">Home</a><span class="mx-2">/</span>Notices</nav><h1 class="mb-6 text-3xl font-bold">Notices</h1><div class="space-y-4">@forelse($items as $item)<article class="rounded-xl bg-white p-5 shadow-sm"><div class="flex flex-col justify-between gap-3 sm:flex-row"><div><h2 class="text-lg font-semibold"><a href="{{ route('public.notices.show',$item->slug) }}" class="hover:text-brand-600">{{ $item->title }}</a></h2><p class="mt-2 text-sm text-gray-600">{{ strip_tags($item->description) }}</p><time class="mt-2 block text-xs text-gray-500">{{ $item->published_at?->format('M d, Y') }}</time></div>@if($item->fileMedia)<a href="{{ $item->fileMedia->url() }}" target="_blank" class="self-start text-sm text-brand-600 underline">Download attachment</a>@endif</div></article>@empty<p class="text-gray-600">No notices are currently available.</p>@endforelse</div><div class="mt-8">{{ $items->links() }}</div>@endsection
+@extends('layouts.public')
+
+@section('content')
+<nav class="mb-6 text-sm text-gray-500"><a href="{{ route('public.home') }}">Home</a><span class="mx-2">/</span>Notices</nav>
+<h1 class="mb-6 text-3xl font-bold">Notices</h1>
+<form method="GET" action="{{ route('public.notices.index') }}" class="mb-6 flex flex-wrap items-end gap-3">
+    <div class="w-64"><x-form.select name="notice_type" label="Notice type" :options="$types" :value="request('notice_type')" placeholder="All types" /></div>
+    <x-ui.button type="submit" variant="outline">Show notices</x-ui.button>
+</form>
+@include('public.notices._listing')
+@endsection

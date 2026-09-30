@@ -1,14 +1,20 @@
-<div x-data="{ activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}', activeShared: '{{ $errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner' }}' }" class="space-y-6">
+<div x-data="{ pageType: @js(old('page_type', $page->page_type?->value ?? 'article')), activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}', activeShared: '{{ $errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner' }}' }" class="space-y-6">
     <div class="sticky top-20 z-30 -mx-4 flex justify-end border-b border-gray-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 sm:-mx-6 sm:px-6">
         <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-600">{{ $submitLabel }}</button>
     </div>
 
     <div class="grid gap-6 md:grid-cols-2">
-        <x-form.select name="page_type" label="Page type" required>
+        <x-form.select name="page_type" label="Page type" x-model="pageType" required>
             @foreach($pageTypes as $pageType)
                 <option value="{{ $pageType->value }}" @selected(old('page_type', $page->page_type?->value ?? 'article') === $pageType->value)>{{ $pageType->label() }}</option>
             @endforeach
         </x-form.select>
+        <div x-show="pageType === 'resource'" x-cloak>
+            <x-form.select name="resource_category_id" label="Resource category" :options="$resourceCategories" :value="$page->resource_category_id" placeholder="All categories" x-bind:disabled="pageType !== 'resource'" help="Select a category to show its published documents, or All categories to show the whole catalogue." />
+        </div>
+        <div x-show="pageType === 'notices'" x-cloak>
+            <x-form.select name="notice_type" label="Notice type" :options="\App\Enums\NoticeType::options()" :value="$page->notice_type?->value" placeholder="All types" x-bind:disabled="pageType !== 'notices'" help="Show published notices of this type, or All types to show every notice." />
+        </div>
         <x-form.select name="parent_id" label="Parent page">
             <option value="">__SELF</option>
             @foreach($parents as $parent)
@@ -23,7 +29,7 @@
             <button type="button" id="page-tab-en" role="tab" aria-controls="page-panel-en" :aria-selected="activeLanguage === 'en'" @click="activeLanguage = 'en'; $nextTick(() => window.dispatchEvent(new Event('page-language-changed')))" :class="activeLanguage === 'en' ? 'border-brand-500 bg-white text-brand-600 dark:bg-gray-800' : 'border-transparent text-gray-500'" class="inline-flex items-center gap-2 border-b-2 px-5 py-4 text-sm font-medium"><img src="{{ asset('images/flags/en.svg') }}" alt="" class="h-4 w-6 object-contain"> English</button>
             <button type="button" id="page-tab-ne" role="tab" aria-controls="page-panel-ne" :aria-selected="activeLanguage === 'ne'" @click="activeLanguage = 'ne'; $nextTick(() => window.dispatchEvent(new Event('page-language-changed')))" :class="activeLanguage === 'ne' ? 'border-brand-500 bg-white text-brand-600 dark:bg-gray-800' : 'border-transparent text-gray-500'" class="inline-flex items-center gap-2 border-b-2 px-5 py-4 text-sm font-medium"><img src="{{ asset('images/flags/np.svg') }}" alt="" class="h-4 w-5 object-contain"> नेपाली</button>
         </nav>
-        
+
         <section id="page-panel-en" role="tabpanel" aria-labelledby="page-tab-en" x-show="activeLanguage === 'en'" class="space-y-6 p-5 sm:p-6">
             <div class="grid gap-6 md:grid-cols-2">
                 <x-form.input name="translations[en][title]" label="Page title (English)" :value="old('translations.en.title', $page->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" required data-page-title />

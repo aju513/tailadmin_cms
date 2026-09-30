@@ -1,5 +1,7 @@
 # Hall Management and Booking Implementation Plan
 
+Current scope: manage halls in the admin and display them on the public website. The user has excluded hall booking. Booking phases below are retained as historical proposals and are not scheduled implementation work.
+
 ## Website findings and scope
 
 The target is the Lumbini Research and Training Institute website, rather than a travel booking site. Its [hall listing](http://lumbini.ajumaharjan.com.np/hall.php), reviewed on 30 September 2026, describes professional spaces in Nepalgunj, Banke for trainings, workshops, conferences, and official events. It currently shows:
@@ -20,12 +22,12 @@ The travel reference supplies presentation patterns: Add/Manage navigation, medi
 | --- | --- |
 | Homepage, About Us, and organizational information | Existing Pages, homepage slides, menus, and site settings supply editorial content and navigation. Add homepage section settings only when integrating each actual section. |
 | Our Team | Use the existing Team Members and Team Categories resources. |
-| News and Notice Board | Use News and Notices. Tender notices, press releases, and application announcements need agreed classifications or dedicated resources before exposing those separate public listings. |
-| Legal Documents and Downloads | Plan a dedicated document catalogue with document type, title, publication date, description, attachment, and ordering, reusing the media library. General page content alone is insufficient for searchable document collections. |
+| News and Notice Board | Use News and [typed Notices](notices.md). Notices Pages select General Notices, Tender Notices, Press Releases, Application Announcements, or All types. |
+| Legal Documents and Downloads | Use the [Resources catalogue](resources.md) with categories, titles, publication dates, descriptions, attachments, and ordering. Resource Pages select a category or All categories and automatically list published documents. |
 | Training | The current navigation links to the external TMIS system. Preserve that configurable external link; do not duplicate its training management or assume access to its data. |
 | Online Application Form | Treat submissions and their approval workflow as a future independent module; a page can introduce the form but does not replace submission persistence, validation, and permissions. |
 | Book a Venue | Use the new Hall catalogue, followed by the booking and scheduling phases below. |
-| Contact and media | Use existing site settings, local media, and editorial pages; introduce gallery/video-specific records only as the frontend requirements become concrete. |
+| Contact and media | Use existing site settings and editorial pages for contact information. Photo albums and URL-based videos now have dedicated admin catalogues under Media; see [Photo gallery and videos](media-catalogues.md). Their public frontend integration remains separate. |
 
 Each operational entity should own its structured data. Pages remain the shared editorial layer for introductions, policies, banners, and SEO. Preserve the public website's design and legacy URLs during frontend integration rather than introducing travel-specific entities into this CMS.
 

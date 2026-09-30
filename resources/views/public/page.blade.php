@@ -16,4 +16,13 @@
         <div>{!! $page->body !!}</div>
         @if($page->children->isNotEmpty())<h2>Related pages</h2><ul>@foreach($page->children as $child)<li><a href="{{ route('public.page', ['path' => $child->path, 'lang' => app()->getLocale()]) }}">{{ $child->title }}</a></li>@endforeach</ul>@endif
     </article>
+    @if($resources ?? null)
+        @include('public.resources._listing')
+    @endif
+    @if($notices ?? null)
+        <section class="mt-8" aria-label="Notices">
+            <h2 class="mb-5 text-2xl font-semibold">{{ $page->notice_type?->label() ?? 'Notices' }}</h2>
+            @include('public.notices._listing', ['items' => $notices])
+        </section>
+    @endif
 @endsection

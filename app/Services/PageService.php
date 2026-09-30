@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class PageService
 {
-    public function __construct(private readonly PageRepositoryInterface $pages, private readonly MediaAssetService $media) {}
+    public function __construct(private readonly PageRepositoryInterface $pages, private readonly MediaAssetService $media, private readonly ResourceCategoryService $resourceCategories) {}
 
     public function create(array $data, Authenticatable $actor): Page
     {
@@ -155,6 +155,12 @@ class PageService
         $data['created_by'] ??= $actor->getAuthIdentifier();
         $data['status'] = $data['status'] ?? ContentStatus::Draft;
         $data['page_type'] = $data['page_type'] ?? PageType::Article;
+        $pageType = $data['page_type'] instanceof PageType ? $data['page_type'] : PageType::from($data['page_type']);
+        $data['notice_type'] = $pageType === PageType::Notices ? ($data['notice_type'] ?? null) : null;
+        $data['resource_category_id'] = $pageType === PageType::Resource ? ($data['resource_category_id'] ?? null) : null;
+        if ($data['resource_category_id']) {
+            $this->resourceCategories->lockSelection((int) $data['resource_category_id']);
+        }
         if (($data['status'] instanceof ContentStatus ? $data['status'] : ContentStatus::from($data['status'])) === ContentStatus::Published) {
             $this->assertCanPublish($actor);
         }

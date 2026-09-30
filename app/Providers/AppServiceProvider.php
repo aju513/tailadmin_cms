@@ -47,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(\App\Repositories\Contracts\GalleryAlbumRepositoryInterface::class, \App\Repositories\Eloquent\GalleryAlbumRepository::class);
+        $this->app->bind(\App\Repositories\Contracts\VideoRepositoryInterface::class, \App\Repositories\Eloquent\VideoRepository::class);
+        $this->app->bind(\App\Repositories\Contracts\ResourceCategoryRepositoryInterface::class, \App\Repositories\Eloquent\ResourceCategoryRepository::class);
+        $this->app->bind(\App\Repositories\Contracts\ResourceDocumentRepositoryInterface::class, \App\Repositories\Eloquent\ResourceDocumentRepository::class);
         $this->app->bind(\App\Repositories\Contracts\HallRepositoryInterface::class, \App\Repositories\Eloquent\HallRepository::class);
         $this->app->bind(\App\Repositories\Contracts\DashboardRepositoryInterface::class, \App\Repositories\Eloquent\DashboardRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);

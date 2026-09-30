@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Services;
+
+use App\Enums\ContentStatus;
+use App\Models\Video;
+use App\Repositories\Contracts\VideoRepositoryInterface;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Throwable;
+
+class VideoService
+{
+    public function __construct(private readonly VideoRepositoryInterface $records, private readonly MediaAssetService $media) {}
+
+    public function index(array $filters): LengthAwarePaginator
+    {
+        return $this->records->paginate($filters);
+    }
+
+    public function newRecord(): Video
+    {
+        return new Video(['status' => ContentStatus::Draft, 'sort_order' => 0]);
+    }
+
+    public function details(Video $record): Video
+    {
+        return $this->records->details($record);
+    }
+
+    public function save(array $data, Authenticatable $actor, ?Video $record = null): Video
+    {
+        Gate::forUser($actor)->authorize($record ? 'videos.edit' : 'videos.create');
+        $uploads = [];
+
+        try {
+            return DB::transaction(function () use ($data, $actor, $record, &$uploads): Video {
+                $record = $record ? $this->records->lock($record) : null;
+                $status = ContentStatus::from($data['status']);
+                if ($status === ContentStatus::Published || $record?->status === ContentStatus::Published) {
+                    Gate::forUser($actor)->authorize('videos.publish');
+                }
+                $baseSlug = Str::limit(Str::slug($data['title']) ?: 'video', 240, '');
+                $data['slug'] = $record?->slug ?: $baseSlug;
+                if (! $record) {
+                    $suffix = 2;
+                    while ($this->records->slugExists($data['slug'], null)) {
+                        $data['slug'] = $baseSlug.'-'.$suffix++;
+                    }
+                }
+
+                $cover = Arr::pull($data, 'cover');
+                if (Arr::pull($data, 'remove_cover', false)) {
+                    $data['cover_media_id'] = null;
+                }
+                if ($cover instanceof UploadedFile) {
+                    $asset = $this->media->store($cover, $actor, $data['title'], $data['title']);
+                    $uploads[] = $asset;
+                    $data['cover_media_id'] = $asset->id;
+                }
+                $data['created_by'] = $record?->created_by ?? $actor->getAuthIdentifier();
+                $data['updated_by'] = $actor->getAuthIdentifier();
+                $data['published_at'] = $status === ContentStatus::Published ? ($record?->published_at ?? now()) : null;
+                $data['published_by'] = $status === ContentStatus::Published ? ($record?->published_by ?? $actor->getAuthIdentifier()) : null;
+                $saved = $record ? $this->records->update($record, $data) : $this->records->create($data);
+
+                activity('content')->causedBy($actor)->performedOn($saved)
+                    ->event($record ? 'videos.updated' : 'videos.created')
+                    ->log($record ? 'Video updated' : 'Video created');
+
+                return $saved;
+            });
+        } catch (Throwable $exception) {
+            foreach ($uploads as $asset) {
+                Storage::disk($asset->disk)->delete($asset->path);
+            }
+            throw $exception;
+        }
+    }
+
+    public function delete(Video $record, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('videos.delete');
+        DB::transaction(function () use ($record, $actor): void {
+            $record = $this->records->lock($record);
+            if ($record->status === ContentStatus::Published) {
+                Gate::forUser($actor)->authorize('videos.publish');
+            }
+            activity('content')->causedBy($actor)->performedOn($record)->event('videos.deleted')->log('Video deleted');
+            $this->records->delete($record);
+        });
+    }
+}

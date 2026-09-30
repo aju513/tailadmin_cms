@@ -1,6 +1,33 @@
 <?php
 
 return [
+    'resources' => [
+        'resources.manage' => ['view_title' => 'Manage resources', 'description' => 'Allows manage operations for resources.'],
+        'resources.create' => ['view_title' => 'Create resources', 'description' => 'Allows create operations for resources.'],
+        'resources.edit' => ['view_title' => 'Edit resources', 'description' => 'Allows edit operations for resources.'],
+        'resources.delete' => ['view_title' => 'Delete resources', 'description' => 'Allows delete operations for resources.'],
+        'resources.publish' => ['view_title' => 'Publish resources', 'description' => 'Allows publish operations for resources.'],
+    ],
+    'resource-categories' => [
+        'resource-categories.manage' => ['view_title' => 'Manage resource categories', 'description' => 'Allows manage operations for resource categories.'],
+        'resource-categories.create' => ['view_title' => 'Create resource categories', 'description' => 'Allows create operations for resource categories.'],
+        'resource-categories.edit' => ['view_title' => 'Edit resource categories', 'description' => 'Allows edit operations for resource categories.'],
+        'resource-categories.delete' => ['view_title' => 'Delete resource categories', 'description' => 'Allows delete operations for resource categories.'],
+    ],
+    'gallery' => [
+        'gallery.manage' => ['view_title' => 'Manage photo albums', 'description' => 'Allows manage operations for photo albums.'],
+        'gallery.create' => ['view_title' => 'Create photo albums', 'description' => 'Allows create operations for photo albums.'],
+        'gallery.edit' => ['view_title' => 'Edit photo albums', 'description' => 'Allows edit operations for photo albums.'],
+        'gallery.delete' => ['view_title' => 'Delete photo albums', 'description' => 'Allows delete operations for photo albums.'],
+        'gallery.publish' => ['view_title' => 'Publish photo albums', 'description' => 'Allows publish operations for photo albums.'],
+    ],
+    'videos' => [
+        'videos.manage' => ['view_title' => 'Manage videos', 'description' => 'Allows manage operations for videos.'],
+        'videos.create' => ['view_title' => 'Create videos', 'description' => 'Allows create operations for videos.'],
+        'videos.edit' => ['view_title' => 'Edit videos', 'description' => 'Allows edit operations for videos.'],
+        'videos.delete' => ['view_title' => 'Delete videos', 'description' => 'Allows delete operations for videos.'],
+        'videos.publish' => ['view_title' => 'Publish videos', 'description' => 'Allows publish operations for videos.'],
+    ],
     'halls' => [
         'halls.manage' => ['view_title' => 'Manage halls', 'description' => 'Allows viewing, filtering, and paginating the hall directory.'],
         'halls.show' => ['view_title' => 'View halls', 'description' => 'Allows viewing individual hall details.'],
@@ -36,7 +63,7 @@ return [
         'notices.create' => ['view_title' => 'Create notices', 'description' => 'Allows creating notices.'],
         'notices.edit' => ['view_title' => 'Edit notices', 'description' => 'Allows editing notices.'],
         'notices.delete' => ['view_title' => 'Delete notices', 'description' => 'Allows deleting notices.'],
-        'notices.publish' => ['view_title' => 'Publish notices', 'description' => 'Allows publishing notices.'],
+        'notices.publish' => ['view_title' => 'Publish notices', 'description' => 'Allows publishing, unpublishing, editing, and deleting published notices.'],
     ],
     'content' => [
         'team-members.manage' => ['view_title' => 'Manage team members', 'description' => 'Allows viewing and filtering the team member directory.'],
