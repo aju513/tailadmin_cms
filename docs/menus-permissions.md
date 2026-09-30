@@ -69,3 +69,7 @@ php artisan admin:menu-regenerate
 ```
 
 The command validates the definition and atomically replaces `bootstrap/cache/admin-menu.php`. The navigation service filters this compiled manifest at request time with `$user->can(...)` and removes empty groups. Route authorization remains mandatory even when an item is hidden.
+
+## Public website links
+
+Main/footer managers can add a label and safe internal path, external URL or grouping anchor, optionally under an item in the same menu. StoreMenuLinkRequest, MenuService and MenuRepository enforce menus.manage and parent membership. Public menus omit unpublished pages and descendants of hidden parents. No new sidebar entry or permission is required.

@@ -18,7 +18,13 @@ class MenuRepository implements MenuRepositoryInterface
             return null;
         }
 
-        $items = $menu->items;
+        $items = $menu->items->filter(fn ($item) => ! $item->page_id || ($item->page && $item->page->status === \App\Enums\ContentStatus::Published && (! $item->page->published_at || $item->page->published_at->lte(now()))));
+        // Remove descendants of a hidden parent instead of promoting them into root links.
+        do {
+            $count = $items->count();
+            $ids = $items->pluck('id');
+            $items = $items->filter(fn ($item) => ! $item->parent_id || $ids->contains($item->parent_id));
+        } while ($items->count() !== $count);
         $byId = $items->keyBy('id');
         foreach ($items as $item) {
             $item->setRelation('children', new Collection);
@@ -45,6 +51,16 @@ class MenuRepository implements MenuRepositoryInterface
     public function find(int $id): Menu
     {
         return Menu::query()->findOrFail($id);
+    }
+
+    public function lock(int $id): Menu
+    {
+        return Menu::query()->whereKey($id)->lockForUpdate()->firstOrFail();
+    }
+
+    public function createLink(Menu $menu, array $data): MenuItem
+    {
+        return $menu->items()->create([...$data, 'sort_order' => ((int) $menu->items()->where('parent_id', $data['parent_id'] ?? null)->max('sort_order')) + 1, 'is_visible' => true]);
     }
 
     public function availablePages(Menu $menu): BaseCollection

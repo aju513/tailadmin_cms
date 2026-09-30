@@ -84,3 +84,7 @@ Notices now use editable categories and optional deadlines, and Notices Pages se
 ## Category editors and ordering
 
 Resource Categories and Notice Categories use full-width CKEditor descriptions and Published toggles. Numeric display-order inputs are removed; reorder rows using drag handles or arrow buttons in the manager. Inactive categories hide associated public content.
+
+## Lumbini public frontend
+
+Public pages now use Front controllers/services and resources/views/front templates. Site Settings controls homepage and contact/SEO fields. Public menus can add module or external links using menus.manage. See [frontend.md](frontend.md) for module/page connections, publication visibility and setup.

@@ -15,6 +15,10 @@ interface MenuRepositoryInterface
 
     public function find(int $id): Menu;
 
+    public function lock(int $id): Menu;
+
+    public function createLink(Menu $menu, array $data): MenuItem;
+
     public function availablePages(Menu $menu): BaseCollection;
 
     /** @param array<int, int|string> $pageIds */

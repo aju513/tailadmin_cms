@@ -1,0 +1,1 @@
+<section class="inner-banner"><div class="container-fluid"><div class="placeholder__img-wrapper"><div class="w-full placeholder__img"><x-front.image :media="$banner ?? null" :alt="$heading ?? $item->title ?? ''" :priority="true" width="1400" height="630" class="rounded-[5px]" /></div></div></div></section>

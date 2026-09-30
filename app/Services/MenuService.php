@@ -39,6 +39,23 @@ class MenuService
         });
     }
 
+    public function addLink(array $data, Authenticatable $actor): MenuItem
+    {
+        \Illuminate\Support\Facades\Gate::forUser($actor)->authorize('menus.manage');
+
+        return DB::transaction(function () use ($data, $actor): MenuItem {
+            $menu = $this->menus->lock((int) $data['menu_id']);
+            $parentId = filled($data['parent_id'] ?? null) ? (int) $data['parent_id'] : null;
+            if ($parentId && $this->menus->itemsByIds($menu, [$parentId])->count() !== 1) {
+                throw ValidationException::withMessages(['parent_id' => 'Choose a parent from this menu.']);
+            }
+            $item = $this->menus->createLink($menu, ['label' => $data['label'], 'external_url' => $data['external_url'], 'parent_id' => $parentId]);
+            activity('content')->causedBy($actor)->performedOn($item)->event('menu-link.created')->withProperties(['menu_id' => $menu->id, 'menu_item_id' => $item->id])->log('Public menu link created');
+
+            return $item;
+        });
+    }
+
     public function delete(MenuItem $item, Authenticatable $actor): void
     {
         DB::transaction(function () use ($item, $actor): void {
@@ -76,6 +93,7 @@ class MenuService
             }
 
             $this->menus->reorderItems($menu, $parentId, $itemIds);
+            DB::afterCommit(fn () => app(\App\Services\Frontend\FrontendCache::class)->clear());
             activity('content')->causedBy($actor)->event('menu-items.reordered')->withProperties([
                 'menu_id' => $menu->id,
                 'parent_id' => $parentId,

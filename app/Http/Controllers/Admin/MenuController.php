@@ -52,6 +52,13 @@ class MenuController extends Controller
         return redirect()->route($menu->location === 'header' ? 'admin.menus.header' : ($menu->location === 'footer' ? 'admin.menus.footer' : 'admin.menus.index'))->with('success', 'Pages assigned to menu.');
     }
 
+    public function storeLink(\App\Http\Requests\Menu\StoreMenuLinkRequest $request): RedirectResponse
+    {
+        $this->menus->addLink($request->validated(), $request->user());
+
+        return back()->with('success', 'Menu link added.');
+    }
+
     public function destroy(DeleteMenuItemRequest $request, MenuItem $menuItem): RedirectResponse
     {
         $this->menus->delete($menuItem, $request->user());

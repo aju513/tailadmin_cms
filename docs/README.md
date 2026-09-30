@@ -12,6 +12,8 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Lumbini public frontend](frontend.md): design integration, module pages, SEO/schema, XML sitemaps, performance and setup.
+
 - [Notice types and page connections](notices.md): managed notice categories, deadlines, and automatic Notices page listings.
 
 - [Resources and page connections](resources.md): document catalogue, categories, automatic Resource page listings, and downloads.

@@ -10,7 +10,7 @@ class TeamMember extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'designation', 'category_id', 'bio', 'photo_media_id', 'is_active', 'sort_order', 'created_by', 'updated_by'];
+    protected $fillable = ['name', 'designation', 'category_id', 'bio', 'email', 'phone', 'photo_media_id', 'is_active', 'sort_order', 'created_by', 'updated_by'];
 
     protected function casts(): array
     {

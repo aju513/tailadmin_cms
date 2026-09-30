@@ -25,3 +25,7 @@ php artisan optimize
 Configure a real mail transport before relying on forgot-password. Change the bootstrap password immediately and do not expose an installation with the known credential; password changes are not forced by middleware. The scheduler must run every minute so the daily activity cleanup executes.
 
 Permission synchronization is exact and may delete obsolete database permissions. Review configuration changes before production deployment and deploy permission/menu changes together.
+
+## Frontend operations
+
+Rebuild assets for the new public Vite entries after deploying this change. Apply the publication-index migration and verify APP_URL and the public storage link. Use frontend:images-optimize for existing media and frontend:cache-clear after external database writes. See [frontend.md](frontend.md) for commands and production performance checks.

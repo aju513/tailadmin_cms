@@ -21,23 +21,9 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UiKitController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PublicHomeController;
-use App\Http\Controllers\PublicNewsController;
-use App\Http\Controllers\PublicNoticeController;
-use App\Http\Controllers\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/resources/{slug}/download', [\App\Http\Controllers\PublicResourceController::class, 'download'])->name('public.resources.download');
-Route::get('/resources/{slug}', [\App\Http\Controllers\PublicResourceController::class, 'show'])->name('public.resources.show');
-
-Route::get('/', PublicHomeController::class)->name('public.home');
-Route::get('/news', [PublicNewsController::class, 'index'])->name('public.news.index');
-Route::get('/news/category/{slug}', [PublicNewsController::class, 'category'])->name('public.news.category');
-Route::get('/news/tag/{slug}', [PublicNewsController::class, 'tag'])->name('public.news.tag');
-Route::get('/news/author/{slug}', [PublicNewsController::class, 'author'])->name('public.news.author');
-Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('public.news.show');
-Route::get('/notices', [PublicNoticeController::class, 'index'])->name('public.notices.index');
-Route::get('/notices/{slug}', [PublicNoticeController::class, 'show'])->name('public.notices.show');
+require __DIR__.'/front.php';
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(function (): void {
     Route::get('/password/change', [PasswordController::class, 'edit'])->name('password.edit');
@@ -155,6 +141,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/menus', [MenuController::class, 'index'])->middleware('can:menus.manage')->name('menus.index');
     Route::get('/menus/header', [MenuController::class, 'header'])->middleware('can:menus.manage')->name('menus.header');
     Route::get('/menus/footer', [MenuController::class, 'footer'])->middleware('can:menus.manage')->name('menus.footer');
+    Route::post('/menus/links', [MenuController::class, 'storeLink'])->middleware('can:menus.manage')->name('menus.links.store');
     Route::post('/menus/assign', [MenuController::class, 'assign'])->middleware('can:menus.manage')->name('menus.assign');
     Route::patch('/menus/order', [MenuController::class, 'order'])->middleware('can:menus.manage')->name('menus.order');
     Route::delete('/menus/bulk', [MenuController::class, 'bulkDestroy'])->middleware('can:menus.manage')->name('menus.bulk-destroy');
@@ -194,4 +181,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
 });
 
 Route::any('/admin/{path?}', fn () => abort(404))->where('path', '.*');
-Route::get('/{path}', [PublicPageController::class, 'show'])->where('path', '.*')->name('public.page');
+Route::get('/{path}', [\App\Http\Controllers\Front\ContentController::class, 'page'])->where('path', '.*')->name('public.page');

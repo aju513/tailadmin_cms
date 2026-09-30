@@ -28,3 +28,7 @@ The sidebar and Blade `@can` directives improve usability, but route middleware,
 - Services own role synchronization and audit event properties.
 - Repositories own filtering and pagination.
 - CMS content uses local public-disk media assets and database-managed public menus; cloud storage is not required.
+
+## Public frontend
+
+Public routes live in routes/front.php; the CMS catch-all follows admin routes. Front/ContentController delegates to Frontend/FrontendService and the bound FrontendRepositoryInterface. SEO, sitemap, image processing and cache invalidation use separate services. Public assets live in resources/front and templates in resources/views/front. See [frontend.md](frontend.md).

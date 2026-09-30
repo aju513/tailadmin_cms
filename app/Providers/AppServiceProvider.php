@@ -47,6 +47,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->scoped(\App\Services\Frontend\ImageService::class);
+        $this->app->bind(\App\Repositories\Contracts\FrontendRepositoryInterface::class, \App\Repositories\Eloquent\FrontendRepository::class);
         $this->app->bind(\App\Repositories\Contracts\GalleryAlbumRepositoryInterface::class, \App\Repositories\Eloquent\GalleryAlbumRepository::class);
         $this->app->bind(\App\Repositories\Contracts\VideoRepositoryInterface::class, \App\Repositories\Eloquent\VideoRepository::class);
         $this->app->bind(\App\Repositories\Contracts\ResourceCategoryRepositoryInterface::class, \App\Repositories\Eloquent\ResourceCategoryRepository::class);
@@ -79,6 +81,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        foreach ([\App\Models\Page::class, \App\Models\News::class, \App\Models\Notice::class, \App\Models\NoticeCategory::class, \App\Models\ResourceDocument::class, \App\Models\ResourceCategory::class, \App\Models\Hall::class, \App\Models\HallGalleryImage::class, \App\Models\GalleryAlbum::class, \App\Models\GalleryPhoto::class, \App\Models\Video::class, \App\Models\TeamMember::class, \App\Models\TeamCategory::class, \App\Models\HomepageSlide::class, \App\Models\SiteSetting::class, \App\Models\Menu::class, \App\Models\MenuItem::class, \App\Models\MediaAsset::class] as $model) {
+            $model::observe(\App\Observers\FrontendContentObserver::class);
+        }
         Gate::before(function (User $user, string $ability): ?bool {
             return $user->hasRole('super-admin') ? true : null;
         });

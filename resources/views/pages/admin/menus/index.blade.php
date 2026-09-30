@@ -47,6 +47,17 @@
                         </form>
 
                         <div>
+                            <details class="mb-6 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+                                <summary class="cursor-pointer text-sm font-semibold text-gray-800 dark:text-white">Add a website or external link</summary>
+                                <form method="POST" action="{{ route('admin.menus.links.store') }}" class="mt-4 grid gap-5 md:grid-cols-2">
+                                    @csrf
+                                    <input type="hidden" name="menu_id" value="{{ $menu->id }}">
+                                    <x-form.input name="label" label="Link label" required />
+                                    <x-form.input name="external_url" label="Link URL" placeholder="/halls or https://example.com" required />
+                                    <x-form.select name="parent_id" label="Parent item" :options="[''=>'Top level'] + $menu->items->pluck('label','id')->all()" />
+                                    <div class="flex items-end justify-end"><x-ui.button type="submit">Add link</x-ui.button></div>
+                                </form>
+                            </details>
                             <div class="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <div>
                                     <h3 class="font-semibold text-gray-800 dark:text-white">Assigned menu items</h3>
