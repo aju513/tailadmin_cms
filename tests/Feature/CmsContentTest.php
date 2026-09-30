@@ -289,6 +289,9 @@ test('bulk page actions reject invalid selections and unauthorized users', funct
 });
 
 test('categories tags and authors have independent admin CRUD surfaces', function (): void {
+    foreach (['categories' => 'category', 'tags' => 'tag', 'authors' => 'author'] as $resource => $label) {
+        $this->actingAs($this->admin)->get(route('admin.'.$resource.'.create'))->assertOk()->assertSee('Create '.$label);
+    }
     $this->actingAs($this->admin)->post(route('admin.categories.store'), ['name' => 'Notices', 'status' => 1])->assertRedirect(route('admin.categories.index'));
     $this->actingAs($this->admin)->post(route('admin.tags.store'), ['name' => 'Public Service', 'status' => 1])->assertRedirect(route('admin.tags.index'));
     $this->actingAs($this->admin)->post(route('admin.authors.store'), ['name' => 'Office Editor', 'email' => 'editor@example.com', 'status' => 1])->assertRedirect(route('admin.authors.index'));

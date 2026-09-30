@@ -60,6 +60,8 @@ The Users Management and System groups are omitted from the sidebar. Their exist
 
 Top-level entries may contain `children`. Keys must be unique, routes must be named and registered, and every permission must exist in the permission catalog.
 
+Child entries may include `active_routes`, an array of named routes that keep their link highlighted and parent group expanded. Without it, the link's own route determines its active state. News uses explicit index/edit/detail routes for its Manage links so its Add links remain independently highlighted.
+
 Run:
 
 ```bash

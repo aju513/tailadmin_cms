@@ -26,20 +26,21 @@
             @foreach ($menuItems as $item)
                 @php
                     $hasChildren = isset($item['children']);
-                    $childActive = $hasChildren && collect($item['children'])->contains(fn ($child) => request()->routeIs($child['route']));
+                    $childActive = $hasChildren && collect($item['children'])->contains(fn ($child) => request()->routeIs(...($child['active_routes'] ?? [$child['route']])));
                 @endphp
                 <li x-init="if ({{ $childActive ? 'true' : 'false' }}) open = '{{ $item['key'] }}'">
                     @if ($hasChildren)
                         <button type="button" @click="open = open === '{{ $item['key'] }}' ? null : '{{ $item['key'] }}'"
+                            :aria-expanded="open === '{{ $item['key'] }}'" aria-controls="sidebar-group-{{ $item['key'] }}"
                             class="menu-item group w-full {{ $childActive ? 'menu-item-active' : 'menu-item-inactive' }}"
                             :class="!$store.sidebar.isExpanded && !$store.sidebar.isHovered ? 'xl:justify-center' : 'xl:justify-start'">
                             <x-common.menu-icon :name="$item['icon'] ?? 'dashboard'" class="menu-item-icon" />
                             <span class="menu-item-text" x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">{{ $item['label'] }}</span>
                             <svg x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen" class="ml-auto h-5 w-5" :class="open === '{{ $item['key'] }}' && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
                         </button>
-                        <ul x-show="open === '{{ $item['key'] }}' && ($store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen)" class="ml-9 mt-2 space-y-1">
+                        <ul id="sidebar-group-{{ $item['key'] }}" x-show="open === '{{ $item['key'] }}' && ($store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen)" class="ml-9 mt-2 space-y-1">
                             @foreach ($item['children'] as $child)
-                                <li><a href="{{ route($child['route']) }}" class="menu-dropdown-item group {{ request()->routeIs($child['route']) ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"><x-common.menu-icon :name="$child['icon'] ?? 'dashboard'" class="h-4 w-4" />{{ $child['label'] }}</a></li>
+                                <li><a href="{{ route($child['route']) }}" class="menu-dropdown-item group {{ request()->routeIs(...($child['active_routes'] ?? [$child['route']])) ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive' }}"><x-common.menu-icon :name="$child['icon'] ?? 'dashboard'" class="h-4 w-4" />{{ $child['label'] }}</a></li>
                             @endforeach
                         </ul>
                     @else

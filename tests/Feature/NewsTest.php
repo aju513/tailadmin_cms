@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
     $this->artisan('admin:permissions-sync')->assertSuccessful();
@@ -83,4 +84,24 @@ test('news routes enforce each permission and mutations are audited', function (
     $this->assertDatabaseMissing('news', ['id' => $news->id]);
     $this->assertDatabaseHas('activity_log', ['event' => 'news.updated', 'causer_id' => $this->admin->id]);
     $this->assertDatabaseHas('activity_log', ['event' => 'news.deleted', 'causer_id' => $this->admin->id]);
+});
+
+test('nested news navigation exposes only independently authorized actions', function (): void {
+    $role = Role::create(['name' => 'news-contributor', 'guard_name' => 'web']);
+    $role->givePermissionTo(['news.create', 'categories.create', 'tags.manage']);
+    $contributor = User::factory()->create();
+    $contributor->assignRole($role);
+
+    $this->actingAs($contributor)->get(route('admin.news.create'))->assertOk()
+        ->assertSee('Add News Category')->assertSee('Manage News Tags')
+        ->assertDontSee('Manage News Categories')->assertDontSee('Add News Tag')
+        ->assertDontSee('Manage News Authors')->assertDontSee('Manage News</a>', false);
+    $this->get(route('admin.categories.create'))->assertOk()->assertSee('Create category');
+    $this->get(route('admin.categories.index'))->assertForbidden();
+    $this->post(route('admin.categories.store'), ['name' => 'Contributor category', 'status' => 1])->assertRedirect(route('admin.categories.index'));
+    $this->post(route('admin.categories.store'), ['name' => ''])->assertSessionHasErrors('name');
+    $this->get(route('admin.tags.index'))->assertOk();
+    $this->get(route('admin.tags.create'))->assertForbidden();
+    $this->post(route('admin.tags.store'), ['name' => 'Unauthorized tag'])->assertForbidden();
+    $this->get(route('admin.authors.create'))->assertForbidden();
 });
