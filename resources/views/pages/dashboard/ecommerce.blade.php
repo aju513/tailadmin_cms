@@ -37,7 +37,7 @@
         @endforeach
     </div>
     <div class="grid gap-6 xl:grid-cols-3">
-        <x-common.component-card title="Top 15 Most Visited Pages" class="xl:col-span-2">
+        <x-common.component-card title="Top 15 Most Visited Pages" :class="app()->environment('production') ? 'xl:col-span-2' : 'xl:col-span-3'">
             <div class="overflow-x-auto"><table class="w-full text-left text-sm text-gray-600 dark:text-gray-400">
                 <thead class="border-b border-gray-200 text-xs uppercase text-gray-500 dark:border-gray-800"><tr><th class="px-3 py-3">S.N.</th><th class="px-3 py-3">Page Title</th><th class="px-3 py-3 text-right">Page Views</th></tr></thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -49,6 +49,7 @@
                 </tbody>
             </table></div>
         </x-common.component-card>
+        @if (app()->environment('production'))
         <x-common.component-card title="Top 15 Search Queries" desc="Google Search Console · Web search">
             @if (! $search['available'])
                 <p class="mb-4 text-sm text-warning-600 dark:text-warning-400">Search Console unavailable. Check the configured site and service account access.</p>
@@ -64,6 +65,7 @@
                 </tbody>
             </table></div>
         </x-common.component-card>
+        @endif
     </div>
 </div>
 @endsection

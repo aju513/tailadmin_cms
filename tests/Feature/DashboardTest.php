@@ -32,11 +32,13 @@ test('dashboard validates reporting periods before fetching reports', function (
 
 test('unconfigured reports render unavailable states without network calls', function () {
     $this->actingAs($this->admin)->get(route('admin.dashboard'))->assertOk()
-        ->assertSee('Google Analytics unavailable')->assertSee('Search Console unavailable');
+        ->assertSee('Google Analytics unavailable')->assertDontSee('Search Console unavailable')
+        ->assertDontSee('Top 15 Search Queries');
     Http::assertNothingSent();
 });
 
 test('dashboard renders real reports and caches each reporting period', function () {
+    $this->app->instance('env', 'production');
     $this->travelTo(now()->setDate(2026, 9, 30));
     $analytics = ['active' => 120, 'new' => 80, 'returning' => 40,
         'countries' => [['label' => 'Nepal', 'value' => 200]],
@@ -57,6 +59,7 @@ test('dashboard renders real reports and caches each reporting period', function
 });
 
 test('one provider failure does not hide the other and is retried after one minute', function () {
+    $this->app->instance('env', 'production');
     $this->mock(GoogleReportingService::class, function ($mock) {
         $mock->shouldReceive('analytics')->twice()->andThrow(new RuntimeException('secret-token'));
         $mock->shouldReceive('search')->once()->andReturn([]);
@@ -71,6 +74,7 @@ test('one provider failure does not hide the other and is retried after one minu
 });
 
 test('empty Google reports are successful empty states', function () {
+    $this->app->instance('env', 'production');
     $this->mock(GoogleReportingService::class, function ($mock) {
         $mock->shouldReceive('analytics')->andReturn(['active' => 0, 'new' => 0, 'returning' => 0, 'countries' => [], 'devices' => [], 'pages' => []]);
         $mock->shouldReceive('search')->andReturn([]);
@@ -109,3 +113,23 @@ test('Google adapter maps reports by dimension name and normalizes search metric
         unlink($path);
     }
 });
+
+test('Search Console runs and appears only in production', function (string $environment) {
+    $this->app->instance('env', $environment);
+    $this->mock(GoogleReportingService::class, function ($mock) use ($environment) {
+        $mock->shouldReceive('analytics')->once()->andReturn(['active' => 0, 'new' => 0, 'returning' => 0, 'countries' => [], 'devices' => [], 'pages' => []]);
+        if ($environment === 'production') {
+            $mock->shouldReceive('search')->once()->andThrow(new RuntimeException('secret-token'));
+        } else {
+            $mock->shouldNotReceive('search');
+        }
+    });
+    $response = $this->actingAs($this->admin)->get(route('admin.dashboard'))->assertOk()->assertDontSee('secret-token');
+    if ($environment === 'production') {
+        $response->assertSee('Top 15 Search Queries')->assertSee('Search Console unavailable');
+        expect(DashboardReport::count())->toBe(2);
+    } else {
+        $response->assertDontSee('Top 15 Search Queries')->assertDontSee('Search Console unavailable');
+        expect(DashboardReport::count())->toBe(1);
+    }
+})->with(['local', 'testing', 'production']);

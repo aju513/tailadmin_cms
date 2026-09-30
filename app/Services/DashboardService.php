@@ -15,6 +15,11 @@ class DashboardService
         $start = $end->copy()->subDays($days - 1);
         $result = ['days' => $days, 'start' => $start->toDateString(), 'end' => $end->toDateString()];
         foreach (['analytics', 'search'] as $provider) {
+            if ($provider === 'search' && ! app()->environment('production')) {
+                $result[$provider] = ['available' => false, 'data' => [], 'updated_at' => null];
+
+                continue;
+            }
             $identity = $provider === 'analytics' ? config('dashboard.property_id') : config('dashboard.site_url');
             $path = config('dashboard.'.$provider.'_credentials');
             $fingerprint = is_readable($path) ? hash_file('sha256', $path) : 'missing';
