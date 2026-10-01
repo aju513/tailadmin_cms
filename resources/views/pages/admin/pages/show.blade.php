@@ -4,12 +4,6 @@
 <x-common.component-card title="{{ $page->title }}" desc="/{{ $page->path }}">
     <div class="space-y-4 text-sm">
         <p><strong>Page type:</strong> {{ $page->page_type?->label() ?? 'Standard Page' }}</p>
-        @if($page->page_type === \App\Enums\PageType::Resource)
-            <p><strong>Resource category:</strong> {{ $page->resourceCategory?->name ?? 'All categories' }}</p>
-        @endif
-        @if($page->page_type === \App\Enums\PageType::Notices)
-            <p><strong>Notice category:</strong> {{ $page->noticeCategory?->name ?? 'All categories' }}</p>
-        @endif
         <p><strong>Status:</strong> {{ ucfirst($page->status->value) }}</p>
         <p><strong>Summary:</strong> {{ $page->summary ?: '—' }}</p>
         <div><strong>Content:</strong><div class="prose mt-2 max-w-none">{!! $page->body !!}</div></div>

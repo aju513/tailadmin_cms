@@ -8,8 +8,6 @@
     <div class="space-y-5 text-sm text-gray-700 dark:text-gray-300">
         <p><strong>Status:</strong> {{ ucfirst($item->status->value) }} @if($item->featured) · Featured @endif</p>
         <p><strong>Published:</strong> {{ $item->published_at?->format('M d, Y') ?? '—' }}</p>
-        <p><strong>Category:</strong> {{ $item->category?->name ?? '—' }} · <strong>Author:</strong> {{ $item->author?->name ?? '—' }}</p>
-        <p><strong>Tags:</strong> {{ $item->tags->pluck('name')->join(', ') ?: '—' }}</p>
         @if($item->thumbnailMedia)<img src="{{ $item->thumbnailMedia->url() }}" alt="{{ $item->thumbnailMedia->alt_text ?: $item->title }}" class="h-48 w-auto rounded-xl object-cover">@endif
         @if($item->subtitle)<p class="text-lg font-medium">{{ $item->subtitle }}</p>@endif
         @if($item->excerpt)<div class="prose max-w-none">{!! $item->excerpt !!}</div>@endif

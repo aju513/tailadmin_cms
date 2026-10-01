@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
-use App\Http\Controllers\Admin\AuthorController;
-use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\HomepageSlideController;
 use App\Http\Controllers\Admin\MediaController;
@@ -15,7 +13,6 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SiteSettingController;
-use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TeamCategoryController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UiKitController;
@@ -66,25 +63,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/notices/{notice}/edit', [NoticeController::class, 'edit'])->middleware('can:notices.edit')->name('notices.edit');
     Route::put('/notices/{notice}', [NoticeController::class, 'update'])->middleware('can:notices.edit')->name('notices.update');
     Route::delete('/notices/{notice}', [NoticeController::class, 'destroy'])->middleware('can:notices.delete')->name('notices.destroy');
-
-    Route::get('/categories', [CategoryController::class, 'index'])->middleware('can:categories.manage')->name('categories.index');
-    Route::get('/categories/create', [CategoryController::class, 'create'])->middleware('can:categories.create')->name('categories.create');
-    Route::post('/categories', [CategoryController::class, 'store'])->middleware('can:categories.create')->name('categories.store');
-    Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->middleware('can:categories.edit')->name('categories.edit');
-    Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('can:categories.edit')->name('categories.update');
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->middleware('can:categories.delete')->name('categories.destroy');
-    Route::get('/tags', [TagController::class, 'index'])->middleware('can:tags.manage')->name('tags.index');
-    Route::get('/tags/create', [TagController::class, 'create'])->middleware('can:tags.create')->name('tags.create');
-    Route::post('/tags', [TagController::class, 'store'])->middleware('can:tags.create')->name('tags.store');
-    Route::get('/tags/{tag}/edit', [TagController::class, 'edit'])->middleware('can:tags.edit')->name('tags.edit');
-    Route::put('/tags/{tag}', [TagController::class, 'update'])->middleware('can:tags.edit')->name('tags.update');
-    Route::delete('/tags/{tag}', [TagController::class, 'destroy'])->middleware('can:tags.delete')->name('tags.destroy');
-    Route::get('/authors', [AuthorController::class, 'index'])->middleware('can:authors.manage')->name('authors.index');
-    Route::get('/authors/create', [AuthorController::class, 'create'])->middleware('can:authors.create')->name('authors.create');
-    Route::post('/authors', [AuthorController::class, 'store'])->middleware('can:authors.create')->name('authors.store');
-    Route::get('/authors/{author}/edit', [AuthorController::class, 'edit'])->middleware('can:authors.edit')->name('authors.edit');
-    Route::put('/authors/{author}', [AuthorController::class, 'update'])->middleware('can:authors.edit')->name('authors.update');
-    Route::delete('/authors/{author}', [AuthorController::class, 'destroy'])->middleware('can:authors.delete')->name('authors.destroy');
 
     Route::get('/team-members', [TeamMemberController::class, 'index'])->middleware('can:team-members.manage')->name('team-members.index');
     Route::get('/team-members/create', [TeamMemberController::class, 'create'])->middleware('can:team-members.create')->name('team-members.create');

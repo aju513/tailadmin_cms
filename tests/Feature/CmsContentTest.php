@@ -1,9 +1,6 @@
 <?php
 
 use App\Enums\PageType;
-use App\Models\ContentAuthor;
-use App\Models\ContentCategory;
-use App\Models\ContentTag;
 use App\Models\MediaAsset;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -103,6 +100,15 @@ test('renaming a nested page updates descendant paths', function (): void {
     ])->assertRedirect(route('admin.pages.index'));
 
     expect($child->refresh()->path)->toBe('new-parent/child');
+});
+
+test('pages accept a custom URL slug', function (): void {
+    $this->actingAs($this->admin)->post(route('admin.pages.store'), [
+        'title' => 'Office Contact', 'slug' => 'contact-office', 'status' => 'draft',
+    ])->assertRedirect(route('admin.pages.index'));
+
+    $page = Page::query()->where('slug', 'contact-office')->firstOrFail();
+    expect($page->path)->toBe('contact-office');
 });
 
 test('page translations are saved, edited, and displayed by language', function (): void {
@@ -288,17 +294,12 @@ test('bulk page actions reject invalid selections and unauthorized users', funct
     ])->assertForbidden();
 });
 
-test('categories tags and authors have independent admin CRUD surfaces', function (): void {
-    foreach (['categories' => 'category', 'tags' => 'tag', 'authors' => 'author'] as $resource => $label) {
-        $this->actingAs($this->admin)->get(route('admin.'.$resource.'.create'))->assertOk()->assertSee('Create '.$label);
-    }
-    $this->actingAs($this->admin)->post(route('admin.categories.store'), ['name' => 'Notices', 'status' => 1])->assertRedirect(route('admin.categories.index'));
-    $this->actingAs($this->admin)->post(route('admin.tags.store'), ['name' => 'Public Service', 'status' => 1])->assertRedirect(route('admin.tags.index'));
-    $this->actingAs($this->admin)->post(route('admin.authors.store'), ['name' => 'Office Editor', 'email' => 'editor@example.com', 'status' => 1])->assertRedirect(route('admin.authors.index'));
-
-    expect(ContentCategory::where('slug', 'notices')->exists())->toBeTrue()
-        ->and(ContentTag::where('slug', 'public-service')->exists())->toBeTrue()
-        ->and(ContentAuthor::where('slug', 'office-editor')->exists())->toBeTrue();
+test('news taxonomy is not exposed in the admin', function (): void {
+    $this->actingAs($this->admin)->get(route('admin.news.create'))
+        ->assertOk()
+        ->assertDontSee('name="category_id"', false)
+        ->assertDontSee('name="author_id"', false)
+        ->assertDontSee('name="tag_ids[]"', false);
 });
 
 test('team members can be created searched edited and deleted from the admin', function (): void {
@@ -571,5 +572,4 @@ test('content permissions are enforced for non-administrators', function (): voi
     $user->assignRole($role);
 
     $this->actingAs($user)->get(route('admin.pages.index'))->assertForbidden();
-    $this->actingAs($user)->get(route('admin.categories.index'))->assertForbidden();
 });

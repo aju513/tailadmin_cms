@@ -18,7 +18,6 @@ class NewsService
     public function save(array $data, Authenticatable $actor, ?News $item = null): News
     {
         return DB::transaction(function () use ($data, $actor, $item): News {
-            $tagIds = Arr::pull($data, 'tag_ids', []);
             $data['slug'] = Str::slug(($data['slug'] ?? null) ?: $data['title']);
             if ($data['slug'] === '') {
                 throw ValidationException::withMessages(['slug' => 'Enter a URL slug using letters or numbers.']);
@@ -45,7 +44,6 @@ class NewsService
             }
 
             $saved = $item ? $this->news->update($item, $data) : $this->news->create($data);
-            $this->news->syncTags($saved, $tagIds);
             activity('content')->causedBy($actor)->performedOn($saved)->event($item ? 'news.updated' : 'news.created')
                 ->withProperties(['news_id' => $saved->id, 'slug' => $saved->slug])->log($item ? 'News updated' : 'News created');
 

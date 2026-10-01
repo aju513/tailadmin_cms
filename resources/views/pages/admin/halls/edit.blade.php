@@ -7,7 +7,7 @@
 <form id="hall-form" method="POST" action="{{ route('admin.halls.update', $hall) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
-    <x-common.component-card title="Hall details">
+    <x-common.component-card title="">
         @include('pages.admin.halls._form')
     </x-common.component-card>
 </form>

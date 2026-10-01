@@ -17,7 +17,7 @@
         <div x-show="stickyActions" x-cloak x-transition.opacity.duration.150ms style="left: 0; right: 0; width: 100%;" class="absolute top-0 flex items-center border-b border-gray-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 sm:px-6">
             <div class="ml-auto flex items-center justify-end gap-3">
                 @can('halls.manage')<a href="{{ route('admin.halls.index') }}" class="rounded-lg border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200">Close</a>@endcan
-                <x-ui.button type="submit">{{ $hall->exists ? 'Save changes' : 'Save hall' }}</x-ui.button>
+                <x-ui.button type="submit">{{ $hall->exists ? 'Save changes' : 'Save' }}</x-ui.button>
             </div>
         </div>
     </div>

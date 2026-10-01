@@ -13,7 +13,6 @@ abstract class SaveNewsRequest extends FormRequest
         $this->merge([
             'status' => $this->input('status', $this->route('news')?->status?->value ?? ContentStatus::Draft->value),
             'featured' => $this->boolean('featured'),
-            'tag_ids' => $this->input('tag_ids', []),
         ]);
     }
 
@@ -30,10 +29,6 @@ abstract class SaveNewsRequest extends FormRequest
             'subtitle' => ['nullable', 'string', 'max:255'],
             'excerpt' => ['nullable', 'string', 'max:10000'],
             'body' => ['nullable', 'string'],
-            'category_id' => ['nullable', 'integer', Rule::exists('content_categories', 'id')->where('status', true)],
-            'author_id' => ['nullable', 'integer', Rule::exists('content_authors', 'id')->where('status', true)],
-            'tag_ids' => ['array'],
-            'tag_ids.*' => ['integer', 'distinct', Rule::exists('content_tags', 'id')->where('status', true)],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'featured' => ['required', 'boolean'],
             'published_at' => ['nullable', 'date'],

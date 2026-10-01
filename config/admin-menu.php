@@ -25,12 +25,6 @@ return [
         'children' => [
             ['key' => 'news-create', 'label' => 'Add News', 'icon' => 'create', 'route' => 'admin.news.create', 'permission' => 'news.create', 'order' => 10],
             ['key' => 'news-manage', 'label' => 'Manage News', 'icon' => 'pages', 'route' => 'admin.news.index', 'active_routes' => ['admin.news.index', 'admin.news.show', 'admin.news.edit'], 'permission' => 'news.manage', 'order' => 20],
-            ['key' => 'news-category-create', 'label' => 'Add News Category', 'icon' => 'create', 'route' => 'admin.categories.create', 'permission' => 'categories.create', 'order' => 30],
-            ['key' => 'news-categories', 'label' => 'Manage News Categories', 'icon' => 'categories', 'route' => 'admin.categories.index', 'active_routes' => ['admin.categories.index', 'admin.categories.edit'], 'permission' => 'categories.manage', 'order' => 40],
-            ['key' => 'news-tag-create', 'label' => 'Add News Tag', 'icon' => 'create', 'route' => 'admin.tags.create', 'permission' => 'tags.create', 'order' => 50],
-            ['key' => 'news-tags', 'label' => 'Manage News Tags', 'icon' => 'tags', 'route' => 'admin.tags.index', 'active_routes' => ['admin.tags.index', 'admin.tags.edit'], 'permission' => 'tags.manage', 'order' => 60],
-            ['key' => 'news-author-create', 'label' => 'Add News Author', 'icon' => 'create', 'route' => 'admin.authors.create', 'permission' => 'authors.create', 'order' => 70],
-            ['key' => 'news-authors', 'label' => 'Manage News Authors', 'icon' => 'authors', 'route' => 'admin.authors.index', 'active_routes' => ['admin.authors.index', 'admin.authors.edit'], 'permission' => 'authors.manage', 'order' => 80],
         ],
     ],
     [

@@ -4,12 +4,6 @@
         <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" help="Leave blank to generate from the title." />
         <x-form.input name="subtitle" label="Subtitle" :value="old('subtitle', $item->subtitle)" />
         <x-form.date-picker name="published_at" label="Publish date" :value="old('published_at', $item->published_at?->format('Y-m-d'))" help="A future date schedules visibility after publication." />
-        <x-form.select name="category_id" label="Category" :options="$categories" :value="$item->category_id" />
-        <x-form.select name="author_id" label="Author" :options="$authors" :value="$item->author_id" />
-        <div class="md:col-span-2">
-            <x-form.multiselect name="tag_ids[]" label="Tags" :options="$tags" :value="$item->exists ? $item->tags->pluck('id')->all() : []" />
-            @error('tag_ids.*')<p class="mt-1 text-sm text-error-600">{{ $message }}</p>@enderror
-        </div>
         <div class="md:col-span-2 flex flex-wrap items-center gap-x-8 gap-y-4">
             @can('news.publish')
                 <x-form.toggle name="status" label="Published" on-value="published" off-value="draft" :checked="old('status', $item->status?->value ?? 'draft') === 'published'" />

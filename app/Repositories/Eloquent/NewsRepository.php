@@ -15,10 +15,9 @@ class NewsRepository implements NewsRepositoryInterface
 {
     public function paginateAdmin(array $filters): LengthAwarePaginator
     {
-        return News::query()->with(['category', 'author', 'thumbnailMedia'])
+        return News::query()->with(['thumbnailMedia'])
             ->when($filters['search'] ?? null, fn ($query, string $search) => $query->where('title', 'like', "%{$search}%"))
             ->when($filters['status'] ?? null, fn ($query, string $status) => $query->where('status', $status))
-            ->when($filters['category_id'] ?? null, fn ($query, int $id) => $query->where('category_id', $id))
             ->latest('created_at')->paginate(15)->withQueryString();
     }
 

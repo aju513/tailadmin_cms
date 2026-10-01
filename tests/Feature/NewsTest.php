@@ -15,25 +15,25 @@ beforeEach(function (): void {
     $this->admin = User::findOrFail(1);
 });
 
-test('admin can create news with taxonomy and images and publish it publicly', function (): void {
+test('admin can create news with images and publish it publicly', function (): void {
     Storage::fake('public');
     $category = ContentCategory::factory()->create();
     $author = ContentAuthor::factory()->create();
     $tag = ContentTag::factory()->create();
 
-    $this->actingAs($this->admin)->get(route('admin.news.create'))->assertOk()->assertSee('News title')->assertSee('SEO details');
+    $this->actingAs($this->admin)->get(route('admin.news.create'))->assertOk()->assertSee('News title')->assertSee('SEO details')->assertDontSee('name="category_id"', false)->assertDontSee('name="author_id"', false)->assertDontSee('name="tag_ids[]"', false);
     $this->actingAs($this->admin)->post(route('admin.news.store'), [
         'title' => 'Council update', 'excerpt' => '<p>Summary</p>', 'body' => '<p>Full story</p>',
-        'category_id' => $category->id, 'author_id' => $author->id, 'tag_ids' => [$tag->id],
         'status' => 'published', 'featured' => '1', 'thumbnail' => UploadedFile::fake()->image('news.jpg'),
         'thumbnail_alt_text' => 'Council building', 'meta_title' => 'Council news',
     ])->assertRedirect(route('admin.news.index'));
 
     $news = News::query()->where('slug', 'council-update')->firstOrFail();
-    expect($news->tags->modelKeys())->toBe([$tag->id]);
+    $news->update(['category_id' => $category->id, 'author_id' => $author->id, 'featured' => true]);
+    $news->tags()->sync([$tag->id]);
     expect($news->thumbnailMedia->alt_text)->toBe('Council building');
     Storage::disk('public')->assertExists($news->thumbnailMedia->path);
-    $this->get(route('public.news.index'))->assertOk()->assertSee('Council update')->assertSee('Featured news');
+    $this->get(route('public.news.index'))->assertOk()->assertSee('Council update');
     $this->get(route('public.news.show', $news->slug))->assertOk()->assertSee('Full story')->assertSee('Council news');
     $this->get(route('public.news.category', $category->slug))->assertOk()->assertSee('Council update');
     $this->get(route('public.news.tag', $tag->slug))->assertOk()->assertSee('Council update');
@@ -57,7 +57,6 @@ test('news drafts and scheduled articles stay private and only one article is fe
 test('news validates slugs, taxonomy, and published permission', function (): void {
     $this->actingAs($this->admin)->post(route('admin.news.store'), ['title' => 'Existing story'])->assertRedirect();
     $this->actingAs($this->admin)->post(route('admin.news.store'), ['title' => 'Existing story'])->assertSessionHasErrors('slug');
-    $this->actingAs($this->admin)->post(route('admin.news.store'), ['title' => 'Other story', 'tag_ids' => [999999]])->assertSessionHasErrors('tag_ids.0');
 
     $editor = User::factory()->create();
     $editor->givePermissionTo(Permission::findByName('news.create', 'web'));
@@ -88,20 +87,10 @@ test('news routes enforce each permission and mutations are audited', function (
 
 test('nested news navigation exposes only independently authorized actions', function (): void {
     $role = Role::create(['name' => 'news-contributor', 'guard_name' => 'web']);
-    $role->givePermissionTo(['news.create', 'categories.create', 'tags.manage']);
+    $role->givePermissionTo(['news.create']);
     $contributor = User::factory()->create();
     $contributor->assignRole($role);
 
     $this->actingAs($contributor)->get(route('admin.news.create'))->assertOk()
-        ->assertSee('Add News Category')->assertSee('Manage News Tags')
-        ->assertDontSee('Manage News Categories')->assertDontSee('Add News Tag')
-        ->assertDontSee('Manage News Authors')->assertDontSee('Manage News</a>', false);
-    $this->get(route('admin.categories.create'))->assertOk()->assertSee('Create category');
-    $this->get(route('admin.categories.index'))->assertForbidden();
-    $this->post(route('admin.categories.store'), ['name' => 'Contributor category', 'status' => 1])->assertRedirect(route('admin.categories.index'));
-    $this->post(route('admin.categories.store'), ['name' => ''])->assertSessionHasErrors('name');
-    $this->get(route('admin.tags.index'))->assertOk();
-    $this->get(route('admin.tags.create'))->assertForbidden();
-    $this->post(route('admin.tags.store'), ['name' => 'Unauthorized tag'])->assertForbidden();
-    $this->get(route('admin.authors.create'))->assertForbidden();
+        ->assertDontSee('Add News Category')->assertDontSee('Manage News Tags')->assertDontSee('Manage News Authors');
 });

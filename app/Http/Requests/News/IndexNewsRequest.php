@@ -15,6 +15,6 @@ class IndexNewsRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['search' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::enum(ContentStatus::class)], 'category_id' => ['nullable', 'integer', 'exists:content_categories,id']];
+        return ['search' => ['nullable', 'string', 'max:100'], 'status' => ['nullable', Rule::enum(ContentStatus::class)]];
     }
 }

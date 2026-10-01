@@ -14,7 +14,7 @@
             </form>
         @endcan
         @can('pages.create')
-            <a href="{{ route('admin.pages.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600"><x-common.menu-icon name="create" class="h-4 w-4" />Create page</a>
+            <a href="{{ route('admin.pages.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600"><x-common.menu-icon name="create" class="h-4 w-4" />Add Page</a>
         @endcan
         @can('pages.delete')
             <form method="POST" action="{{ route('admin.pages.bulk-destroy') }}" onsubmit="return confirm('Permanently delete the selected pages?')" class="flex items-center">

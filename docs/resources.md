@@ -6,9 +6,8 @@ Resources are structured downloadable documents, managed separately from Pages. 
 
 1. Create a resource category, for example Legal Documents or Training Materials.
 2. Add a resource with title, category, optional stable slug, plain-text description, PDF/Word/Excel attachment (up to 10 MB), display order, status, and publication timestamp.
-3. Create or edit a Page. Select Page Type: Resource.
-4. The Resource Category dropdown appears. Select a category, or All categories.
-5. Publish the page and the documents. Assign the page to the existing public menu.
+3. Create or edit a Page with Page Type: Resource.
+4. Publish the page and the documents. Assign the page to the existing public menu.
 
 The page retains its own title, introduction/body, banner, URL, SEO, and navigation placement. Its matching resources appear below that content automatically. One document can appear on multiple pages that select its category or All categories, without duplicated uploads.
 
@@ -16,7 +15,7 @@ The page retains its own title, introduction/body, banner, URL, SEO, and navigat
 
 resource_categories stores name, unique slug, full-width CKEditor description, Published status, internal order, and audit actors. Category forms have no display-order field. Reorder categories in the index by dragging rows or using arrow buttons. resource_documents stores title, unique slug, category, description, MediaAsset attachment, order, draft/published state, publication timestamp, and audit actors. Slugs remain stable on edit unless explicitly changed.
 
-pages.resource_category_id is nullable. Null means All categories only for Resource pages. Changing a page to another type clears its resource category on the server. Existing Resource pages default to All categories after migration.
+Existing `pages.resource_category_id` values are retained for compatibility with previously configured public pages, but new Page forms no longer expose category selection. Saving a page clears the legacy resource category assignment.
 
 Public listings are ordered by display order, then latest publication date and ID; they contain 12 documents per page and preserve the page's language query. Only published resources in active categories whose publication timestamp has arrived and whose media record exists are listed. Detail and download endpoints apply the same publication checks and return 404 for drafts/future publication. Missing files return 404 on download.
 

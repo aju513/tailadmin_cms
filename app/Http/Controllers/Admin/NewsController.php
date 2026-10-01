@@ -21,7 +21,7 @@ class NewsController extends Controller
 
     public function index(IndexNewsRequest $request): View
     {
-        return view('pages.admin.news.index', ['items' => $this->news->paginateAdmin($request->validated()), 'categories' => $this->news->activeCategories(), 'title' => 'News']);
+        return view('pages.admin.news.index', ['items' => $this->news->paginateAdmin($request->validated()), 'title' => 'News']);
     }
 
     public function create(): View
@@ -38,7 +38,7 @@ class NewsController extends Controller
 
     public function show(ShowNewsRequest $request, News $news): View
     {
-        return view('pages.admin.news.show', ['item' => $news->load(['category', 'author', 'tags', 'thumbnailMedia', 'bannerMedia', 'socialMedia']), 'title' => 'News Details']);
+        return view('pages.admin.news.show', ['item' => $news->load(['thumbnailMedia', 'bannerMedia', 'socialMedia']), 'title' => 'News Details']);
     }
 
     public function edit(News $news): View
@@ -62,6 +62,6 @@ class NewsController extends Controller
 
     private function formView(string $view, News $news, string $title): View
     {
-        return view($view, ['item' => $news, 'categories' => $this->news->activeCategories(), 'authors' => $this->news->activeAuthors(), 'tags' => $this->news->activeTags(), 'title' => $title]);
+        return view($view, ['item' => $news, 'title' => $title]);
     }
 }

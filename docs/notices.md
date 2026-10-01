@@ -14,7 +14,7 @@ Each notice can have an optional deadline timestamp, useful for tenders and appl
 
 ## Page connection
 
-On Add/Edit Page, select Page Type: Notices. The Notice Category dropdown appears, allowing a single category or All categories. Published notices in that category are listed below the page's existing introduction/body. A null selection means All categories. Changing to another page type clears notice_category_id on the server.
+On Add/Edit Page, select Page Type: Notices. Category selection is no longer part of the Page form; existing category assignments remain supported by the public compatibility layer, while saving a page clears the legacy notice category assignment.
 
 Examples: Tender Notices page selects the Tender Notices category; Press Releases selects Press Releases; Notice Board selects All categories. The existing Page/menu workflow controls page URLs and navigation placement.
 

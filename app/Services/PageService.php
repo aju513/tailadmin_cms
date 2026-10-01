@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class PageService
 {
-    public function __construct(private readonly PageRepositoryInterface $pages, private readonly MediaAssetService $media, private readonly ResourceCategoryService $resourceCategories, private readonly NoticeCategoryService $noticeCategories) {}
+    public function __construct(private readonly PageRepositoryInterface $pages, private readonly MediaAssetService $media) {}
 
     public function create(array $data, Authenticatable $actor): Page
     {
@@ -140,7 +140,7 @@ class PageService
                 $data[$field]['ne'] = $translations['ne'][$field];
             }
         }
-        $data['slug'] = Str::slug($data['title']['en']);
+        $data['slug'] = Str::slug($data['slug'] ?? '') ?: Str::slug($data['title']['en']);
         $data['parent_id'] = $data['parent_id'] ?? null;
         $data['parent_id'] = $data['parent_id'] ?: null;
         if ($page && (int) $data['parent_id'] === $page->id) {
@@ -155,16 +155,9 @@ class PageService
         $data['created_by'] ??= $actor->getAuthIdentifier();
         $data['status'] = $data['status'] ?? ContentStatus::Draft;
         $data['page_type'] = $data['page_type'] ?? PageType::Article;
-        $pageType = $data['page_type'] instanceof PageType ? $data['page_type'] : PageType::from($data['page_type']);
-        $data['notice_category_id'] = $pageType === PageType::Notices ? ($data['notice_category_id'] ?? null) : null;
+        $data['notice_category_id'] = null;
         $data['notice_type'] = null;
-        if ($data['notice_category_id']) {
-            $this->noticeCategories->lockSelection((int) $data['notice_category_id']);
-        }
-        $data['resource_category_id'] = $pageType === PageType::Resource ? ($data['resource_category_id'] ?? null) : null;
-        if ($data['resource_category_id']) {
-            $this->resourceCategories->lockSelection((int) $data['resource_category_id']);
-        }
+        $data['resource_category_id'] = null;
         if (($data['status'] instanceof ContentStatus ? $data['status'] : ContentStatus::from($data['status'])) === ContentStatus::Published) {
             $this->assertCanPublish($actor);
         }
