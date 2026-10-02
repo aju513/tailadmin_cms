@@ -1,0 +1,1 @@
+<div x-show="statusMessage" x-cloak role="status" aria-live="polite" class="mb-4 rounded-lg px-4 py-3 text-sm" :class="statusError ? 'bg-error-50 text-error-700 dark:bg-error-500/10 dark:text-error-400' : 'bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400'" x-text="statusMessage"></div>

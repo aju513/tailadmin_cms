@@ -41,4 +41,8 @@ interface NewsRepositoryInterface
     public function clearFeatured(?News $except = null): void;
 
     public function delete(News $news): void;
+
+    public function findByIds(array $ids): Collection;
+
+    public function reorder(array $ids): void;
 }

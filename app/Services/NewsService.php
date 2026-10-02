@@ -60,6 +60,82 @@ class NewsService
         });
     }
 
+    public function publish(News $item, Authenticatable $actor): News
+    {
+        $this->assertCanPublish($actor);
+        $item = $this->news->update($item, ['status' => ContentStatus::Published, 'published_at' => now(), 'published_by' => $actor->getAuthIdentifier()]);
+        activity('content')->causedBy($actor)->performedOn($item)->event('news.published')->log('News published');
+
+        return $item;
+    }
+
+    public function unpublish(News $item, Authenticatable $actor): News
+    {
+        $this->assertCanPublish($actor);
+        $item = $this->news->update($item, ['status' => ContentStatus::Draft, 'published_at' => null, 'published_by' => null]);
+        activity('content')->causedBy($actor)->performedOn($item)->event('news.unpublished')->log('News unpublished');
+
+        return $item;
+    }
+
+    public function bulkChangeStatus(array $ids, ContentStatus $status, Authenticatable $actor): void
+    {
+        if (! $actor->can('news.publish')) {
+            throw ValidationException::withMessages(['status' => 'You do not have permission to publish news.']);
+        }
+
+        DB::transaction(function () use ($ids, $status, $actor): void {
+            $items = $this->news->findByIds($ids);
+            if ($items->count() !== count($ids)) {
+                throw ValidationException::withMessages(['news' => 'One or more selected news articles could not be found.']);
+            }
+
+            foreach ($items as $item) {
+                $published = $status === ContentStatus::Published;
+                $this->news->update($item, [
+                    'status' => $status,
+                    'published_at' => $published ? ($item->published_at ?? now()) : null,
+                    'published_by' => $published ? ($item->published_by ?? $actor->getAuthIdentifier()) : null,
+                    'featured' => $published ? $item->featured : false,
+                    'updated_by' => $actor->getAuthIdentifier(),
+                ]);
+            }
+        });
+    }
+
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        DB::transaction(function () use ($ids, $actor): void {
+            $items = $this->news->findByIds($ids);
+            if ($items->count() !== count($ids)) {
+                throw ValidationException::withMessages(['news' => 'One or more selected news articles could not be found.']);
+            }
+
+            foreach ($items as $item) {
+                $this->delete($item, $actor);
+            }
+        });
+    }
+
+    public function reorder(array $ids, Authenticatable $actor): void
+    {
+        DB::transaction(function () use ($ids): void {
+            $items = $this->news->findByIds($ids);
+            if ($items->count() !== count($ids)) {
+                throw ValidationException::withMessages(['news' => 'One or more news articles could not be found.']);
+            }
+
+            $this->news->reorder($ids);
+        });
+    }
+
+    private function assertCanPublish(Authenticatable $actor): void
+    {
+        if (! $actor->can('news.publish')) {
+            throw ValidationException::withMessages(['status' => 'You do not have permission to publish news.']);
+        }
+    }
+
     private function attachMedia(array $data, Authenticatable $actor): array
     {
         foreach (['thumbnail' => 'thumbnail_media_id', 'banner_image' => 'banner_media_id', 'social_media_image' => 'social_media_id'] as $input => $column) {

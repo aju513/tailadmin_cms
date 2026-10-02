@@ -93,4 +93,31 @@ class NoticeCategoryService
             $this->categories->delete($category);
         });
     }
+
+    public function bulkChangeStatus(array $ids, bool $active, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('notice-categories.edit');
+        DB::transaction(function () use ($ids, $active, $actor): void {
+            $records = $this->categories->findByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw ValidationException::withMessages(['categories' => 'One or more selected categories could not be found.']);
+            }
+            foreach ($records as $record) {
+                $this->categories->update($record, ['is_active' => $active, 'updated_by' => $actor->getAuthIdentifier()]);
+            }
+        });
+    }
+
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        DB::transaction(function () use ($ids, $actor): void {
+            $records = $this->categories->findByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw ValidationException::withMessages(['categories' => 'One or more selected categories could not be found.']);
+            }
+            foreach ($records as $record) {
+                $this->delete($record, $actor);
+            }
+        });
+    }
 }

@@ -16,6 +16,18 @@
             <x-form.multiselect name="ui-kit-tags[]" label="Multiselect" :options="['one' => 'First option', 'two' => 'Second option', 'three' => 'Third option']" />
             <x-form.toggle name="ui-kit-active" label="Toggle" :checked="true" />
             <x-form.checkbox name="ui-kit-feature" value="reports" label="Checkbox" description="Enable reports for this record." />
+            <div class="flex items-center gap-3">
+                <span x-data="pageManager({ 'example': 'published' })"><x-common.table-select-all aria-label="Example select all rows" /></span>
+                <x-common.table-checkbox aria-label="Example table selection" />
+                <x-common.table-checkbox checked aria-label="Example selected row" />
+                <x-common.table-checkbox x-data x-init="$el.indeterminate = true" aria-label="Example partial selection" />
+                <span class="text-sm text-gray-500">Table selection: unchecked, checked, and partial</span>
+            </div>
+            <div x-data="{ ...pageManager({ '0': 'published' }), statusBusy: true, statusMessage: 'Example status feedback' }">
+                <x-common.table-status-feedback />
+                <x-common.table-status id="0" status="published" label="Example page" permission="pages.publish" :url="route('admin.pages.bulk-status')" selection-key="pages" />
+                <span class="text-sm text-gray-500">Publication status (disabled demonstration)</span>
+            </div>
             <x-form.file-upload name="ui-kit-files[]" label="File upload / dropzone" accept="image/png,image/jpeg" :multiple="true" :max-files="3" :max-size="5242880" />
             <x-form.editor name="ui-kit-body" label="Editor" />
         </div>

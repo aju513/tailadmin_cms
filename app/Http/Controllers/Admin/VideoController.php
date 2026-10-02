@@ -11,6 +11,7 @@ use App\Http\Requests\Video\StoreVideoRequest;
 use App\Http\Requests\Video\UpdateVideoRequest;
 use App\Models\Video;
 use App\Services\VideoService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -53,5 +54,26 @@ class VideoController extends Controller
         $this->service->delete($video, $request->user());
 
         return back()->with('success', 'Video deleted. Uploaded files remain in the Media Library.');
+    }
+
+    public function bulkStatus(\App\Http\Requests\Video\BulkVideoStatusRequest $request): RedirectResponse|JsonResponse
+    {
+        $this->service->bulkStatus($request->validated('records'), \App\Enums\ContentStatus::from($request->validated('status')), $request->user());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Selected statuses updated.',
+                'records' => array_map(fn ($id) => ['id' => (int) $id, 'status' => (string) $request->validated('status')], $request->validated('records')),
+            ]);
+        }
+
+        return back()->with('success', 'Selected publication statuses updated.');
+    }
+
+    public function bulkDestroy(\App\Http\Requests\Video\BulkVideoDeleteRequest $request): RedirectResponse
+    {
+        $this->service->bulkDelete($request->validated('records'), $request->user());
+
+        return back()->with('success', 'Selected records deleted.');
     }
 }

@@ -26,4 +26,6 @@ interface HallRepositoryInterface
     public function removeGalleryImages(Hall $hall, array $ids): void;
 
     public function addGalleryImage(Hall $hall, int $mediaId): void;
+
+    public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection;
 }

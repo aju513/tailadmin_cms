@@ -38,3 +38,6 @@ Run these commands after pulling the change:
 Run php artisan storage:link if the public storage link does not already exist. Grant the new permissions to appropriate existing roles. No new Composer or npm dependencies are required.
 
 At the user's request, tests, builds, migrations, permission sync, menu regeneration, and Git actions were not run for this change. PHP syntax is checked separately. CRUD, publication permissions, validation, photo ownership/order/limits, upload rollback, and UI behavior require a later verification pass.
+## Manager layout and bulk actions
+
+Gallery and Videos use the Resources manager layout: title/breadcrumb left and Publish, Unpublish, Add Gallery/Add Video, and Bulk delete in the right-hand actions slot. The five columns contain reorder icon, status icon, selection, title/media details, and created date/actions. Selection enables real bulk forms; status icons submit a single record through the bulk-status route. Status updates use the publish permission; deletion uses the delete permission and retains existing published-record safeguards. Bulk writes are transactional and audited. The existing reorder icons remain display-only.

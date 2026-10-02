@@ -1,31 +1,66 @@
 @extends('layouts.app')
 
 @section('content')
-<x-common.page-breadcrumb pageTitle="Homepage Slides">
-    <x-slot:actions>
-        @can('homepage-slides.create')<a href="{{ route('admin.homepage-slides.create') }}" class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/30">Create slide</a>@endcan
-    </x-slot:actions>
-</x-common.page-breadcrumb>
-<x-common.component-card title="Homepage slides" desc="Manage the public homepage hero content.">
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-            <thead><tr class="text-left text-xs uppercase text-gray-500"><th class="px-4 py-3">Slide</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Actions</th></tr></thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                @forelse($slides as $slide)
-                    <tr @can('homepage-slides.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.homepage-slides.edit', $slide) }}'" title="Open {{ $slide->title }} for editing" @endcan class="group transition @can('homepage-slides.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan">
-                        <td class="px-4 py-4 font-medium text-gray-800 dark:text-white">{{ $slide->title }}</td>
-                        <td class="px-4 py-4 text-sm">{{ ucfirst($slide->status->value) }}</td>
-                        <td class="px-4 py-4"><div class="flex justify-end gap-2">
-                            <a class="inline-flex rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-brand-600 transition hover:border-brand-500 hover:bg-brand-50 hover:text-brand-700 dark:border-gray-700 dark:text-brand-400 dark:hover:bg-brand-500/10" href="{{ route('admin.homepage-slides.edit', $slide) }}">Edit</a>
-                            <form method="POST" action="{{ route('admin.homepage-slides.destroy', $slide) }}" onsubmit="return confirm('Delete this slide?')">@csrf @method('DELETE')<button class="inline-flex rounded-lg bg-error-50 px-3 py-2 text-xs font-medium text-error-600 transition hover:bg-error-100 hover:text-error-700 dark:bg-error-500/10 dark:hover:bg-error-500/20" type="submit">Delete</button></form>
-                        </div></td>
-                    </tr>
-                @empty
-                    <tr><td colspan="3" class="px-4 py-10 text-center text-sm text-gray-500">No slides found.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    {{ $slides->links() }}
-</x-common.component-card>
+<div x-data="pageManager(@js($slides->mapWithKeys(fn ($record) => [(string) $record->id => $record->status->value])->all()), 'records')">
+    <x-common.page-breadcrumb pageTitle="Homepage Slides">
+        <x-slot:actions>
+            @can('homepage-slides.edit')
+                <form method="POST" action="{{ route('admin.homepage-slides.bulk-status') }}" @submit.prevent="changeStatus($el.action, 'PATCH', [...selected], $event.submitter?.value)" class="flex items-center gap-2">
+                    @csrf @method('PATCH')
+                    <template x-for="recordId in selected" :key="`status-${recordId}`"><input type="hidden" name="records[]" :value="recordId"></template>
+                    <button name="status" value="published" type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg border border-success-500/40 px-3 py-2.5 text-sm font-medium text-success-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="activate" class="h-4 w-4" />Publish</button>
+                    <button name="status" value="draft" type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg border border-warning-500/40 px-3 py-2.5 text-sm font-medium text-warning-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="deactivate" class="h-4 w-4" />Unpublish</button>
+                </form>
+            @endcan
+            @can('homepage-slides.create')
+                <a href="{{ route('admin.homepage-slides.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600"><x-common.menu-icon name="create" class="h-4 w-4" />Add Slide</a>
+            @endcan
+            @can('homepage-slides.delete')
+                <form method="POST" action="{{ route('admin.homepage-slides.bulk-destroy') }}" onsubmit="return confirm('Permanently delete the selected homepage-slides?')" class="flex items-center">
+                    @csrf @method('DELETE')
+                    <template x-for="recordId in selected" :key="`delete-${recordId}`"><input type="hidden" name="records[]" :value="recordId"></template>
+                    <button type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg bg-error-50 px-3 py-2.5 text-sm font-medium text-error-600 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Bulk delete</button>
+                </form>
+            @endcan
+        </x-slot:actions>
+    </x-common.page-breadcrumb>
+    <x-common.table-status-feedback />
+
+    <x-common.component-card title="Homepage slide manager" desc="Use the selection controls for bulk actions.">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+                <thead><tr class="text-left text-xs uppercase text-gray-500">
+                    <th scope="col" aria-label="Reorder" class="w-10 px-2 py-3"></th>
+                    <th scope="col" class="w-16 px-2 py-3 text-center">Status</th>
+                    <th scope="col" class="w-12 px-2 py-3 text-center">
+                        <x-common.table-select-all aria-label="Select all slides on this page" />
+                    </th>
+                    <th scope="col" class="px-3 py-3">Title</th>
+                    <th scope="col" class="px-3 py-3 text-right">Created date / Actions</th>
+                </tr></thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    @forelse($slides as $record)
+                        <tr @can('homepage-slides.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.homepage-slides.edit', $record) }}'" @endcan class="@can('homepage-slides.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan bg-white transition dark:bg-transparent">
+                            <td class="w-10 px-2 py-4 text-center text-gray-400"><i class="bi bi-arrows-move" aria-hidden="true"></i></td>
+                            <td class="w-16 px-2 py-4 text-center" @mousedown.stop><x-common.table-status :id="$record->id" :status="$record->status->value" :label="$record->title" permission="homepage-slides.edit" :url="route('admin.homepage-slides.bulk-status')" selection-key="records" active-value="published" inactive-value="draft" /></td>
+                            <td class="w-12 px-2 py-4 text-center"><x-common.table-checkbox value="{{ $record->id }}" x-model="selected" aria-label="Select {{ $record->title }}" /></td>
+                            <td class="px-3 py-4"><div class="flex items-center gap-3">
+                                @if($record->media)<img src="{{ $record->media->url() }}" alt="" class="h-12 w-16 rounded-lg object-cover">@endif
+                                <div><div class="font-medium text-gray-800 dark:text-white">{{ $record->title }}</div><div class="mt-1 text-xs text-gray-500">{{ $record->subtitle }}</div></div>
+                            </div></td>
+                            <td class="px-3 py-4"><div class="flex items-center justify-end gap-3">
+                                <time datetime="{{ $record->created_at?->toDateString() }}" class="whitespace-nowrap text-sm text-gray-500">{{ $record->created_at?->format('M d, Y') }}</time>
+                                @can('homepage-slides.edit')<a href="{{ route('admin.homepage-slides.edit', $record) }}" class="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-brand-600 transition hover:border-brand-500 hover:bg-brand-50 hover:text-brand-700 dark:border-gray-700 dark:text-white dark:hover:bg-brand-500/10"><x-common.menu-icon name="edit" class="h-4 w-4" />Edit</a>@endcan
+                                @can('homepage-slides.delete')<form method="POST" action="{{ route('admin.homepage-slides.destroy', $record) }}" onsubmit="return confirm('Delete this slide?')">@csrf @method('DELETE')<button class="inline-flex items-center gap-1 rounded-lg bg-error-50 px-3 py-2 text-xs font-medium text-error-600 transition hover:bg-error-100 hover:text-error-700 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Delete</button></form>@endcan
+                            </div></td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-500">No homepage-slides found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-5">{{ $slides->links() }}</div>
+    </x-common.component-card>
+</div>
 @endsection

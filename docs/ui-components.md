@@ -14,8 +14,11 @@
 - `<x-ui.badge>` supports status colors and light/solid variants.
 - `<x-ui.alert>` supports success, warning, error, and information feedback.
 - `<x-common.menu-icon>` renders the named SVG icon used by the generated sidebar menu.
+- `<x-common.table-checkbox>` provides a 22px square selection control with a white animated checkmark, partial-selection indicator, keyboard focus ring, dark mode, and reduced-motion support. Pass an accessible `aria-label` and native/Alpine input attributes. Homepage Slides demonstrates page-scoped select-all behavior.
 
 ## Form components
+
+Admin index tables use `pageManager(statuses, selectionKey)` for shared selection and CSRF-protected AJAX status state. `<x-common.table-select-all>` selects displayed rows and indicates partial selection; `<x-common.table-status>` renders authorized AJAX toggles or read-only indicators with matching 32px targets and filled icons; `<x-common.table-status-feedback>` announces success/errors. Boolean managers pass string values `1`/`0`, while publication and user managers retain their enum values. Keep status maps and selection scope on the same outer Alpine component as bulk actions.
 
 CRUD forms must compose the reusable `x-form.*` components below instead of duplicating input markup:
 

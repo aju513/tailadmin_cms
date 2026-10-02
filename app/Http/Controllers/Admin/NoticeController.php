@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Notice\CreateNoticeRequest;
-use App\Http\Requests\Notice\EditNoticeRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Notice\BulkDeleteNoticeRequest;
+use App\Http\Requests\Notice\BulkNoticeStatusRequest;
+use App\Http\Requests\Notice\CreateNoticeRequest;
 use App\Http\Requests\Notice\DeleteNoticeRequest;
+use App\Http\Requests\Notice\EditNoticeRequest;
 use App\Http\Requests\Notice\IndexNoticeRequest;
+use App\Http\Requests\Notice\OrderNoticeRequest;
+use App\Http\Requests\Notice\PublishNoticeRequest;
 use App\Http\Requests\Notice\StoreNoticeRequest;
 use App\Http\Requests\Notice\UpdateNoticeRequest;
 use App\Models\Notice;
 use App\Services\NoticeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -52,5 +57,47 @@ class NoticeController extends Controller
         $this->service->delete($notice, $request->user());
 
         return back()->with('success', 'Notice deleted.');
+    }
+
+    public function publish(PublishNoticeRequest $request, Notice $notice): RedirectResponse
+    {
+        $this->service->publish($notice, $request->user());
+
+        return back()->with('success', 'Notice published.');
+    }
+
+    public function unpublish(PublishNoticeRequest $request, Notice $notice): RedirectResponse
+    {
+        $this->service->unpublish($notice, $request->user());
+
+        return back()->with('success', 'Notice unpublished.');
+    }
+
+    public function bulkStatus(BulkNoticeStatusRequest $request): RedirectResponse|JsonResponse
+    {
+        $this->service->bulkChangeStatus($request->validated('notices'), \App\Enums\ContentStatus::from($request->validated('status')), $request->user());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Selected statuses updated.',
+                'records' => array_map(fn ($id) => ['id' => (int) $id, 'status' => (string) $request->validated('status')], $request->validated('notices')),
+            ]);
+        }
+
+        return back()->with('success', 'Selected notice statuses updated.');
+    }
+
+    public function bulkDestroy(BulkDeleteNoticeRequest $request): RedirectResponse
+    {
+        $this->service->bulkDelete($request->validated('notices'), $request->user());
+
+        return back()->with('success', 'Selected notices deleted.');
+    }
+
+    public function order(OrderNoticeRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $this->service->reorder($request->validated('notices'));
+
+        return response()->json(['message' => 'Notice order updated.']);
     }
 }

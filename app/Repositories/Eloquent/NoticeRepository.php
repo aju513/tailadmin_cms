@@ -7,6 +7,7 @@ use App\Models\Notice;
 use App\Repositories\Contracts\NoticeRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class NoticeRepository implements NoticeRepositoryInterface
 {
@@ -72,5 +73,17 @@ class NoticeRepository implements NoticeRepositoryInterface
     public function nextSortOrder(): int
     {
         return ((int) Notice::query()->max('sort_order')) + 1;
+    }
+
+    public function findByIds(array $ids): Collection
+    {
+        return Notice::query()->whereIn('id', $ids)->get();
+    }
+
+    public function reorder(array $ids): void
+    {
+        foreach (array_values($ids) as $position => $id) {
+            Notice::query()->whereKey($id)->update(['sort_order' => $position]);
+        }
     }
 }

@@ -35,4 +35,6 @@ class TeamCategoryService
             activity('content')->causedBy($actor)->performedOn($category)->event('team-category.deleted')->log('Team category deleted');
         });
     }
+    public function bulkStatus(array $ids, bool $active): void { DB::transaction(function () use ($ids, $active): void { foreach ($this->categories->findByIds($ids) as $category) $this->categories->update($category, ['status' => $active]); }); }
+    public function bulkDelete(array $ids, Authenticatable $actor): void { DB::transaction(function () use ($ids, $actor): void { foreach ($this->categories->findByIds($ids) as $category) $this->delete($category, $actor); }); }
 }

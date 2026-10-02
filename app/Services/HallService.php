@@ -126,6 +126,43 @@ class HallService
         });
     }
 
+    public function bulkStatus(array $ids, ContentStatus $status, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('halls.publish');
+        DB::transaction(function () use ($ids, $status, $actor): void {
+            $records = $this->halls->lockByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw ValidationException::withMessages(['halls' => 'One or more selected halls could not be found.']);
+            }
+            foreach ($records as $hall) {
+                $published = $status === ContentStatus::Published;
+                $this->halls->update($hall, [
+                    'status' => $status,
+                    'published_at' => $published ? now() : null,
+                    'published_by' => $published ? $actor->getAuthIdentifier() : null,
+                    'updated_by' => $actor->getAuthIdentifier(),
+                ]);
+                activity('content')->causedBy($actor)->performedOn($hall)
+                    ->event($published ? 'hall.published' : 'hall.unpublished')
+                    ->withProperties(['hall_id' => $hall->id])->log($published ? 'Hall published' : 'Hall unpublished');
+            }
+        });
+    }
+
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('halls.delete');
+        DB::transaction(function () use ($ids, $actor): void {
+            $records = $this->halls->lockByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw ValidationException::withMessages(['halls' => 'One or more selected halls could not be found.']);
+            }
+            foreach ($records as $hall) {
+                $this->delete($hall, $actor);
+            }
+        });
+    }
+
     private function removeFailedUpload(MediaAsset $asset): void
     {
         Storage::disk($asset->disk)->delete($asset->path);

@@ -98,4 +98,38 @@ class GalleryAlbumService
             $this->records->delete($record);
         });
     }
+
+    public function bulkStatus(array $ids, \App\Enums\ContentStatus $status, Authenticatable $actor): void
+    {
+        \Illuminate\Support\Facades\Gate::forUser($actor)->authorize('gallery.publish');
+        DB::transaction(function () use ($ids, $status, $actor): void {
+            $records = $this->records->lockByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['records' => 'One or more selected records could not be found.']);
+            }
+            foreach ($records as $record) {
+                $data = ['status' => $status, 'updated_by' => $actor->getAuthIdentifier()];
+                $published = $status === \App\Enums\ContentStatus::Published;
+                $data['published_at'] = $published ? now() : null;
+                $data['published_by'] = $published ? $actor->getAuthIdentifier() : null;
+                $this->records->update($record, $data);
+                activity('content')->causedBy($actor)->performedOn($record)
+                    ->event('gallery.status-updated')->withProperties(['status' => $status->value])->log('Publication status updated');
+            }
+        });
+    }
+
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        \Illuminate\Support\Facades\Gate::forUser($actor)->authorize('gallery.delete');
+        DB::transaction(function () use ($ids, $actor): void {
+            $records = $this->records->lockByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['records' => 'One or more selected records could not be found.']);
+            }
+            foreach ($records as $record) {
+                $this->delete($record, $actor);
+            }
+        });
+    }
 }

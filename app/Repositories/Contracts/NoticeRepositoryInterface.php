@@ -4,6 +4,7 @@ namespace App\Repositories\Contracts;
 
 use App\Models\Notice;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface NoticeRepositoryInterface
 {
@@ -26,4 +27,8 @@ interface NoticeRepositoryInterface
     public function slugExists(string $slug, ?Notice $except = null): bool;
 
     public function nextSortOrder(): int;
+
+    public function findByIds(array $ids): Collection;
+
+    public function reorder(array $ids): void;
 }

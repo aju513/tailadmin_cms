@@ -17,6 +17,7 @@ use App\Http\Requests\Page\UpdatePageRequest;
 use App\Models\Page;
 use App\Repositories\Contracts\PageRepositoryInterface;
 use App\Services\PageService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -58,16 +59,24 @@ class PageController extends Controller
         return redirect()->route('admin.pages.index')->with('success', 'Page updated.');
     }
 
-    public function publish(PublishPageRequest $request, Page $page): RedirectResponse
+    public function publish(PublishPageRequest $request, Page $page): RedirectResponse|JsonResponse
     {
-        $this->service->publish($page, $request->user());
+        $page = $this->service->publish($page, $request->user());
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Page published.', 'pages' => [['id' => $page->id, 'status' => $page->status->value]]]);
+        }
 
         return back()->with('success', 'Page published.');
     }
 
-    public function unpublish(PublishPageRequest $request, Page $page): RedirectResponse
+    public function unpublish(PublishPageRequest $request, Page $page): RedirectResponse|JsonResponse
     {
-        $this->service->unpublish($page, $request->user());
+        $page = $this->service->unpublish($page, $request->user());
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Page unpublished.', 'pages' => [['id' => $page->id, 'status' => $page->status->value]]]);
+        }
 
         return back()->with('success', 'Page unpublished.');
     }
@@ -79,9 +88,16 @@ class PageController extends Controller
         return redirect()->route('admin.pages.index')->with('success', 'Page deleted.');
     }
 
-    public function bulkStatus(BulkPageStatusRequest $request): RedirectResponse
+    public function bulkStatus(BulkPageStatusRequest $request): RedirectResponse|JsonResponse
     {
         $this->service->bulkChangeStatus($request->validated('pages'), ContentStatus::from($request->validated('status')), $request->user());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Selected page statuses updated.',
+                'pages' => array_map(fn ($id) => ['id' => (int) $id, 'status' => $request->validated('status')], $request->validated('pages')),
+            ]);
+        }
 
         return back()->with('success', 'Selected page statuses updated.');
     }

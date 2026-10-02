@@ -18,7 +18,7 @@ class NewsRepository implements NewsRepositoryInterface
         return News::query()->with(['thumbnailMedia'])
             ->when($filters['search'] ?? null, fn ($query, string $search) => $query->where('title', 'like', "%{$search}%"))
             ->when($filters['status'] ?? null, fn ($query, string $status) => $query->where('status', $status))
-            ->latest('created_at')->paginate(15)->withQueryString();
+            ->orderBy('sort_order')->latest('created_at')->paginate(15)->withQueryString();
     }
 
     public function paginatePublished(array $filters): LengthAwarePaginator
@@ -106,6 +106,18 @@ class NewsRepository implements NewsRepositoryInterface
     public function delete(News $news): void
     {
         $news->delete();
+    }
+
+    public function findByIds(array $ids): Collection
+    {
+        return News::query()->whereIn('id', $ids)->get();
+    }
+
+    public function reorder(array $ids): void
+    {
+        foreach (array_values($ids) as $position => $id) {
+            News::query()->whereKey($id)->update(['sort_order' => $position]);
+        }
     }
 
     private function publishedQuery()

@@ -6,20 +6,26 @@
     </td>
     <td class="w-16 px-2 py-4 text-center" @mousedown.stop>
         @can('pages.publish')
-            <form method="POST" action="{{ route($page->status->value === 'published' ? 'admin.pages.unpublish' : 'admin.pages.publish', $page) }}">
+            <form method="POST" action="{{ route($page->status->value === 'published' ? 'admin.pages.unpublish' : 'admin.pages.publish', $page) }}"
+                :action="statuses['{{ $page->id }}'] === 'published' ? @js(route('admin.pages.unpublish', $page)) : @js(route('admin.pages.publish', $page))"
+                @submit.prevent="changeStatus($el.action, 'POST', ['{{ $page->id }}'])">
                 @csrf
-                <button type="submit" class="relative inline-flex rounded-full p-1 transition hover:scale-110 {{ $page->status->value === 'published' ? 'text-success-500 hover:bg-success-50 dark:hover:bg-success-500/10' : 'text-error-500 hover:bg-error-50 dark:hover:bg-error-500/10' }}" title="{{ $page->status->value === 'published' ? 'Unpublish' : 'Publish' }} page" aria-label="{{ $page->status->value === 'published' ? 'Unpublish' : 'Publish' }} {{ $page->title }}">
-                    <x-common.menu-icon :name="$page->status->value === 'published' ? 'activate' : 'deactivate'" class="h-5 w-5" />
+                <button type="submit" @dragstart.stop.prevent :disabled="statusBusy" :aria-busy="pendingIds.includes('{{ $page->id }}')" class="page-status-control inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full align-middle focus-visible:outline-none focus-visible:ring-4 disabled:cursor-wait disabled:opacity-50"
+                    :class="statuses['{{ $page->id }}'] === 'published' ? 'text-success-500 hover:bg-success-50 hover:text-success-600 focus-visible:ring-success-500/20 dark:hover:bg-success-500/10' : 'text-error-500 hover:bg-error-50 hover:text-error-600 focus-visible:ring-error-500/20 dark:hover:bg-error-500/10'"
+                    :title="pendingIds.includes('{{ $page->id }}') ? 'Updating status…' : (statuses['{{ $page->id }}'] === 'published' ? 'Unpublish page' : 'Publish page')"
+                    :aria-label="(statuses['{{ $page->id }}'] === 'published' ? 'Unpublish ' : 'Publish ') + @js($page->title)">
+                    <x-common.menu-icon name="activate" x-show="statuses['{{ $page->id }}'] === 'published'" style="{{ $page->status->value === 'published' ? '' : 'display: none' }}" class="page-status-icon h-7 w-7" />
+                    <x-common.menu-icon name="deactivate" x-show="statuses['{{ $page->id }}'] !== 'published'" style="{{ $page->status->value === 'published' ? 'display: none' : '' }}" class="page-status-icon h-7 w-7" />
                 </button>
             </form>
         @else
-            <span title="{{ ucfirst($page->status->value) }}" class="inline-flex rounded-full p-1 {{ $page->status->value === 'published' ? 'text-success-500' : 'text-error-500' }}">
-                <x-common.menu-icon :name="$page->status->value === 'published' ? 'activate' : 'deactivate'" class="h-5 w-5" />
+            <span title="{{ ucfirst($page->status->value) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-full align-middle {{ $page->status->value === 'published' ? 'text-success-500' : 'text-error-500' }}">
+                <x-common.menu-icon :name="$page->status->value === 'published' ? 'activate' : 'deactivate'" class="page-status-icon h-7 w-7" />
                 <span class="sr-only">{{ ucfirst($page->status->value) }}</span>
             </span>
         @endcan
     </td>
-    <td class="w-10 px-2 py-4" @mousedown.stop><input type="checkbox" value="{{ $page->id }}" x-model="selected" class="rounded border-gray-300 text-gray-500 focus:ring-gray-400 dark:border-gray-600" aria-label="Select {{ $page->title }}"></td>
+    <td class="w-12 px-2 py-4 text-center" @mousedown.stop><x-common.table-checkbox value="{{ $page->id }}" x-model="selected" aria-label="Select {{ $page->title }}" @dragstart.stop.prevent /></td>
     <td class="px-3 py-4"><div class="font-medium text-gray-800 dark:text-white">{{ str_repeat('-- ', (int) ($page->tree_level ?? 0)) }}{{ $page->title }}</div></td>
     <td class="px-3 py-4"><div class="flex items-center justify-end gap-3">
         <time datetime="{{ $page->created_at?->toDateString() }}" class="whitespace-nowrap text-sm text-gray-500">{{ $page->created_at?->format('M d, Y') }}</time>

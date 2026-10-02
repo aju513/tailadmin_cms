@@ -48,4 +48,8 @@ class VideoRepository implements VideoRepositoryInterface
         $record->delete();
     }
 
+    public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return Video::query()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get();
+    }
 }

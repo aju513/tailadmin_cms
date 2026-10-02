@@ -220,7 +220,12 @@ test('page index shows compact columns and selected-page actions', function (): 
         ->assertSee('Bulk delete')
         ->assertSee('Publish')
         ->assertSee('Unpublish')
-        ->assertDontSee('Select all pages')
+        ->assertSee('Select all displayed pages')
+        ->assertSee('table-checkbox-tick', false)
+        ->assertSee('page-status-control', false)
+        ->assertSee('page-status-icon h-7 w-7', false)
+        ->assertSee('x-model="selected"', false)
+        ->assertSee('x-effect="$el.indeterminate', false)
         ->assertDontSee('>Order</th>', false)
         ->assertSee('Created date / Actions')
         ->assertDontSee('title="Edit page"', false)
@@ -307,8 +312,8 @@ test('team members can be created searched edited and deleted from the admin', f
 
     $this->actingAs($this->admin)->get(route('admin.team-members.index'))
         ->assertOk()
-        ->assertSee('Team member directory')
-        ->assertSee('Add team member')
+        ->assertSee('Team member manager')
+        ->assertSee('Add Team Member')
         ->assertSee('Team Members')
         ->assertSee(route('admin.team-members.index'));
 

@@ -124,4 +124,50 @@ class ResourceDocumentService
             $this->records->delete($record);
         });
     }
+
+    public function publish(ResourceDocument $record, Authenticatable $actor): ResourceDocument
+    {
+        Gate::forUser($actor)->authorize('resources.publish');
+
+        return $this->records->update($record, ['status' => ContentStatus::Published, 'published_at' => now(), 'published_by' => $actor->getAuthIdentifier()]);
+    }
+
+    public function unpublish(ResourceDocument $record, Authenticatable $actor): ResourceDocument
+    {
+        Gate::forUser($actor)->authorize('resources.publish');
+
+        return $this->records->update($record, ['status' => ContentStatus::Draft, 'published_at' => null, 'published_by' => null]);
+    }
+
+    public function bulkChangeStatus(array $ids, ContentStatus $status, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('resources.publish');
+        DB::transaction(function () use ($ids, $status, $actor): void {
+            $records = $this->records->findByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw ValidationException::withMessages(['resources' => 'One or more selected resources could not be found.']);
+            }
+            foreach ($records as $record) {
+                $status === ContentStatus::Published ? $this->publish($record, $actor) : $this->unpublish($record, $actor);
+            }
+        });
+    }
+
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        DB::transaction(function () use ($ids, $actor): void {
+            $records = $this->records->findByIds($ids);
+            if ($records->count() !== count($ids)) {
+                throw ValidationException::withMessages(['resources' => 'One or more selected resources could not be found.']);
+            }
+            foreach ($records as $record) {
+                $this->delete($record, $actor);
+            }
+        });
+    }
+
+    public function reorder(array $ids): void
+    {
+        DB::transaction(fn () => $this->records->reorder($ids));
+    }
 }

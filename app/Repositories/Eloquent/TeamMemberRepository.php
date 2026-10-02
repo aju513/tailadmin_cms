@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\TeamMember;
 use App\Repositories\Contracts\TeamMemberRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class TeamMemberRepository implements TeamMemberRepositoryInterface
 {
@@ -45,4 +46,5 @@ class TeamMemberRepository implements TeamMemberRepositoryInterface
     {
         return (int) TeamMember::query()->max('sort_order') + 1;
     }
+    public function findByIds(array $ids): Collection { return TeamMember::query()->whereIn('id', $ids)->get(); }
 }

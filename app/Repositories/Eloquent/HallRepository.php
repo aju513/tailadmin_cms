@@ -25,6 +25,11 @@ class HallRepository implements HallRepositoryInterface
         return $hall->load(['thumbnailMedia', 'bannerMedia', 'socialMedia', 'galleryImages.mediaAsset']);
     }
 
+    public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return Hall::query()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get();
+    }
+
     public function lock(Hall $hall): Hall
     {
         return Hall::whereKey($hall->id)->lockForUpdate()->firstOrFail();

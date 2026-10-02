@@ -23,7 +23,7 @@
         </button>
     </td>
     <td class="w-14 px-4 py-4 text-center">
-        <input type="checkbox" value="{{ $item->id }}" x-model="selected" class="rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-600" aria-label="Select {{ $item->label }}">
+        <x-common.table-checkbox value="{{ $item->id }}" x-model="selected" aria-label="Select {{ $item->label }}" @dragstart.stop.prevent />
     </td>
     <td class="px-4 py-4 font-medium text-gray-800 dark:text-white" style="padding-left: {{ 1 + $depth * 1.5 }}rem">
         @if($depth > 0)<span class="mr-1 text-gray-400" aria-hidden="true">&rdsh;</span>@endif

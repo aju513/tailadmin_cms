@@ -84,7 +84,7 @@
                                             <th class="w-16 px-4 py-3 text-center">S.N.</th>
                                             <th scope="col" aria-label="Menu order" class="w-16 px-4 py-3 text-center">Order</th>
                                             <th scope="col" aria-label="Select menu items" class="w-14 px-4 py-3 text-center">
-                                                <input type="checkbox" @change="toggleAll($event.target.checked)" :checked="allSelected" x-effect="$el.indeterminate = selected.length > 0 && !allSelected" class="rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-600" aria-label="Select all menu items">
+                                                <x-common.table-checkbox @change="toggleAll($event.target.checked)" x-bind:checked="allSelected" x-bind:disabled="itemIds.length === 0" x-effect="$el.indeterminate = selected.length > 0 && !allSelected" aria-label="Select all menu items" />
                                             </th>
                                             <th class="px-4 py-3">Menu Title</th>
                                             <th class="px-4 py-3">Page / URL</th>

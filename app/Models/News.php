@@ -14,7 +14,7 @@ class News extends Model
 
     protected $table = 'news';
 
-    protected $fillable = ['title', 'slug', 'subtitle', 'excerpt', 'body', 'category_id', 'author_id', 'thumbnail_media_id', 'banner_media_id', 'social_media_id', 'meta_title', 'meta_keywords', 'meta_description', 'status', 'featured', 'published_at', 'created_by', 'updated_by', 'published_by'];
+    protected $fillable = ['title', 'slug', 'subtitle', 'excerpt', 'body', 'category_id', 'author_id', 'thumbnail_media_id', 'banner_media_id', 'social_media_id', 'meta_title', 'meta_keywords', 'meta_description', 'status', 'featured', 'published_at', 'sort_order', 'created_by', 'updated_by', 'published_by'];
 
     protected function casts(): array
     {

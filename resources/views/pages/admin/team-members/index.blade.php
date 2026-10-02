@@ -1,45 +1,72 @@
 @extends('layouts.app')
 
 @section('content')
-<x-common.page-breadcrumb pageTitle="Team Members">
-    <x-slot:actions>
-        @can('team-members.create')
-            <a href="{{ route('admin.team-members.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-600"><x-common.menu-icon name="create" class="h-4 w-4" />Add team member</a>
-        @endcan
-    </x-slot:actions>
-</x-common.page-breadcrumb>
+<div x-data="pageManager(@js($members->mapWithKeys(fn ($record) => [(string) $record->id => ($record->is_active ? '1' : '0')])->all()), 'members')">
+    <x-common.page-breadcrumb pageTitle="Team Members">
+        <x-slot:actions>
+            @can('team-members.edit')
+                <form method="POST" action="{{ route('admin.team-members.bulk-status') }}" @submit.prevent="changeStatus($el.action, 'PATCH', [...selected], $event.submitter?.value)" class="flex items-center gap-2">
+                    @csrf @method('PATCH')
+                    <template x-for="recordId in selected" :key="`status-${recordId}`"><input type="hidden" name="members[]" :value="recordId"></template>
+                    <button name="status" value="1" type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg border border-success-500/40 px-3 py-2.5 text-sm font-medium text-success-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="activate" class="h-4 w-4" />Publish</button>
+                    <button name="status" value="0" type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg border border-warning-500/40 px-3 py-2.5 text-sm font-medium text-warning-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="deactivate" class="h-4 w-4" />Unpublish</button>
+                </form>
+            @endcan
+            @can('team-members.create')
+                <a href="{{ route('admin.team-members.create') }}" class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600"><x-common.menu-icon name="create" class="h-4 w-4" />Add Team Member</a>
+            @endcan
+            @can('team-members.delete')
+                <form method="POST" action="{{ route('admin.team-members.bulk-destroy') }}" onsubmit="return confirm('Permanently delete the selected team members?')" class="flex items-center">
+                    @csrf @method('DELETE')
+                    <template x-for="recordId in selected" :key="`delete-${recordId}`"><input type="hidden" name="members[]" :value="recordId"></template>
+                    <button type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg bg-error-50 px-3 py-2.5 text-sm font-medium text-error-600 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Bulk delete</button>
+                </form>
+            @endcan
+        </x-slot:actions>
+    </x-common.page-breadcrumb>
+    <x-common.table-status-feedback />
 
-<x-common.component-card title="Team member directory" desc="Add and manage the people featured as part of your team.">
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-            <thead><tr class="text-left text-xs uppercase text-gray-500"><th class="px-4 py-3">Member</th><th class="px-4 py-3">Category / Designation</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Created</th><th class="px-4 py-3 text-right">Actions</th></tr></thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                @forelse($members as $member)
-                    <tr @can('team-members.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.team-members.edit', $member) }}'" title="Open {{ $member->name }} for editing" @endcan class="group transition @can('team-members.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan">
-                        <td class="px-4 py-3.5">
-                            <div class="flex items-center gap-3">
-                                @if($member->photoMedia)
-                                    <img src="{{ $member->photoMedia->url() }}" alt="{{ $member->photoMedia->alt_text ?: $member->name }}" class="h-11 w-11 rounded-full object-cover">
+    <x-common.component-card title="Team member manager" desc="Use the selection controls for bulk actions.">
+        <form method="GET" action="{{ route('admin.team-members.index') }}" class="mb-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+            <input name="search" value="{{ request('search') }}" aria-label="Search team members" placeholder="Search team member" class="h-11 rounded-lg border border-gray-300 bg-transparent px-4 text-sm dark:border-gray-700 dark:text-white">
+            <button class="rounded-lg border border-gray-300 px-4 text-sm font-medium dark:border-gray-700 dark:text-white">Search</button>
+        </form>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+                <thead><tr class="text-left text-xs uppercase text-gray-500">
+                    <th scope="col" aria-label="Reorder" class="w-10 px-2 py-3"></th>
+                    <th scope="col" class="w-16 px-2 py-3 text-center">Status</th>
+                    <th scope="col" class="w-12 px-2 py-3 text-center"><x-common.table-select-all aria-label="Select all displayed team-members" /></th>
+                    <th scope="col" class="px-3 py-3">Title</th>
+                    <th scope="col" class="px-3 py-3 text-right">Created date / Actions</th>
+                </tr></thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    @forelse($members as $record)
+                        <tr @can('team-members.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.team-members.edit', $record) }}'" @endcan class="@can('team-members.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan bg-white transition dark:bg-transparent">
+                            <td class="w-10 px-2 py-4 text-center text-gray-400"><i class="bi bi-arrows-move" aria-hidden="true"></i></td>
+                            <td class="w-16 px-2 py-4 text-center" @mousedown.stop><x-common.table-status :id="$record->id" :status="($record->is_active ? '1' : '0')" :label="$record->name" permission="team-members.edit" :url="route('admin.team-members.bulk-status')" selection-key="members" active-value="1" inactive-value="0" /></td>
+                            <td class="w-12 px-2 py-4 text-center"><x-common.table-checkbox value="{{ $record->id }}" x-model="selected" aria-label="Select {{ $record->name }}" @dragstart.stop.prevent /></td>
+                            <td class="px-3 py-4"><div class="flex items-center gap-3">
+                                @if($record->photoMedia)
+                                    <img src="{{ $record->photoMedia->url() }}" alt="{{ $record->photoMedia->alt_text ?: $record->name }}" class="h-11 w-11 rounded-full object-cover">
                                 @else
-                                    <span class="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-500 dark:bg-gray-800">{{ str($member->name)->substr(0, 1)->upper() }}</span>
+                                    <span class="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-500 dark:bg-gray-800">{{ str($record->name)->substr(0, 1)->upper() }}</span>
                                 @endif
-                                <span class="font-medium text-gray-800 dark:text-white">{{ $member->name }}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-300">{{ $member->category?->name ?? 'Uncategorized' }}<br><span class="text-xs text-gray-500">{{ $member->designation }}</span></td>
-                        <td class="px-4 py-4"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $member->is_active ? 'bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300' }}">{{ $member->is_active ? 'Active' : 'Inactive' }}</span></td>
-                        <td class="px-4 py-4 text-sm text-gray-500">{{ $member->created_at->format('M d, Y') }}</td>
-                        <td class="px-4 py-4"><div class="flex justify-end gap-2">
-                            @can('team-members.edit')<a href="{{ route('admin.team-members.edit', $member) }}" class="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-brand-600 transition hover:border-brand-500 hover:bg-brand-50 dark:border-gray-700 dark:text-brand-400 dark:hover:bg-brand-500/10"><x-common.menu-icon name="edit" class="h-4 w-4" />Edit</a>@endcan
-                            @can('team-members.delete')<form method="POST" action="{{ route('admin.team-members.destroy', $member) }}" onsubmit="return confirm('Delete this team member?')">@csrf @method('DELETE')<button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-error-50 px-3 py-2 text-xs font-medium text-error-600 transition hover:bg-error-100 dark:bg-error-500/10 dark:hover:bg-error-500/20"><x-common.menu-icon name="delete" class="h-4 w-4" />Delete</button></form>@endcan
-                        </div></td>
-                    </tr>
-                @empty
-                    <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-500">No team members found.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-    {{ $members->links() }}
-</x-common.component-card>
+                                <div><div class="font-medium text-gray-800 dark:text-white">{{ $record->name }}</div><div class="mt-1 text-xs text-gray-500">{{ $record->category?->name ?? 'Uncategorized' }} · {{ $record->designation }}</div></div>
+                            </div></td>
+                            <td class="px-3 py-4"><div class="flex items-center justify-end gap-3">
+                                <time datetime="{{ $record->created_at?->toDateString() }}" class="whitespace-nowrap text-sm text-gray-500">{{ $record->created_at?->format('M d, Y') }}</time>
+                                @can('team-members.edit')<a href="{{ route('admin.team-members.edit', $record) }}" class="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-brand-600 transition hover:border-brand-500 hover:bg-brand-50 hover:text-brand-700 dark:border-gray-700 dark:text-white dark:hover:bg-brand-500/10"><x-common.menu-icon name="edit" class="h-4 w-4" />Edit</a>@endcan
+                                @can('team-members.delete')<form method="POST" action="{{ route('admin.team-members.destroy', $record) }}" onsubmit="return confirm('Delete this team member?')">@csrf @method('DELETE')<button class="inline-flex items-center gap-1 rounded-lg bg-error-50 px-3 py-2 text-xs font-medium text-error-600 transition hover:bg-error-100 hover:text-error-700 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Delete</button></form>@endcan
+                            </div></td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-500">No team members found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-5">{{ $members->links() }}</div>
+    </x-common.component-card>
+</div>
 @endsection

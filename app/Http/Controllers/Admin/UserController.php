@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -68,13 +69,20 @@ class UserController extends Controller
         return back()->with('success', 'User status updated.');
     }
 
-    public function bulkStatus(BulkUserStatusRequest $request): RedirectResponse
+    public function bulkStatus(BulkUserStatusRequest $request): RedirectResponse|JsonResponse
     {
         $this->service->bulkChangeStatus(
             $request->validated('users'),
             UserStatus::from($request->validated('status')),
             $request->user(),
         );
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Selected statuses updated.',
+                'records' => array_map(fn ($id) => ['id' => (int) $id, 'status' => (string) $request->validated('status')], $request->validated('users')),
+            ]);
+        }
 
         return back()->with('success', 'Selected user statuses updated.');
     }

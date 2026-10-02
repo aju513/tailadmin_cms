@@ -10,6 +10,7 @@ use App\Http\Requests\HomepageSlide\UpdateHomepageSlideRequest;
 use App\Models\HomepageSlide;
 use App\Repositories\Contracts\HomepageSlideRepositoryInterface;
 use App\Services\HomepageSlideService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -51,5 +52,26 @@ class HomepageSlideController extends Controller
         $this->service->delete($homepageSlide, $request->user());
 
         return back()->with('success', 'Homepage slide deleted.');
+    }
+
+    public function bulkStatus(\App\Http\Requests\HomepageSlide\BulkHomepageSlideStatusRequest $request): RedirectResponse|JsonResponse
+    {
+        $this->service->bulkStatus($request->validated('records'), \App\Enums\ContentStatus::from($request->validated('status')), $request->user());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Selected statuses updated.',
+                'records' => array_map(fn ($id) => ['id' => (int) $id, 'status' => (string) $request->validated('status')], $request->validated('records')),
+            ]);
+        }
+
+        return back()->with('success', 'Selected publication statuses updated.');
+    }
+
+    public function bulkDestroy(\App\Http\Requests\HomepageSlide\BulkHomepageSlideDeleteRequest $request): RedirectResponse
+    {
+        $this->service->bulkDelete($request->validated('records'), $request->user());
+
+        return back()->with('success', 'Selected records deleted.');
     }
 }

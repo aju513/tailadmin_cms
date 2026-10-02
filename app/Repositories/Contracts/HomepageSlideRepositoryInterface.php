@@ -16,4 +16,6 @@ interface HomepageSlideRepositoryInterface
     public function update(HomepageSlide $slide, array $data): HomepageSlide;
 
     public function delete(HomepageSlide $slide): void;
+
+    public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection;
 }

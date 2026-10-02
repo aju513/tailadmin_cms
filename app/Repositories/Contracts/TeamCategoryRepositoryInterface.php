@@ -17,4 +17,5 @@ interface TeamCategoryRepositoryInterface
     public function update(TeamCategory $category, array $data): TeamCategory;
 
     public function delete(TeamCategory $category): void;
+    public function findByIds(array $ids): Collection;
 }

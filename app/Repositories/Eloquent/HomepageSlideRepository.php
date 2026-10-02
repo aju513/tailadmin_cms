@@ -35,4 +35,9 @@ class HomepageSlideRepository implements HomepageSlideRepositoryInterface
     {
         $slide->delete();
     }
+
+    public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return HomepageSlide::query()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get();
+    }
 }

@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div x-data="{ selected: [] }">
+<div x-data="pageManager(@js($pages->mapWithKeys(fn ($page) => [(string) $page->id => $page->status->value])->all()))">
 <x-common.page-breadcrumb pageTitle="Pages">
     <x-slot:actions>
         @can('pages.publish')
-            <form method="POST" action="{{ route('admin.pages.bulk-status') }}" class="flex items-center gap-2">
+            <form method="POST" action="{{ route('admin.pages.bulk-status') }}" @submit.prevent="changeStatus($el.action, 'PATCH', [...selected], $event.submitter?.value)" class="flex items-center gap-2">
                 @csrf
                 @method('PATCH')
                 <template x-for="pageId in selected" :key="`status-${pageId}`"><input type="hidden" name="pages[]" :value="pageId"></template>
-                <button name="status" value="published" type="submit" :disabled="selected.length === 0" class="inline-flex items-center gap-1.5 rounded-lg border border-success-500/40 px-3 py-2.5 text-sm font-medium text-success-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="activate" class="h-4 w-4" />Publish</button>
-                <button name="status" value="draft" type="submit" :disabled="selected.length === 0" class="inline-flex items-center gap-1.5 rounded-lg border border-warning-500/40 px-3 py-2.5 text-sm font-medium text-warning-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="deactivate" class="h-4 w-4" />Unpublish</button>
+                <button name="status" value="published" type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg border border-success-500/40 px-3 py-2.5 text-sm font-medium text-success-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="activate" class="h-4 w-4" />Publish</button>
+                <button name="status" value="draft" type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg border border-warning-500/40 px-3 py-2.5 text-sm font-medium text-warning-600 disabled:cursor-not-allowed disabled:opacity-40"><x-common.menu-icon name="deactivate" class="h-4 w-4" />Unpublish</button>
             </form>
         @endcan
         @can('pages.create')
@@ -21,18 +21,34 @@
                 @csrf
                 @method('DELETE')
                 <template x-for="pageId in selected" :key="`delete-${pageId}`"><input type="hidden" name="pages[]" :value="pageId"></template>
-                <button type="submit" :disabled="selected.length === 0" class="inline-flex items-center gap-1.5 rounded-lg bg-error-50 px-3 py-2.5 text-sm font-medium text-error-600 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Bulk delete</button>
+                <button type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg bg-error-50 px-3 py-2.5 text-sm font-medium text-error-600 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Bulk delete</button>
             </form>
         @endcan
     </x-slot:actions>
 </x-common.page-breadcrumb>
+
+<div x-show="statusMessage" x-cloak role="status" aria-live="polite" class="mb-4 rounded-lg px-4 py-3 text-sm" :class="statusError ? 'bg-error-50 text-error-700 dark:bg-error-500/10 dark:text-error-400' : 'bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400'" x-text="statusMessage"></div>
 
 <x-common.component-card title="Page manager" desc="Drag rows to reorder pages. Nested pages are shown with -- indentation.">
     <div x-data="pageOrdering('{{ route('admin.pages.order') }}')">
             <div x-show="message" x-text="message" class="mb-4 rounded-lg bg-success-50 px-4 py-3 text-sm text-success-700" x-cloak></div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-                    <thead><tr class="text-left text-xs uppercase text-gray-500"><th scope="col" aria-label="Reorder pages" class="w-10 px-2 py-3"></th><th class="w-16 px-2 py-3 text-center">Status</th><th scope="col" aria-label="Select pages" class="w-10 px-2 py-3"></th><th class="px-3 py-3">Page</th><th class="px-3 py-3 text-right">Created date / Actions</th></tr></thead>
+                    <thead><tr class="text-left text-xs uppercase text-gray-500">
+                        <th scope="col" aria-label="Reorder pages" class="w-10 px-2 py-3"></th>
+                        <th class="w-16 px-2 py-3 text-center">Status</th>
+                        <th scope="col" class="w-12 px-2 py-3 text-center">
+                            <x-common.table-checkbox
+                                aria-label="Select all displayed pages"
+                                x-bind:checked="visibleIds.length > 0 && selected.length === visibleIds.length"
+                                x-effect="$el.indeterminate = selected.length > 0 && selected.length < visibleIds.length"
+                                x-bind:disabled="visibleIds.length === 0"
+                                @change="selected = $event.target.checked ? [...visibleIds] : []"
+                            />
+                        </th>
+                        <th class="px-3 py-3">Page</th>
+                        <th class="px-3 py-3 text-right">Created date / Actions</th>
+                    </tr></thead>
                     <tbody x-ref="rows" class="divide-y divide-gray-100 dark:divide-gray-800">
                         @forelse($pages as $page)
                             @include('pages.admin.pages._row', ['page' => $page])

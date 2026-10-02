@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Page;
 use App\Models\Notice;
 use App\Models\NoticeCategory;
+use App\Models\Page;
 use App\Repositories\Contracts\NoticeCategoryRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -24,6 +24,11 @@ class NoticeCategoryRepository implements NoticeCategoryRepositoryInterface
     public function find(int $id): NoticeCategory
     {
         return NoticeCategory::query()->findOrFail($id);
+    }
+
+    public function findByIds(array $ids): Collection
+    {
+        return NoticeCategory::query()->whereIn('id', $ids)->get();
     }
 
     public function slugExists(string $slug, ?NoticeCategory $record): bool
@@ -77,5 +82,4 @@ class NoticeCategoryRepository implements NoticeCategoryRepositoryInterface
         return Notice::query()->where('notice_category_id', $record->id)->exists()
             || Page::query()->where('notice_category_id', $record->id)->exists();
     }
-
 }

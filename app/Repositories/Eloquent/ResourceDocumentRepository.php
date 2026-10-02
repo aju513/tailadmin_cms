@@ -4,10 +4,10 @@ namespace App\Repositories\Eloquent;
 
 use App\Enums\ContentStatus;
 use App\Models\ResourceDocument;
-
 use App\Repositories\Contracts\ResourceDocumentRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class ResourceDocumentRepository implements ResourceDocumentRepositoryInterface
 {
@@ -69,4 +69,15 @@ class ResourceDocumentRepository implements ResourceDocumentRepositoryInterface
         return $this->publicQuery()->where('slug', $slug)->firstOrFail();
     }
 
+    public function findByIds(array $ids): Collection
+    {
+        return ResourceDocument::query()->whereIn('id', $ids)->get();
+    }
+
+    public function reorder(array $ids): void
+    {
+        foreach (array_values($ids) as $position => $id) {
+            ResourceDocument::query()->whereKey($id)->update(['sort_order' => $position]);
+        }
+    }
 }

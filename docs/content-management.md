@@ -4,6 +4,8 @@ The CMS provides a small government website content foundation. News articles ar
 
 ## Implemented modules
 
+All selectable admin content indexes now use the same animated 22px white-tick checkboxes and select-all controls. News, Notices, Resources, their categories, Team Members/Categories, Halls, Homepage Slides, Gallery, Videos, and Users share AJAX row and bulk status updates, loading guards, error feedback, and server-side authorization. Select-all affects only displayed records; nested Resource Category controls share the header's selection state. Menu item tables reuse the checkbox styling and keep their existing selection and reorder logic. Existing labels, status values, permission gates, and non-JavaScript redirect responses are preserved.
+
 - Hall catalogue with seating capacity, NPR rates and rate units, operational availability, amenities, bilingual content, contacts, images/gallery, and SEO. See [Halls and bookings](halls-and-bookings.md) for the detailed implementation and booking roadmap. Date reservations and public booking forms are planned separately.
 
 - Pages with nested parent/child hierarchy, generated public paths, editable slugs, drag-and-drop ordering, and validated page types: Article, News, Notices, Resource, Team, Contact Us, Sitemap, Hall, FAQs, Videos, and Gallery.
@@ -40,11 +42,16 @@ The page editor presents the English page title and editable URL slug first, fol
 
 The language tabs use locally stored public domain SVG flags of England and Nepal from Wikimedia Commons.
 
-The page index provides row selection and bulk Publish, Unpublish, and Bulk delete actions. Bulk changes validate the selected page IDs and run in one transaction. Publishing uses `pages.publish`; deleting uses `pages.delete`. Each changed page retains its individual activity entry. The table shows an unlabeled order handle and row checkbox, status, page title, and created date beside the row actions.
+The page index provides row selection and bulk Publish, Unpublish, and Bulk delete actions. Bulk changes validate the selected page IDs and run in one transaction. Publishing uses `pages.publish`; deleting uses `pages.delete`. Each changed page retains its individual activity entry. The table shows an unlabeled order handle and row checkbox, status, page title, and created date beside the row actions. Header and row selection use the shared 22px animated checkbox with white ticks. The header selects all displayed pages (including nested rows), shows a dash for partial selection, and is disabled when the list is empty. Checkbox interactions do not trigger row navigation or drag ordering.
 
 Page content is currently rendered as administrator-provided HTML. A production deployment should sanitize rich text at the input boundary before allowing untrusted editors to publish it.
 
+On the Pages manager, publication status uses filled green/red circles with white check/cross marks, matching the selection control's approximately 22px visual size and 32px click target. Authorized status buttons have animated color, hover enlargement, click compression, and keyboard focus states, with reduced-motion support. Read-only indicators retain the same size without interactive effects; publication endpoints and permissions are unchanged.
+
+Pages row status toggles and bulk Publish/Unpublish use CSRF-protected AJAX requests to the existing endpoints. JSON responses update the shared icon state without navigating or clearing selections. Status controls are disabled while a request is pending; failures preserve the previous icons and show accessible feedback. Standard form submissions still return redirects, and the existing FormRequest/service authorization and activity logging remain in force.
+
 ## Media storage
+
 
 CMS uploads always use Laravel's local `public` disk and are stored under `storage/app/public/cms`. Run `php artisan storage:link` once per environment. No S3 bucket or cloud storage configuration is required.
 
@@ -71,6 +78,10 @@ php artisan admin:menu-regenerate
 
 ## Photo gallery and videos
 
+Homepage Slides has a select-all checkbox for the current paginated page. Its header shows a partial-selection dash when some rows are selected, and is disabled for an empty list. Header and row controls use the shared larger square checkbox with brand-color transitions and white checkmarks; selections continue to drive the existing bulk forms.
+
+Homepage Slides uses the same Resources-style index header and table, with Publish, Unpublish, Add Slide, and Bulk delete. The existing homepage-slides.edit permission controls publication status. Row checkboxes enable bulk forms, and status icons toggle an individual slide through the same status endpoint. Bulk workflows are transactional and audited; uploaded media remains in the Media Library. Reorder icons remain display-only.
+
 Dedicated album and video management now lives under Media. See [Photo gallery and videos](media-catalogues.md) for fields, permissions, upload limits, and setup commands.
 
 ## Resources and downloads
@@ -82,6 +93,8 @@ Resource Pages now select a resource category or All categories, and automatical
 Notices now use editable categories and optional deadlines, and Notices Pages select a category or All categories. See [Notice types and page connections](notices.md).
 
 ## Category editors and ordering
+
+Team Members and Team Categories index screens share the Resources manager layout: title and breadcrumb on the left; Publish, Unpublish, Add Team Member/Add Category, and Bulk delete in the breadcrumb actions slot. Bulk actions enable when rows are selected and submit to the existing team bulk routes. Publish/Unpublish maps to the member `is_active` or category `status` boolean. Each table has five columns, with member designation/category or category slug/member count inside the title cell. Status icons submit a single-record status change; Edit/Delete and the created date share the final cell. The existing team reorder icons remain display-only.
 
 Resource Categories and Notice Categories use full-width CKEditor descriptions and Published toggles. Numeric display-order inputs are removed; reorder rows using drag handles or arrow buttons in the manager. Inactive categories hide associated public content.
 

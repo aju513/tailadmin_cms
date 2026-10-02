@@ -153,3 +153,6 @@ php artisan admin:menu-regenerate
 ```
 
 If the public media link does not already exist, run `php artisan storage:link`. Rebuild assets during your usual deployment/build step if the current CSS bundle lacks newly used Tailwind classes. No new Composer or npm dependencies are required. After setup, open `/admin/halls` and create the real venue records with confirmed rates and units. Seeders and factory data are not production hall records.
+# Hall manager layout
+
+The Halls index uses the Resources manager header and five-column table. Publish, Unpublish, Add Hall, and Bulk delete appear in the breadcrumb actions slot. Selected hall IDs enable bulk controls; the status icon submits a single hall through the same status route. Status changes require halls.publish; deletion requires halls.delete. Workflows use FormRequests, the Hall service, and the existing bound Hall repository, with transactional writes and activity logging. Thumbnails, building/location, capacity, rental rate, and availability appear in the title cell; View/Edit/Delete and created date share the final cell. Existing reorder icons remain display-only.

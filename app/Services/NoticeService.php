@@ -118,4 +118,54 @@ class NoticeService
             $this->records->delete($record);
         });
     }
+
+    public function publish(Notice $record, Authenticatable $actor): Notice
+    {
+        Gate::forUser($actor)->authorize('notices.publish');
+        $record = $this->records->update($record, ['status' => ContentStatus::Published, 'published_at' => now(), 'published_by' => $actor->getAuthIdentifier()]);
+        activity('content')->causedBy($actor)->performedOn($record)->event('notice.published')->log('Notice published');
+
+        return $record;
+    }
+
+    public function unpublish(Notice $record, Authenticatable $actor): Notice
+    {
+        Gate::forUser($actor)->authorize('notices.publish');
+        $record = $this->records->update($record, ['status' => ContentStatus::Draft, 'published_at' => null, 'published_by' => null]);
+        activity('content')->causedBy($actor)->performedOn($record)->event('notice.unpublished')->log('Notice unpublished');
+
+        return $record;
+    }
+
+    public function bulkChangeStatus(array $ids, ContentStatus $status, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('notices.publish');
+        DB::transaction(function () use ($ids, $status, $actor): void {
+            $items = $this->records->findByIds($ids);
+            if ($items->count() !== count($ids)) {
+                throw ValidationException::withMessages(['notices' => 'One or more selected notices could not be found.']);
+            }
+            foreach ($items as $item) {
+                $status === ContentStatus::Published ? $this->publish($item, $actor) : $this->unpublish($item, $actor);
+            }
+        });
+    }
+
+    public function bulkDelete(array $ids, Authenticatable $actor): void
+    {
+        DB::transaction(function () use ($ids, $actor): void {
+            $items = $this->records->findByIds($ids);
+            if ($items->count() !== count($ids)) {
+                throw ValidationException::withMessages(['notices' => 'One or more selected notices could not be found.']);
+            }
+            foreach ($items as $item) {
+                $this->delete($item, $actor);
+            }
+        });
+    }
+
+    public function reorder(array $ids): void
+    {
+        DB::transaction(fn () => $this->records->reorder($ids));
+    }
 }

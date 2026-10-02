@@ -63,4 +63,6 @@ class TeamMemberService
             activity('content')->causedBy($actor)->event('team-member.deleted')->withProperties(['team_member_id' => $member->id])->log('Team member deleted');
         });
     }
+    public function bulkStatus(array $ids, bool $active): void { DB::transaction(function () use ($ids, $active): void { foreach ($this->members->findByIds($ids) as $member) $this->members->update($member, ['is_active' => $active]); }); }
+    public function bulkDelete(array $ids, Authenticatable $actor): void { DB::transaction(function () use ($ids, $actor): void { foreach ($this->members->findByIds($ids) as $member) $this->delete($member, $actor); }); }
 }

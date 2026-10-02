@@ -3,8 +3,8 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Page;
-use App\Models\ResourceDocument;
 use App\Models\ResourceCategory;
+use App\Models\ResourceDocument;
 use App\Repositories\Contracts\ResourceCategoryRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -24,6 +24,11 @@ class ResourceCategoryRepository implements ResourceCategoryRepositoryInterface
     public function find(int $id): ResourceCategory
     {
         return ResourceCategory::query()->findOrFail($id);
+    }
+
+    public function findByIds(array $ids): Collection
+    {
+        return ResourceCategory::query()->whereIn('id', $ids)->get();
     }
 
     public function slugExists(string $slug, ?ResourceCategory $record): bool
@@ -77,5 +82,4 @@ class ResourceCategoryRepository implements ResourceCategoryRepositoryInterface
         return ResourceDocument::query()->where('resource_category_id', $record->id)->exists()
             || Page::query()->where('resource_category_id', $record->id)->exists();
     }
-
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Notice;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 
 class ShowPublicNoticeRequest extends FormRequest
 {

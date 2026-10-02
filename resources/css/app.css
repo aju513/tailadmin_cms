@@ -753,6 +753,88 @@ span.flatpickr-weekday,
   @apply w-6.5 rounded-xl;
 }
 
+.page-status-control {
+  transition: color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.page-status-control:hover {
+  transform: scale(1.08);
+}
+
+.page-status-control:active {
+  transform: scale(0.9);
+}
+
+.page-status-icon circle {
+  fill: currentColor;
+}
+
+.page-status-icon path {
+  stroke: var(--color-white);
+  stroke-width: 2.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-status-control {
+    transition: none;
+  }
+
+  .page-status-control:hover,
+  .page-status-control:active {
+    transform: none;
+  }
+}
+
+.table-checkbox-box {
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.table-checkbox-tick,
+.table-checkbox-mixed {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.table-checkbox input:checked + .table-checkbox-box,
+.table-checkbox input:indeterminate + .table-checkbox-box {
+  @apply border-brand-500 bg-brand-500 dark:border-brand-500 dark:bg-brand-500;
+}
+
+.table-checkbox input:checked:not(:indeterminate) + .table-checkbox-box .table-checkbox-tick,
+.table-checkbox input:indeterminate + .table-checkbox-box .table-checkbox-mixed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.table-checkbox input:focus-visible + .table-checkbox-box {
+  @apply ring-4 ring-brand-500/20;
+}
+
+.table-checkbox input:hover:not(:disabled) + .table-checkbox-box {
+  @apply border-brand-400;
+}
+
+.table-checkbox input:active:not(:disabled) + .table-checkbox-box {
+  transform: scale(0.9);
+}
+
+.table-checkbox input:disabled {
+  cursor: not-allowed;
+}
+
+.table-checkbox input:disabled + .table-checkbox-box {
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-checkbox-box,
+  .table-checkbox-tick,
+  .table-checkbox-mixed {
+    transition: none;
+  }
+}
+
 .form-check-input:checked ~ span {
   @apply border-[6px] border-brand-500 dark:border-brand-500;
 }

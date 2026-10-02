@@ -72,4 +72,8 @@ class GalleryAlbumRepository implements GalleryAlbumRepositoryInterface
         ]);
     }
 
+    public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return GalleryAlbum::query()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get();
+    }
 }
