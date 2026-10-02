@@ -8,6 +8,7 @@
     'help' => null,
     'error' => null,
     'disabled' => false,
+    'cascade' => false,
 ])
 
 @php
@@ -29,33 +30,13 @@
             $optionLabel = $option;
         }
 
-        $normalizedOptions[] = ['value' => (string) $optionValue, 'label' => (string) $optionLabel];
+        $normalizedOptions[] = ['value' => (string) $optionValue, 'label' => (string) $optionLabel, 'parent' => is_array($option) && isset($option['parent']) ? (string) $option['parent'] : null];
     }
 @endphp
 
 <x-form.field :name="$oldName" :label="$label" :id="$id" :error="$error" :help="$help">
     <div
-        x-data="{
-            open: false,
-            search: '',
-            selected: @js($selectedValues),
-            options: @js($normalizedOptions),
-            get filteredOptions() {
-                return this.options.filter(option => option.label.toLowerCase().includes(this.search.toLowerCase()));
-            },
-            toggle(value) {
-                value = String(value);
-                this.selected = this.selected.includes(value)
-                    ? this.selected.filter(selectedValue => selectedValue !== value)
-                    : [...this.selected, value];
-            },
-            remove(value) {
-                this.selected = this.selected.filter(selectedValue => selectedValue !== String(value));
-            },
-            labelFor(value) {
-                return this.options.find(option => option.value === String(value))?.label ?? value;
-            }
-        }"
+        x-data="multiselect(@js($normalizedOptions), @js($selectedValues), @js($cascade))"
         @click.outside="open = false"
         class="relative"
     >

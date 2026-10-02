@@ -10,6 +10,26 @@ use Illuminate\Support\Collection;
 
 class PageRepository implements PageRepositoryInterface
 {
+    public function lock(int $id): Page
+    {
+        return Page::query()->whereKey($id)->lockForUpdate()->firstOrFail();
+    }
+
+    public function find(int $id): Page
+    {
+        return Page::query()->findOrFail($id);
+    }
+
+    public function noticeSections(): Collection
+    {
+        return $this->orderedForIndex([])->filter(fn (Page $page) => $page->page_type === \App\Enums\PageType::Notices)->values();
+    }
+
+    public function hasNoticeAssignments(array $pageIds): bool
+    {
+        return \App\Models\Notice::query()->whereIn('notice_page_id', $pageIds)->exists();
+    }
+
     public function paginateForIndex(array $filters): LengthAwarePaginator
     {
         return Page::query()->with('parent')->when($filters['search'] ?? null, function ($query, string $search): void {

@@ -35,8 +35,6 @@ return [
         'children' => [
             ['key' => 'notice-create', 'label' => 'Add Notice', 'icon' => 'create', 'route' => 'admin.notices.create', 'permission' => 'notices.create', 'order' => 10],
             ['key' => 'notices-manage', 'label' => 'Manage Notices', 'icon' => 'pages', 'route' => 'admin.notices.index', 'active_routes' => ['admin.notices.index', 'admin.notices.edit'], 'permission' => 'notices.manage', 'order' => 20],
-            ['key' => 'notice-categories-create', 'label' => 'Add Notice Category', 'icon' => 'create', 'route' => 'admin.notice-categories.create', 'permission' => 'notice-categories.create', 'order' => 30],
-            ['key' => 'notice-categories-manage', 'label' => 'Manage Notice Categories', 'icon' => 'categories', 'route' => 'admin.notice-categories.index', 'active_routes' => ['admin.notice-categories.index', 'admin.notice-categories.edit'], 'permission' => 'notice-categories.manage', 'order' => 40],
         ],
     ],
     [

@@ -8,6 +8,14 @@ use Illuminate\Support\Collection;
 
 interface PageRepositoryInterface
 {
+    public function lock(int $id): Page;
+
+    public function find(int $id): Page;
+
+    public function noticeSections(): Collection;
+
+    public function hasNoticeAssignments(array $pageIds): bool;
+
     public function paginateForIndex(array $filters): LengthAwarePaginator;
 
     public function orderedForIndex(array $filters): Collection;

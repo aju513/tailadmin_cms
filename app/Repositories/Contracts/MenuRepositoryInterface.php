@@ -9,6 +9,12 @@ use Illuminate\Support\Collection as BaseCollection;
 
 interface MenuRepositoryInterface
 {
+    public function descendantPageIds(array $pageIds): array;
+
+    public function requiredNoticeAncestors(array $pageIds): array;
+
+    public function hasRemainingNoticeChildren(Menu $menu, array $itemIds): bool;
+
     public function forLocation(string $location): ?Menu;
 
     public function locations(): Collection;

@@ -2,6 +2,8 @@
 
 The CMS provides a small government website content foundation. News articles are a dedicated resource, separate from hierarchical pages.
 
+Menu assignment selects a complete page branch when its parent is picked: children and deeper descendants are included even when filtered out of the dropdown search. The server independently expands submitted parent IDs and avoids duplicate items. Reassign an existing parent to add missing or newly created children; existing assignments are not retroactively expanded. Draft descendants can be assigned but remain hidden publicly. This cascading selection is enabled only for menu page assignment, not other multiselect fields.
+
 ## Implemented modules
 
 All selectable admin content indexes now use the same animated 22px white-tick checkboxes and select-all controls. News, Notices, Resources, their categories, Team Members/Categories, Halls, Homepage Slides, Gallery, Videos, and Users share AJAX row and bulk status updates, loading guards, error feedback, and server-side authorization. Select-all affects only displayed records; nested Resource Category controls share the header's selection state. Menu item tables reuse the checkbox styling and keep their existing selection and reorder logic. Existing labels, status values, permission gates, and non-JavaScript redirect responses are preserved.
@@ -88,15 +90,15 @@ Dedicated album and video management now lives under Media. See [Photo gallery a
 
 Resource Pages now select a resource category or All categories, and automatically display matching published documents. See [Resources and page connections](resources.md).
 
-## Notice types
+## Notice Sections
 
-Notices now use editable categories and optional deadlines, and Notices Pages select a category or All categories. See [Notice types and page connections](notices.md).
+Admin notices now select a Notice Section from the Pages hierarchy (Page Type Notices), including direct assignment to a parent Notice Board. The manager supports descendant-inclusive section filtering. Notice Category administration is retired, but legacy data and public category-based listings remain unchanged during this admin-only phase. See [Notice Sections](notices.md).
 
 ## Category editors and ordering
 
 Team Members and Team Categories index screens share the Resources manager layout: title and breadcrumb on the left; Publish, Unpublish, Add Team Member/Add Category, and Bulk delete in the breadcrumb actions slot. Bulk actions enable when rows are selected and submit to the existing team bulk routes. Publish/Unpublish maps to the member `is_active` or category `status` boolean. Each table has five columns, with member designation/category or category slug/member count inside the title cell. Status icons submit a single-record status change; Edit/Delete and the created date share the final cell. The existing team reorder icons remain display-only.
 
-Resource Categories and Notice Categories use full-width CKEditor descriptions and Published toggles. Numeric display-order inputs are removed; reorder rows using drag handles or arrow buttons in the manager. Inactive categories hide associated public content.
+Resource Categories use full-width CKEditor descriptions and Published toggles. Numeric display-order inputs are removed; reorder rows using drag handles or arrow buttons in the manager. Inactive categories hide associated public content. Notice Category administration has been replaced by Notice Sections; legacy notice category visibility remains in force on the public site.
 
 ## Lumbini public frontend
 

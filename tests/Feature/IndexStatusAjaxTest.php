@@ -14,7 +14,6 @@ dataset('ajax index managers', [
     ['notices', \App\Models\Notice::class, 'notices', 'status', 'published', 'draft'],
     ['resources', \App\Models\ResourceDocument::class, 'resources', 'status', 'published', 'draft'],
     ['resource-categories', \App\Models\ResourceCategory::class, 'categories', 'is_active', '1', '0'],
-    ['notice-categories', \App\Models\NoticeCategory::class, 'categories', 'is_active', '1', '0'],
     ['team-members', \App\Models\TeamMember::class, 'members', 'is_active', '1', '0'],
     ['team-categories', \App\Models\TeamCategory::class, 'categories', 'status', '1', '0'],
     ['halls', \App\Models\Hall::class, 'halls', 'status', 'published', 'draft'],

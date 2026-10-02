@@ -24,6 +24,11 @@ class Page extends Model
         return ['notice_type' => NoticeType::class, 'page_type' => PageType::class, 'status' => ContentStatus::class, 'published_at' => 'datetime'];
     }
 
+    public function notices(): HasMany
+    {
+        return $this->hasMany(Notice::class, 'notice_page_id');
+    }
+
     public function noticeCategory(): BelongsTo
     {
         return $this->belongsTo(NoticeCategory::class, 'notice_category_id');

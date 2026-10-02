@@ -14,7 +14,7 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 - [Lumbini public frontend](frontend.md): design integration, module pages, SEO/schema, XML sitemaps, performance and setup.
 
-- [Notice types and page connections](notices.md): managed notice categories, deadlines, and automatic Notices page listings.
+- [Notice Sections](notices.md): parent/child Notices pages, admin assignments, deadlines, menu safeguards, and legacy public compatibility.
 
 - [Resources and page connections](resources.md): document catalogue, categories, automatic Resource page listings, and downloads.
 

@@ -1327,6 +1327,10 @@ nav .nested-dropdown li:last-child a {
 .nested-dropdown-wrap:hover + .nested-dropdown {
   @apply block;
 }
+.menu-branch:hover > .nested-dropdown,
+.menu-branch:focus-within > .nested-dropdown {
+  @apply block;
+}
 a.nested-dropdown-wrap {
   @apply border-b border-dashed border-[#ebebeb] py-2.5;
 }

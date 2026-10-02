@@ -11,14 +11,85 @@ use Illuminate\Support\Collection as BaseCollection;
 
 class MenuRepository implements MenuRepositoryInterface
 {
+    public function descendantPageIds(array $pageIds): array
+    {
+        $children = Page::query()->get(['id', 'parent_id'])->groupBy('parent_id');
+        $ids = array_values(array_unique(array_map('intval', $pageIds)));
+        for ($index = 0; $index < count($ids); $index++) {
+            foreach ($children->get($ids[$index], collect()) as $child) {
+                if (! in_array($child->id, $ids, true)) {
+                    $ids[] = $child->id;
+                }
+            }
+        }
+
+        return $ids;
+    }
+
+    public function requiredNoticeAncestors(array $pageIds): array
+    {
+        $pages = Page::query()->get(['id', 'parent_id', 'page_type'])->keyBy('id');
+        $ancestors = [];
+        foreach ($pageIds as $id) {
+            $page = $pages->get((int) $id);
+            if ($page?->page_type !== \App\Enums\PageType::Notices) {
+                continue;
+            }
+            $visited = [$page->id];
+            while ($page->parent_id && ! in_array($page->parent_id, $visited, true)) {
+                $page = $pages->get($page->parent_id);
+                if (! $page) {
+                    break;
+                }
+                $visited[] = $page->id;
+                if ($page->page_type === \App\Enums\PageType::Notices) {
+                    $ancestors[] = $page->id;
+                }
+            }
+        }
+
+        return array_values(array_unique($ancestors));
+    }
+
+    public function hasRemainingNoticeChildren(Menu $menu, array $itemIds): bool
+    {
+        $items = $menu->items()->with('page')->get();
+        foreach ($items->whereIn('id', $itemIds) as $parent) {
+            if ($parent->page?->page_type !== \App\Enums\PageType::Notices) {
+                continue;
+            }
+            foreach ($items->whereNotIn('id', $itemIds) as $child) {
+                if ($child->page?->page_type === \App\Enums\PageType::Notices && str_starts_with($child->page->path, $parent->page->path.'/')) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function forLocation(string $location): ?Menu
     {
-        $menu = Menu::query()->where('location', $location)->with(['items' => fn ($query) => $query->where('is_visible', true)->with('page')])->first();
+        $menu = Menu::query()->where('location', $location)->with(['items' => fn ($query) => $query->with('page')])->first();
         if (! $menu) {
             return null;
         }
 
-        $items = $menu->items->filter(fn ($item) => ! $item->page_id || ($item->page && $item->page->status === \App\Enums\ContentStatus::Published && (! $item->page->published_at || $item->page->published_at->lte(now()))));
+        // Resolve page links from the current page tree, including hidden assigned
+        // ancestors so their descendants cannot leak into the public root menu.
+        $pages = Page::query()->get(['id', 'parent_id'])->keyBy('id');
+        $assigned = $menu->items->whereNotNull('page_id')->keyBy('page_id');
+        foreach ($assigned as $pageId => $item) {
+            $parentId = $pages->get($pageId)?->parent_id;
+            $visited = [$pageId];
+            while ($parentId && ! $assigned->has($parentId) && ! in_array($parentId, $visited, true)) {
+                $visited[] = $parentId;
+                $parentId = $pages->get($parentId)?->parent_id;
+            }
+            $item->parent_id = $parentId && ! in_array($parentId, $visited, true) ? $assigned->get($parentId)?->id : null;
+        }
+
+        $items = $menu->items->filter(fn ($item) => $item->is_visible && (! $item->page_id || ($item->page && $item->page->status === \App\Enums\ContentStatus::Published && (! $item->page->published_at || $item->page->published_at->lte(now())))));
         // Remove descendants of a hidden parent instead of promoting them into root links.
         do {
             $count = $items->count();

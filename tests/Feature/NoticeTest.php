@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\PageType;
 use App\Models\Notice;
+use App\Models\Page;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +15,7 @@ beforeEach(function (): void {
 test('admin can publish a notice with an attachment and it is public', function (): void {
     Storage::fake('public');
     $this->actingAs($this->admin)->post(route('admin.notices.store'), [
+        'notice_page_id' => Page::factory()->create(['page_type' => PageType::Notices])->id,
         'title' => 'Public holiday notice', 'description' => '<p>Office closed Monday.</p>', 'sort_order' => 1,
         'status' => 'published', 'file' => UploadedFile::fake()->create('notice.pdf', 20, 'application/pdf'),
         'meta_title' => 'Holiday notice',
@@ -26,9 +29,10 @@ test('admin can publish a notice with an attachment and it is public', function 
 
 test('notice routes and publishing require permissions', function (): void {
     $this->get(route('admin.notices.index'))->assertRedirect();
+    $section = Page::factory()->create(['page_type' => PageType::Notices]);
     $editor = User::factory()->create();
     $editor->givePermissionTo('notices.create');
-    $this->actingAs($editor)->post(route('admin.notices.store'), ['title' => 'Draft notice', 'sort_order' => 0, 'status' => 'draft'])->assertRedirect();
-    $this->actingAs($editor)->post(route('admin.notices.store'), ['title' => 'Published notice', 'sort_order' => 0, 'status' => 'published'])->assertSessionHasErrors('status');
+    $this->actingAs($editor)->post(route('admin.notices.store'), ['notice_page_id' => $section->id, 'title' => 'Draft notice', 'sort_order' => 0, 'status' => 'draft'])->assertRedirect();
+    $this->actingAs($editor)->post(route('admin.notices.store'), ['notice_page_id' => $section->id, 'title' => 'Published notice', 'sort_order' => 0, 'status' => 'published'])->assertSessionHasErrors('status');
     $this->assertDatabaseMissing('notices', ['slug' => 'published-notice']);
 });

@@ -10,6 +10,18 @@ use Illuminate\Database\Eloquent\Collection;
 
 class NoticeCategoryRepository implements NoticeCategoryRepositoryInterface
 {
+    public function compatibilityCategory(): NoticeCategory
+    {
+        $general = NoticeCategory::query()->where('slug', 'general')->where('is_active', true)->lockForUpdate()->first();
+        if ($general) {
+            return $general;
+        }
+
+        return NoticeCategory::query()->firstOrCreate(['slug' => 'notice-sections-default'], [
+            'name' => 'General Notices', 'is_active' => true, 'sort_order' => $this->nextSortOrder(),
+        ]);
+    }
+
     public function ordered(array $filters): Collection
     {
         return NoticeCategory::query()->when($filters['search'] ?? null, fn ($query, $search) => $query->where('name', 'like', '%'.$search.'%'))

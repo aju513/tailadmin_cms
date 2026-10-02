@@ -34,6 +34,12 @@ class PageService
     public function update(Page $page, array $data, Authenticatable $actor): Page
     {
         return DB::transaction(function () use ($page, $data, $actor): Page {
+            $page = $this->pages->lock($page->id);
+            $requestedType = $data['page_type'] ?? $page->page_type;
+            $requestedType = $requestedType instanceof PageType ? $requestedType->value : $requestedType;
+            if ($requestedType !== PageType::Notices->value && $this->pages->hasNoticeAssignments([$page->id])) {
+                throw ValidationException::withMessages(['page_type' => 'Move assigned notices to another section before changing this page type.']);
+            }
             $oldPath = $page->path;
             $descendants = $this->pages->descendants($page);
             $data = $this->prepare($this->attachMedia($data, $actor), $actor, $page);
@@ -77,6 +83,11 @@ class PageService
     public function delete(Page $page, Authenticatable $actor): void
     {
         DB::transaction(function () use ($page, $actor): void {
+            $page = $this->pages->lock($page->id);
+            $sectionIds = $this->pages->descendants($page)->pluck('id')->prepend($page->id)->all();
+            if ($this->pages->hasNoticeAssignments($sectionIds)) {
+                throw ValidationException::withMessages(['page' => 'Move assigned notices out of this page and its child sections before deleting it.']);
+            }
             $this->record($actor, $page, 'page.deleted', 'Page deleted');
             $this->pages->delete($page);
         });

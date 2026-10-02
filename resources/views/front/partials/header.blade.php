@@ -159,10 +159,10 @@
         <?php foreach ($siteNavigation as $navItem): ?>
             <li class="relative">
                 <?php if (!empty($navItem['children'])): ?>
-                    <span class="dropdown-toggle flex w-full items-center gap-0 text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">
-                        <?= htmlspecialchars($navItem['label'], ENT_QUOTES, 'UTF-8') ?>
+                    <a href="{{ $navItem['href'] }}" class="text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">{{ $navItem['label'] }}</a>
+                    <button type="button" aria-label="Toggle {{ $navItem['label'] }} submenu" aria-expanded="false" class="dropdown-toggle inline-flex items-center text-text_color hover:text-secondary">
                         <span class="icon icon-dropdown text-sm xl:text-base"></span>
-                    </span>
+                    </button>
                     <div class="item dropdown custom-shadow absolute left-auto top-9 z-10 hidden rounded-bl-[5px] rounded-br-[5px]">
                         <div class="flex flex-wrap justify-start">
                             <ul class="w-72 p-3">

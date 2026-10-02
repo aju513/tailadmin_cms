@@ -27,11 +27,13 @@ class MenuService
     public function assignPages(array $data, Authenticatable $actor): Menu
     {
         return DB::transaction(function () use ($data, $actor): Menu {
-            $menu = $this->menus->find((int) $data['menu_id']);
-            $assigned = $this->menus->assignPages($menu, $data['page_ids']);
+            $menu = $this->menus->lock((int) $data['menu_id']);
+            $descendantIds = $this->menus->descendantPageIds($data['page_ids']);
+            $pageIds = array_values(array_unique([...$descendantIds, ...$this->menus->requiredNoticeAncestors($descendantIds)]));
+            $assigned = $this->menus->assignPages($menu, $pageIds);
             activity('content')->causedBy($actor)->event('menu-pages.assigned')->withProperties([
                 'menu_id' => $menu->id,
-                'page_ids' => array_map('intval', $data['page_ids']),
+                'page_ids' => $pageIds,
                 'created_count' => $assigned,
             ])->log('Pages assigned to menu');
 
@@ -59,6 +61,10 @@ class MenuService
     public function delete(MenuItem $item, Authenticatable $actor): void
     {
         DB::transaction(function () use ($item, $actor): void {
+            $menu = $this->menus->lock($item->menu_id);
+            if ($this->menus->hasRemainingNoticeChildren($menu, [$item->id])) {
+                throw ValidationException::withMessages(['menu_items' => 'Remove the child Notice Sections from this menu before removing their parent.']);
+            }
             $this->menus->deleteItem($item);
             activity('content')->causedBy($actor)->event('menu-item.deleted')->withProperties(['menu_item_id' => $item->id])->log('Menu item deleted');
         });
@@ -106,12 +112,15 @@ class MenuService
     public function bulkDelete(array $data, Authenticatable $actor): void
     {
         DB::transaction(function () use ($data, $actor): void {
-            $menu = $this->menus->find((int) $data['menu_id']);
+            $menu = $this->menus->lock((int) $data['menu_id']);
             $itemIds = array_map('intval', $data['menu_items']);
             if ($this->menus->itemsByIds($menu, $itemIds)->count() !== count($itemIds)) {
                 throw ValidationException::withMessages(['menu_items' => 'One or more menu items do not belong to this menu.']);
             }
 
+            if ($this->menus->hasRemainingNoticeChildren($menu, $itemIds)) {
+                throw ValidationException::withMessages(['menu_items' => 'Select the child Notice Sections too, or remove them before their parent.']);
+            }
             $this->menus->deleteItems($menu, $itemIds);
             activity('content')->causedBy($actor)->event('menu-items.deleted')->withProperties([
                 'menu_id' => $menu->id,

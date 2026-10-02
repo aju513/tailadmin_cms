@@ -1,12 +1,6 @@
 <?php
 
 return [
-    'notice-categories' => [
-        'notice-categories.manage' => ['view_title' => 'Manage notice categories', 'description' => 'Allows manage operations for notice categories.'],
-        'notice-categories.create' => ['view_title' => 'Create notice categories', 'description' => 'Allows create operations for notice categories.'],
-        'notice-categories.edit' => ['view_title' => 'Edit notice categories', 'description' => 'Allows edit operations for notice categories.'],
-        'notice-categories.delete' => ['view_title' => 'Delete notice categories', 'description' => 'Allows delete operations for notice categories.'],
-    ],
 
     'resources' => [
         'resources.manage' => ['view_title' => 'Manage resources', 'description' => 'Allows manage operations for resources.'],

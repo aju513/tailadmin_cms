@@ -13,10 +13,10 @@ class NoticeRepository implements NoticeRepositoryInterface
 {
     public function paginateAdmin(array $filters): LengthAwarePaginator
     {
-        return Notice::query()->with('fileMedia', 'category')
+        return Notice::query()->with('fileMedia', 'category', 'noticePage')
             ->when($filters['search'] ?? null, fn ($query, $search) => $query->where('title', 'like', '%'.$search.'%'))
             ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
-            ->when($filters['notice_category_id'] ?? null, fn ($query, $type) => $query->where('notice_category_id', $type))
+            ->when($filters['notice_page_ids'] ?? null, fn ($query, $ids) => $query->whereIn('notice_page_id', $ids))
             ->orderBy('sort_order')->latest('id')->paginate(15)->withQueryString();
     }
 
@@ -45,7 +45,7 @@ class NoticeRepository implements NoticeRepositoryInterface
 
     public function details(Notice $notice): Notice
     {
-        return $notice->load('fileMedia', 'category');
+        return $notice->load('fileMedia', 'category', 'noticePage');
     }
 
     public function create(array $data): Notice

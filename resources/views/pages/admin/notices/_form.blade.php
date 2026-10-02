@@ -2,7 +2,13 @@
     <div class="grid gap-6 md:grid-cols-2">
         <x-form.input name="title" label="Notice title" :value="old('title', $item->title)" required />
         <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" help="Leave blank to generate from the title." />
-        <x-form.select name="notice_category_id" label="Notice category" :options="$categories" :value="$item->notice_category_id" required />
+        <div>
+            <x-form.select name="notice_page_id" label="Notice Section" :options="$sections" :value="$item->notice_page_id" placeholder="Select a section…" required help="Choose the Notice Board or one of its child sections." />
+            @if(empty($sections))
+                <p class="mt-2 text-sm text-warning-600">Create a Page with type Notices before adding notices.</p>
+                @can('pages.create')<a href="{{ route('admin.pages.create') }}" class="text-sm text-brand-500 underline">Create a Notice Section in Pages</a>@endcan
+            @endif
+        </div>
         <x-form.input name="deadline_at" label="Deadline (optional)" type="datetime-local" :value="$item->deadline_at?->format('Y-m-d\TH:i')" help="For tender submissions or applications. Leave blank when there is no deadline." />
         <div class="flex items-center sm:pt-6">
     @can('notices.publish')

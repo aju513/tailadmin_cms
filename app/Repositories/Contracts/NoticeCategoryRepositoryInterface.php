@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface NoticeCategoryRepositoryInterface
 {
+    public function compatibilityCategory(): NoticeCategory;
+
     public function ordered(array $filters): Collection;
 
     public function lockAll(): Collection;

@@ -54,6 +54,8 @@ Set `APP_URL` to the actual HTTPS production origin before caching configuration
 - Detail `lastmod` uses record update time. Catalogue URLs omit `lastmod` because no reliable aggregate edit time is stored. Request-time synthetic dates and obsolete sitemap pings are not used.
 - `/robots.txt` is dynamic and points at the canonical XML index. The previous static file is removed so the web server forwards this request to Laravel.
 - XML responses, homepage data, settings and menus use a bounded 60-second cache. Content observers invalidate after commit; menu bulk ordering invalidates explicitly. Scheduling becomes visible within that interval. External database writes must call `frontend:cache-clear`.
+
+Header and mobile menus follow the current Pages parent/child hierarchy, including after a page is moved without being reassigned. Only assigned pages appear; a missing menu ancestor connects to the nearest assigned ancestor. Hidden, draft, or scheduled assigned parents suppress their descendants. Manual links retain their menu parent. Desktop parent labels remain clickable, with a separate dropdown button; deeper menus also open on keyboard focus.
 - Rendered HTML, session cookies, authenticated responses, CSRF tokens and downloads are not shared through a public response cache.
 
 ## Performance

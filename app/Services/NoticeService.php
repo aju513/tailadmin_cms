@@ -18,11 +18,23 @@ use Throwable;
 
 class NoticeService
 {
-    public function __construct(private readonly NoticeRepositoryInterface $records, private readonly MediaAssetService $media, private readonly NoticeCategoryService $categories) {}
+    public function __construct(private readonly NoticeRepositoryInterface $records, private readonly MediaAssetService $media, private readonly NoticeCategoryService $categories, private readonly \App\Repositories\Contracts\PageRepositoryInterface $pages, private readonly \App\Repositories\Contracts\NoticeCategoryRepositoryInterface $legacyCategories) {}
 
     public function index(array $filters): LengthAwarePaginator
     {
+        if (filled($filters['notice_page_id'] ?? null)) {
+            $page = $this->pages->find((int) $filters['notice_page_id']);
+            $filters['notice_page_ids'] = $this->pages->descendants($page)->pluck('id')->prepend($page->id)->all();
+        }
+
         return $this->records->paginateAdmin($filters);
+    }
+
+    public function sectionOptions(): array
+    {
+        return $this->pages->noticeSections()->mapWithKeys(fn ($page) => [
+            $page->id => str_repeat('-- ', (int) $page->tree_level).$page->title.' ('.$page->path.')'.($page->status === ContentStatus::Draft ? ' (Unpublished)' : ''),
+        ])->all();
     }
 
     public function categoryOptions(bool $activeOnly = false): array
@@ -51,7 +63,7 @@ class NoticeService
 
     public function newRecord(): Notice
     {
-        return new Notice(['status' => ContentStatus::Draft, 'notice_category_id' => array_key_first($this->categories->options(true)), 'sort_order' => 0]);
+        return new Notice(['status' => ContentStatus::Draft, 'sort_order' => 0]);
     }
 
     public function details(Notice $record): Notice
@@ -67,7 +79,19 @@ class NoticeService
         try {
             return DB::transaction(function () use ($data, $actor, $record, &$uploads): Notice {
                 $record = $record ? $this->records->lock($record) : null;
-                $this->categories->lockSelection((int) $data['notice_category_id']);
+                $section = $this->pages->lock((int) $data['notice_page_id']);
+                if ($section->page_type !== \App\Enums\PageType::Notices) {
+                    throw ValidationException::withMessages(['notice_page_id' => 'Choose a page with type Notices.']);
+                }
+                if ($record) {
+                    $data['notice_category_id'] = $record->notice_category_id;
+                } else {
+                    $category = $this->legacyCategories->compatibilityCategory();
+                    $data['notice_category_id'] = $category->id;
+                    if ($category->wasRecentlyCreated) {
+                        activity('content')->causedBy($actor)->performedOn($category)->event('notice-category.compatibility-created')->log('Internal notice compatibility category created');
+                    }
+                }
                 $status = ContentStatus::from($data['status']);
                 if ($status === ContentStatus::Published || $record?->status === ContentStatus::Published) {
                     Gate::forUser($actor)->authorize('notices.publish');
@@ -92,7 +116,7 @@ class NoticeService
 
                 activity('content')->causedBy($actor)->performedOn($saved)
                     ->event($record ? 'notice.updated' : 'notice.created')
-                    ->withProperties(['notice_id' => $saved->id, 'slug' => $saved->slug, 'notice_category_id' => $saved->notice_category_id])
+                    ->withProperties(['notice_id' => $saved->id, 'slug' => $saved->slug, 'notice_category_id' => $saved->notice_category_id, 'notice_page_id' => $saved->notice_page_id])
                     ->log($record ? 'Notice updated' : 'Notice created');
 
                 return $saved;
