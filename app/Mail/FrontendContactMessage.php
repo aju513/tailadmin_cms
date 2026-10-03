@@ -18,6 +18,6 @@ class FrontendContactMessage extends Mailable
 
     public function content(): Content
     {
-        return new Content(view: 'emails.frontend-contact-message');
+        return new Content(view: 'front.emails.contact-message');
     }
 }

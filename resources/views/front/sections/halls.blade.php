@@ -1,12 +1,13 @@
 <section class="homepage__hall-booking" aria-labelledby="hall-booking-title">
-    <div class="container-fluid bg-primary md:rounded-[40px] overflow-hidden">
+    <div class="container-fluid bg-tertiary md:rounded-[40px] overflow-hidden">
         <div class="container max-md:!px-0">
             <div class="flex items-center justify-between">
                     <div class="homepage__hall-booking-copy">
                         <h2 id="hall-booking-title" class="text-white/90!">Professional Spaces<br />for Trainings &amp; Events</h2>
                         <p class="">Fully equipped spaces designed for trainings, workshops, meetings, and official events.</p>
-                    <a href="{{ route('public.halls.index') }}" class="btn-primary group flex w-fit px-5! py-3! max-w-[200px]! hover:bg-block/40! mt-5!">
-View Halls                        <span class="ml-1 icon-arrow-up-right inline-block text-base transition-transform duration-500 ease-in-out group-hover:translate-x-1" aria-hidden="true"></span>
+                    <a href="{{ route('public.halls.index') }}" class="btn-primary hav-icon mt-7 bg-white! text-[#164491]!">
+                        <span class="font-medium hover:underline!">View Halls</span>
+                        <span class="btn-primary__icon icon-arrow-up-right bg-[#10336F]/80!" aria-hidden="true"></span>
                     </a>
                    
                     </div>

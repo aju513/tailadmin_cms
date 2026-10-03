@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Hall\BulkDeleteHallRequest;
-use App\Http\Requests\Hall\BulkHallStatusRequest;
-use App\Http\Requests\Hall\CreateHallRequest;
-use App\Http\Requests\Hall\DeleteHallRequest;
-use App\Http\Requests\Hall\EditHallRequest;
-use App\Http\Requests\Hall\IndexHallRequest;
-use App\Http\Requests\Hall\ShowHallRequest;
-use App\Http\Requests\Hall\StoreHallRequest;
-use App\Http\Requests\Hall\UpdateHallRequest;
+use App\Http\Requests\Admin\Hall\BulkDeleteHallRequest;
+use App\Http\Requests\Admin\Hall\BulkHallStatusRequest;
+use App\Http\Requests\Admin\Hall\CreateHallRequest;
+use App\Http\Requests\Admin\Hall\DeleteHallRequest;
+use App\Http\Requests\Admin\Hall\EditHallRequest;
+use App\Http\Requests\Admin\Hall\IndexHallRequest;
+use App\Http\Requests\Admin\Hall\ShowHallRequest;
+use App\Http\Requests\Admin\Hall\StoreHallRequest;
+use App\Http\Requests\Admin\Hall\UpdateHallRequest;
 use App\Models\Hall;
 use App\Services\HallService;
 use Illuminate\Http\JsonResponse;
@@ -24,12 +24,12 @@ class HallController extends Controller
 
     public function index(IndexHallRequest $request): View
     {
-        return view('pages.admin.halls.index', ['items' => $this->service->index($request->validated()), 'title' => 'Halls']);
+        return view('admin.pages.halls.index', ['items' => $this->service->index($request->validated()), 'title' => 'Halls']);
     }
 
     public function create(CreateHallRequest $request): View
     {
-        return view('pages.admin.halls.create', ['hall' => $this->service->newHall(), 'title' => 'Add Hall']);
+        return view('admin.pages.halls.create', ['hall' => $this->service->newHall(), 'title' => 'Add Hall']);
     }
 
     public function store(StoreHallRequest $request): RedirectResponse
@@ -41,12 +41,12 @@ class HallController extends Controller
 
     public function show(ShowHallRequest $request, Hall $hall): View
     {
-        return view('pages.admin.halls.show', ['hall' => $this->service->details($hall), 'title' => 'Hall Details']);
+        return view('admin.pages.halls.show', ['hall' => $this->service->details($hall), 'title' => 'Hall Details']);
     }
 
     public function edit(EditHallRequest $request, Hall $hall): View
     {
-        return view('pages.admin.halls.edit', ['hall' => $this->service->details($hall), 'title' => 'Edit Hall']);
+        return view('admin.pages.halls.edit', ['hall' => $this->service->details($hall), 'title' => 'Edit Hall']);
     }
 
     public function update(UpdateHallRequest $request, Hall $hall): RedirectResponse

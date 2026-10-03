@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Content\DeleteCategoryRequest;
-use App\Http\Requests\Content\IndexCategoryRequest;
-use App\Http\Requests\Content\StoreCategoryRequest;
-use App\Http\Requests\Content\UpdateCategoryRequest;
+use App\Http\Requests\Admin\Content\DeleteCategoryRequest;
+use App\Http\Requests\Admin\Content\IndexCategoryRequest;
+use App\Http\Requests\Admin\Content\StoreCategoryRequest;
+use App\Http\Requests\Admin\Content\UpdateCategoryRequest;
 use App\Models\ContentCategory;
 use App\Repositories\Contracts\ContentRepositoryInterface;
 use App\Services\CategoryService;
@@ -19,12 +19,12 @@ class CategoryController extends Controller
 
     public function index(IndexCategoryRequest $request): View
     {
-        return view('pages.admin.content.index', ['items' => $this->categories->paginate($request->validated()), 'title' => 'Categories', 'resource' => 'categories', 'resourceLabel' => 'Category']);
+        return view('admin.pages.content.index', ['items' => $this->categories->paginate($request->validated()), 'title' => 'Categories', 'resource' => 'categories', 'resourceLabel' => 'Category']);
     }
 
     public function create(): View
     {
-        return view('pages.admin.content.create', ['item' => new ContentCategory(['status' => true]), 'title' => 'Create Category', 'resource' => 'categories', 'resourceLabel' => 'Category']);
+        return view('admin.pages.content.create', ['item' => new ContentCategory(['status' => true]), 'title' => 'Create Category', 'resource' => 'categories', 'resourceLabel' => 'Category']);
     }
 
     public function store(StoreCategoryRequest $request): RedirectResponse
@@ -36,7 +36,7 @@ class CategoryController extends Controller
 
     public function edit(ContentCategory $category): View
     {
-        return view('pages.admin.content.edit', ['item' => $category, 'title' => 'Edit Category', 'resource' => 'categories', 'resourceLabel' => 'Category']);
+        return view('admin.pages.content.edit', ['item' => $category, 'title' => 'Edit Category', 'resource' => 'categories', 'resourceLabel' => 'Category']);
     }
 
     public function update(UpdateCategoryRequest $request, ContentCategory $category): RedirectResponse

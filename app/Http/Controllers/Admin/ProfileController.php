@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Profile\UpdateProfileRequest;
+use App\Http\Requests\Admin\Profile\UpdateProfileRequest;
 use App\Services\ProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -14,7 +14,7 @@ class ProfileController extends Controller
 
     public function edit(): View
     {
-        return view('pages.admin.profile', ['title' => 'My Profile']);
+        return view('admin.pages.profile', ['title' => 'My Profile']);
     }
 
     public function update(UpdateProfileRequest $request): RedirectResponse

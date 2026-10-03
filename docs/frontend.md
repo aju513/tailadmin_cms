@@ -2,20 +2,23 @@
 
 ## References and structure
 
-The Lumbini PHP design at `C:/Users/User/Documents/reference/lumbini/desing-website-lumbini` is the source of truth. Its HTML containers, classes, source CSS, fonts, icons, assets and responsive behavior are copied into the Laravel frontend. Only content bindings, application URLs, library initialization and asset paths are adapted. There is no separately designed layout stylesheet. The travel portal at `D:/2026/humantreks.com` informs the separate Front namespace, frontend assets, reusable Blade sections, sitemap index and schema services. Travel packages and booking workflows are excluded from this institute website.
+The Lumbini PHP design at `D:/websitepcgg` is the source of truth. Its HTML containers, classes, source CSS, fonts, icons, assets and responsive behavior are copied into the Laravel frontend. Content bindings, application URLs, library initialization, asset paths and small accessibility corrections are adapted. There is no separately designed layout stylesheet. The travel portal at `D:/2026/humantreks.com` informs the separate Front namespace, frontend assets, reusable Blade sections, sitemap index and schema services. Travel packages and booking workflows are excluded from this institute website.
 
-- `routes/front.php`: public catalogues, detail, search, XML sitemap and robots routes. The CMS catch-all stays after admin routes in `routes/web.php`.
+- `routes/front.php`: public catalogues, detail, search, XML sitemap and robots routes, followed by the CMS catch-all. `routes/web.php` loads protected routes from `routes/admin.php` first.
 - `app/Http/Controllers/Front`: thin controllers.
 - `app/Http/Requests/Front`: public input validation and public-access authorization.
 - `app/Services/Frontend`: page orchestration, metadata/JSON-LD, XML sitemaps, HTML sanitation, video providers, images, cache and maintenance.
+- `FrontendLayoutService` and `Http/ViewComposers/Front/LayoutComposer`: common settings, menus and metadata for the public shell. Header/footer partials, branding, fallback navigation and default office hours are configured in `config/frontend.php`; saved CMS settings and menus take precedence. See [folder-structure.md](folder-structure.md).
 - `FrontendRepositoryInterface` / `Eloquent/FrontendRepository`: publication-aware queries, pagination, eager loading, search and sitemap records. Registered in AppServiceProvider.
-- `resources/views/front/{layouts,partials,components,sections,catalogues,details,pages}`: public templates. Homepage sections follow the original order: banner/notices, trainings, About/services, capacity report, resources, team, hall banner, videos and news.
-- `resources/front/css/design.css`: the original `css/main.css`, with Laravel Blade source paths and automatic project-wide utility scanning disabled. Style rules are unchanged.
+- `resources/views/front/{layouts,partials,components,sections,catalogues,details,pages,emails}`: public templates. Homepage sections follow the original order: banner/notices, trainings, About/services, capacity report, resources, team, hall banner, videos and news.
+- `resources/front/css/design.css`: the reference's `css/main.css`, with Laravel Blade source paths and automatic project-wide utility scanning disabled. Adaptations retain keyboard-accessible nested menus, readable catalogue descriptions on dark cards and the direct-child resource button selector.
 - `resources/front/css/icons.css`: the original icon definitions from `inc/common-header.php`, with local font paths.
 - `resources/front/{js,fonts,images,vendor}`: public JavaScript, copied assets and the reference's Fancybox 6 distribution. Swiper 12 uses the existing npm dependency. Admin assets remain separate.
 - `public/front/images`: design assets referenced by the HTML, including the original banner photographs used when Home Slides is empty.
 
 ## Admin-to-website mapping
+
+The October 2026 sync includes the reference's latest working files, including its uncommitted design edits: the tertiary blue token, training/resource cards and badges, white action buttons, About and hall backgrounds, neutral capacity-report text, revised resource background and capacity/organization icons. Homepage resource cards use the compact training-card layout and show one, two or three slides at the reference's mobile, 640px and 1024px breakpoints. Resource catalogue cards omit category badges while retaining category tabs, descriptions, publication metadata and named detail links. The hall action continues to open the existing public hall catalogue. Updated artwork is copied into both `resources/front/images` for Vite and `public/front/images` for Blade asset URLs.
 
 | Admin content | Public behavior |
 | --- | --- |
@@ -55,7 +58,7 @@ Set `APP_URL` to the actual HTTPS production origin before caching configuration
 - `/robots.txt` is dynamic and points at the canonical XML index. The previous static file is removed so the web server forwards this request to Laravel.
 - XML responses, homepage data, settings and menus use a bounded 60-second cache. Content observers invalidate after commit; menu bulk ordering invalidates explicitly. Scheduling becomes visible within that interval. External database writes must call `frontend:cache-clear`.
 
-Header and mobile menus follow the current Pages parent/child hierarchy, including after a page is moved without being reassigned. Only assigned pages appear; a missing menu ancestor connects to the nearest assigned ancestor. Hidden, draft, or scheduled assigned parents suppress their descendants. Manual links retain their menu parent. Desktop parent labels remain clickable, with a separate dropdown button; deeper menus also open on keyboard focus.
+Header and mobile menus follow the current Pages parent/child hierarchy, including after a page is moved without being reassigned. Only assigned pages appear; a missing menu ancestor connects to the nearest assigned ancestor. Hidden, draft, or scheduled assigned parents suppress their descendants. Manual links retain their menu parent. At every depth, parent labels and icons form a single button that toggles their submenu on click, Enter or Space instead of navigating to the parent's URL. Items without children remain normal links, including external links. Desktop nested menus use the button's expanded state; closing a top-level dropdown also resets its nested dropdowns. At desktop widths (1024px and wider), scrolling beyond 300px applies the `sticky` class to `.header__menu`, matching the fixed-navbar and compact-logo CSS selectors. The mobile navbar becomes sticky beyond 120px; scrolling back or crossing the desktop breakpoint resets the relevant classes.
 - Rendered HTML, session cookies, authenticated responses, CSRF tokens and downloads are not shared through a public response cache.
 
 ## Performance
@@ -71,9 +74,9 @@ Header and mobile menus follow the current Pages parent/child hierarchy, includi
 
 No PageSpeed score is asserted. Measure deployed mobile LCP/CLS/INP on the homepage, news details, gallery and hall after setup; results depend on hosting, built assets and actual content.
 
-## Deferred setup
+## Setup and verification
 
-Run from the CMS repository. CSS and JavaScript were built with `npm run build` after the user's later explicit build request. Tests, migrations, permission/menu regeneration and Git actions remain deferred.
+Run from the CMS repository. Build both asset manifests before feature tests or deployment.
 
 ```powershell
 php artisan migrate
@@ -83,10 +86,10 @@ php artisan frontend:cache-clear
 php artisan optimize:clear
 ```
 
-`migrate` applies the public team contact fields, publication indexes and earlier pending category/module migrations. Use `storage:link` if the link is absent. No new Composer package is required; Swiper is already installed and Fancybox files are copied from the exact distribution referenced by the design. The production Vite manifest includes the public entries. Use `npm run dev` during local development; use `npm run build` again after future template/asset edits.
+`migrate` applies the public team contact fields, publication indexes and earlier pending category/module migrations. Use `storage:link` if the link is absent. No new Composer package is required; Swiper is already installed and Fancybox files are copied from the exact distribution referenced by the design. `npm run build` creates separate manifests under `public/build/front` and `public/build/admin`. `npm run dev` starts both development servers; `dev:front` and `dev:admin` start individual servers. Rebuild after template/asset edits.
 
 Existing `settings.manage` and `menus.manage` permissions protect additions; there is no new permission or sidebar item. If earlier category/menu updates have not been installed, also run `php artisan admin:permissions-sync` and `php artisan admin:menu-regenerate` as their module docs describe.
 
 After verifying `.env`, optional deployment optimization is `php artisan config:cache`, `php artisan route:cache` and `php artisan view:cache`.
 
-`tests/Feature/FrontendIntegrationTest.php` covers publication/category visibility, sitemap splitting and invalid requests, typed resource root pages, safe HTML/schema encoding, query validation, robots, team visibility, provider allowlisting, menu/settings authorization, report validation and contact delivery/failure behavior. Tests were added without execution. PHP/JavaScript and compiled Blade syntax are checked. Public catalogues, details, the homepage and settings fields were rendered with in-memory sample data, without database writes or mail sends. All temporary helper scripts were removed.
+`tests/Feature/FrontendIntegrationTest.php` covers publication/category visibility, sitemap splitting and invalid requests, typed resource root pages, safe HTML/schema encoding, query validation, robots, team visibility, provider allowlisting, menu/settings authorization, report validation and contact delivery/failure behavior. `ApplicationStructureTest.php` adds header/footer configuration, CMS precedence, layout composition, admin route protection and independent production/development assets. Run `php artisan test`, `php vendor/bin/pint --test` and `npm run build` before handoff.

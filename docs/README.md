@@ -12,6 +12,8 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Admin and frontend folder structure](folder-structure.md): routes, views, assets, header/footer configuration and separate builds.
+
 - [Lumbini public frontend](frontend.md): design integration, module pages, SEO/schema, XML sitemaps, performance and setup.
 
 - [Notice Sections](notices.md): parent/child Notices pages, admin assignments, deadlines, menu safeguards, and legacy public compatibility.

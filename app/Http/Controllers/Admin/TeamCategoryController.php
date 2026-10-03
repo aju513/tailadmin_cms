@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TeamCategory\BulkDeleteTeamCategoryRequest;
-use App\Http\Requests\TeamCategory\BulkTeamCategoryStatusRequest;
-use App\Http\Requests\TeamCategory\DeleteTeamCategoryRequest;
-use App\Http\Requests\TeamCategory\IndexTeamCategoryRequest;
-use App\Http\Requests\TeamCategory\StoreTeamCategoryRequest;
-use App\Http\Requests\TeamCategory\UpdateTeamCategoryRequest;
+use App\Http\Requests\Admin\TeamCategory\BulkDeleteTeamCategoryRequest;
+use App\Http\Requests\Admin\TeamCategory\BulkTeamCategoryStatusRequest;
+use App\Http\Requests\Admin\TeamCategory\DeleteTeamCategoryRequest;
+use App\Http\Requests\Admin\TeamCategory\IndexTeamCategoryRequest;
+use App\Http\Requests\Admin\TeamCategory\StoreTeamCategoryRequest;
+use App\Http\Requests\Admin\TeamCategory\UpdateTeamCategoryRequest;
 use App\Models\TeamCategory;
 use App\Repositories\Contracts\TeamCategoryRepositoryInterface;
 use App\Services\TeamCategoryService;
@@ -22,12 +22,12 @@ class TeamCategoryController extends Controller
 
     public function index(IndexTeamCategoryRequest $request): View
     {
-        return view('pages.admin.team-categories.index', ['categories' => $this->categories->paginate($request->validated()), 'title' => 'Team Categories']);
+        return view('admin.pages.team-categories.index', ['categories' => $this->categories->paginate($request->validated()), 'title' => 'Team Categories']);
     }
 
     public function create(): View
     {
-        return view('pages.admin.team-categories.create', ['category' => new TeamCategory(['status' => true]), 'title' => 'Create Team Category']);
+        return view('admin.pages.team-categories.create', ['category' => new TeamCategory(['status' => true]), 'title' => 'Create Team Category']);
     }
 
     public function store(StoreTeamCategoryRequest $request): RedirectResponse
@@ -39,7 +39,7 @@ class TeamCategoryController extends Controller
 
     public function edit(TeamCategory $teamCategory): View
     {
-        return view('pages.admin.team-categories.edit', ['category' => $teamCategory, 'title' => 'Edit Team Category']);
+        return view('admin.pages.team-categories.edit', ['category' => $teamCategory, 'title' => 'Edit Team Category']);
     }
 
     public function update(UpdateTeamCategoryRequest $request, TeamCategory $teamCategory): RedirectResponse

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { multiselect } from '../../resources/js/components/multiselect.js';
+import { multiselect } from '../../resources/admin/js/components/multiselect.js';
 
 const options = [
     { value: '1', parent: null, label: 'Board' },

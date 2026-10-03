@@ -27,3 +27,6 @@ foreach (['news', 'notices', 'resources', 'halls', 'gallery', 'videos', 'team'] 
         $detailRoute->where('slug', '[0-9]+');
     }
 }
+
+// Keep the CMS catch-all after every explicit admin and public route.
+Route::get('/{path}', [ContentController::class, 'page'])->where('path', '.*')->name('public.page');

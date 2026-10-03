@@ -17,6 +17,8 @@
 
 Every new admin CRUD feature must use the following structure. The feature name below is a lowercase, stable key such as `products` or `invoices`.
 
+Add admin routes in `routes/admin.php`, controllers in `Http/Controllers/Admin`, requests in `Http/Requests/Admin/<Feature>` and views in `resources/views/admin/pages/<feature>`. Public routes, controllers, requests and views use the corresponding `Front`/`front` boundary. See [folder-structure.md](folder-structure.md).
+
 ```text
 Route -> FormRequest -> Controller -> Service -> Repository contract -> Eloquent repository -> Model
                                       |             |
@@ -71,7 +73,7 @@ Use a dedicated FormRequest for each input boundary: an index/filter request, st
 
 ### Standard views
 
-The normal CRUD surface has four Blade files under `resources/views/pages/admin/<feature>/`:
+The normal CRUD surface has four Blade files under `resources/views/admin/pages/<feature>/`:
 
 1. `index.blade.php` — page breadcrumb, authorized Create action, GET filter form above the table, paginated results, empty state, and per-row View/Edit/Delete actions gated by their individual permissions.
 2. `create.blade.php` — validated create form posting to the named store route.

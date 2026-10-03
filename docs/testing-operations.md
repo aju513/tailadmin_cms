@@ -2,6 +2,8 @@
 
 ## Local verification
 
+Run `npm run build` once before feature tests so both admin and frontend manifests exist. See [folder-structure.md](folder-structure.md) for separate build/development commands.
+
 ```bash
 php artisan test
 vendor/bin/pint --test

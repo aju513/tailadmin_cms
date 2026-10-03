@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\ContentStatus;
-use App\Models\ResourceDocument;
 use App\Models\ResourceCategory;
+use App\Models\ResourceDocument;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ResourceDocumentFactory extends Factory

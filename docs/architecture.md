@@ -31,4 +31,6 @@ The sidebar and Blade `@can` directives improve usability, but route middleware,
 
 ## Public frontend
 
-Public routes live in routes/front.php; the CMS catch-all follows admin routes. Front/ContentController delegates to Frontend/FrontendService and the bound FrontendRepositoryInterface. SEO, sitemap, image processing and cache invalidation use separate services. Public assets live in resources/front and templates in resources/views/front. See [frontend.md](frontend.md).
+`routes/web.php` loads `routes/admin.php` before `routes/front.php`; the public CMS catch-all is last. Controllers and FormRequests use `Admin` and `Front` namespaces. Admin templates live in `resources/views/admin` and assets in `resources/admin`; public templates and assets use the matching `front` folders. Shared models, repositories and content services remain domain-based.
+
+Front/ContentController delegates to Frontend/FrontendService and the bound FrontendRepositoryInterface. FrontendLayoutService prepares common settings and menus, and the frontend layout composer provides these to new public views. SEO, sitemap, image processing and cache invalidation use separate services. See [folder-structure.md](folder-structure.md) for configuration and independent Vite builds, and [frontend.md](frontend.md) for public features.

@@ -27,5 +27,4 @@ class Video extends Model
     {
         return $this->belongsTo(MediaAsset::class, 'cover_media_id');
     }
-
 }

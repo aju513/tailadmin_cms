@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Settings\UpdateSiteSettingsRequest;
+use App\Http\Requests\Admin\Settings\UpdateSiteSettingsRequest;
 use App\Services\SiteSettingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -14,7 +14,7 @@ class SiteSettingController extends Controller
 
     public function edit(): View
     {
-        return view('pages.admin.settings.edit', ['settings' => $this->settings->all(), 'title' => 'Site Settings']);
+        return view('admin.pages.settings.edit', ['settings' => $this->settings->all(), 'title' => 'Site Settings']);
     }
 
     public function update(UpdateSiteSettingsRequest $request): RedirectResponse

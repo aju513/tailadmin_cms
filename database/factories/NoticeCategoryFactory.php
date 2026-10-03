@@ -17,7 +17,6 @@ class NoticeCategoryFactory extends Factory
             'description' => fake()->paragraph(),
             'sort_order' => 0, 'is_active' => true,
 
-
         ];
     }
 }

@@ -20,5 +20,4 @@ class ResourceCategory extends Model
     {
         return 'slug';
     }
-
 }

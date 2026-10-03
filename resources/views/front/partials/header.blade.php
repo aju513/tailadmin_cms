@@ -17,8 +17,8 @@
                             class="site-brand__emblem"
                             width="150"
                             height="126"
-                            src="{{ $settings['logo_url'] ?: asset('front/images/svg/nepal-emblem.svg') }}"
-                            alt="Emblem of Nepal" />
+                            src="{{ $settings['logo_url'] ?: asset(config('frontend.branding.logo')) }}"
+                            alt="{{ $settings['site_name'] }}" />
                         <span class="site-brand__copy">
                              <span class="site-brand__name">{{ $settings['site_name'] }}</span>
                             <span class="site-brand__location">{{ $settings['address'] }}</span>
@@ -96,7 +96,7 @@
 
                     <!-- TMIS -->
                     <a
-                        href="{{ $settings['tmis_url'] ?: 'https://tmis.pcgg.lumbini.gov.np/' }}"
+                        href="{{ $settings['tmis_url'] }}"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="py-2 text-[16px] font-medium text-white transition-all duration-500 ease-in-out bg-secondary rounded-4xl px-3 hover:bg-primary">
@@ -143,10 +143,10 @@
                             class="site-brand__emblem"
                             width="150"
                             height="126"
-                            src="{{ $settings['logo_url'] ?: asset('front/images/svg/nepal-emblem.svg') }}"
-                            alt="Emblem of Nepal" />
+                            src="{{ $settings['logo_url'] ?: asset(config('frontend.branding.logo')) }}"
+                            alt="{{ $settings['site_name'] }}" />
                         <span class="site-brand__copy">
-                            <span class="site-brand__province">Lumbini Provincial Government</span>
+                            <span class="site-brand__province">{{ $settings['province_name'] }}</span>
                             <span class="site-brand__name">{{ $settings['site_name'] }}</span>
                             <span class="site-brand__location">{{ $settings['address'] }}</span>
                         </span>
@@ -156,12 +156,12 @@
 
                 <nav class="nav-menu flex items-center justify-center">
     <ul class="gap-2 lg:flex lg:items-center lg:justify-between xl:gap-5">
-        <?php foreach ($siteNavigation as $navItem): ?>
+        @foreach ($siteNavigation as $navItem)
             <li class="relative">
-                <?php if (!empty($navItem['children'])): ?>
-                    <a href="{{ $navItem['href'] }}" class="text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">{{ $navItem['label'] }}</a>
-                    <button type="button" aria-label="Toggle {{ $navItem['label'] }} submenu" aria-expanded="false" class="dropdown-toggle inline-flex items-center text-text_color hover:text-secondary">
-                        <span class="icon icon-dropdown text-sm xl:text-base"></span>
+                @if (!empty($navItem['children']))
+                    <button type="button" aria-label="Toggle {{ $navItem['label'] }} submenu" aria-expanded="false" class="dropdown-toggle inline-flex items-center gap-1 text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">
+                        {{ $navItem['label'] }}
+                        <span class="icon icon-dropdown text-sm xl:text-base" aria-hidden="true"></span>
                     </button>
                     <div class="item dropdown custom-shadow absolute left-auto top-9 z-10 hidden rounded-bl-[5px] rounded-br-[5px]">
                         <div class="flex flex-wrap justify-start">
@@ -170,13 +170,13 @@
                             </ul>
                         </div>
                     </div>
-                <?php else: ?>
-                    <a href="<?= htmlspecialchars($navItem['href'], ENT_QUOTES, 'UTF-8') ?>"<?= !empty($navItem['external']) ? ' target="_blank" rel="noopener noreferrer"' : '' ?> class="text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">
-                        <?= htmlspecialchars($navItem['label'], ENT_QUOTES, 'UTF-8') ?>
+                @else
+                    <a href="{{ $navItem['href'] }}" @if(!empty($navItem['external'])) target="_blank" rel="noopener noreferrer" @endif class="text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">
+                        {{ $navItem['label'] }}
                     </a>
-                <?php endif; ?>
+                @endif
             </li>
-        <?php endforeach; ?>
+        @endforeach
     </ul>
 </nav>
 
@@ -249,10 +249,10 @@
                             class="site-brand__emblem"
                             width="72"
                             height="60"
-                            src="{{ $settings['logo_url'] ?: asset('front/images/svg/nepal-emblem.svg') }}"
-                            alt="Emblem of Nepal" />
+                            src="{{ $settings['logo_url'] ?: asset(config('frontend.branding.logo')) }}"
+                            alt="{{ $settings['site_name'] }}" />
                         <span class="site-brand__copy">
-                            <span class="site-brand__province">Lumbini Provincial Government</span>
+                            <span class="site-brand__province">{{ $settings['province_name'] }}</span>
                             <span class="site-brand__name">{{ $settings['site_name'] }}</span>
                             <span class="site-brand__location">{{ $settings['address'] }}</span>
                         </span>

@@ -4,15 +4,13 @@ namespace App\Services\Frontend;
 
 use App\Enums\PageType;
 use App\Repositories\Contracts\FrontendRepositoryInterface;
-use App\Repositories\Contracts\MenuRepositoryInterface;
 use App\Repositories\Contracts\NewsRepositoryInterface;
 use App\Services\NoticeService;
 use App\Services\ResourceDocumentService;
-use App\Services\SiteSettingService;
 
 class FrontendService
 {
-    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly MenuRepositoryInterface $menus, private readonly SiteSettingService $settings, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache) {}
+    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache) {}
 
     private function setLocale(array $filters): void
     {
@@ -26,15 +24,7 @@ class FrontendService
     private function prepare(array $data, array $filters = []): array
     {
         $this->setLocale($filters);
-        $settings = array_replace(['site_name' => config('frontend.name'), 'hero_title' => config('frontend.hero_title'), 'hero_description' => config('frontend.hero_description')], $this->cache->remember('settings', fn () => $this->settings->all()));
-        $settings['site_name'] = $settings['site_name'] ?: config('frontend.name');
-        $data = [...$data, 'settings' => $settings, 'mainMenu' => $this->cache->remember('menu.header', fn () => $this->menus->forLocation('header')), 'footerMenu' => $this->cache->remember('menu.footer', fn () => $this->menus->forLocation('footer'))];
-        $data['navigation'] = $data['mainMenu'] ? $this->navigation($data['mainMenu']->items) : $this->defaultNavigation($settings);
-        $data['footerNavigation'] = $data['footerMenu'] ? $this->navigation($data['footerMenu']->items) : collect(['Home' => 'home', 'Our Team' => 'team.index', 'Notice Board' => 'notices.index', 'Resources' => 'resources.index', 'Gallery' => 'gallery.index', 'Videos' => 'videos.index', 'Our Halls' => 'halls.index', 'Contact Us' => 'contact'])->map(fn ($route, $label) => ['label' => $label, 'href' => route('public.'.$route)])->values()->all();
-        $data['importantNavigation'] = collect($settings['important_links'])->map(fn ($link) => ['label' => $link['label'], 'href' => $link['url']])->all();
-        $map = $settings['map_url'];
-        $mapHost = strtolower(parse_url($map ?? '', PHP_URL_HOST) ?? '');
-        $data['mapEmbedUrl'] = $map && in_array($mapHost, ['google.com', 'www.google.com', 'maps.google.com'], true) && (str_contains(parse_url($map, PHP_URL_PATH) ?? '', '/embed') || str_contains(parse_url($map, PHP_URL_QUERY) ?? '', 'output=embed')) ? $map : null;
+        $data = [...$data, ...$this->layout->data()];
         if (isset($data['latestResources'])) {
             $data['resourceGroups'] = $data['latestResources']->groupBy('resource_category_id');
         }
@@ -140,22 +130,5 @@ class FrontendService
         }
 
         return $this->prepare(['kind' => 'sitemap', 'heading' => 'Sitemap', 'pages' => $this->content->pages()], $filters);
-    }
-
-    private function navigation(\Illuminate\Support\Collection $items): array
-    {
-        return $items->filter(fn ($item) => app(SafeHtml::class)->safeUrl($item->url(), true))->map(fn ($item) => ['label' => $item->label, 'href' => $item->url(), 'children' => $this->navigation($item->children)])->values()->all();
-    }
-
-    private function defaultNavigation(array $settings): array
-    {
-        return [
-            ['label' => 'Home', 'href' => route('public.home')],
-            ['label' => 'Training', 'href' => $settings['training_url'] ?: 'https://tmis.pcgg.lumbini.gov.np/routines?status=all', 'external' => true],
-            ['label' => 'Organization', 'href' => route('public.team.index'), 'children' => [['label' => 'Our Team', 'href' => route('public.team.index')], ['label' => 'Legal Documents', 'href' => route('public.resources.index')]]],
-            ['label' => 'Notice Board', 'href' => route('public.notices.index'), 'children' => [['label' => 'News', 'href' => route('public.news.index')], ['label' => 'Notice', 'href' => route('public.notices.index')]]],
-            ['label' => 'Downloads', 'href' => route('public.resources.index')],
-            ['label' => 'Contact Us', 'href' => route('public.contact')],
-        ];
     }
 }

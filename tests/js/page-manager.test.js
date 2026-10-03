@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pageManager } from '../../resources/js/components/page-manager.js';
+import { pageManager } from '../../resources/admin/js/components/page-manager.js';
 
 globalThis.document = { querySelector: () => ({ content: 'test-csrf' }) };
 

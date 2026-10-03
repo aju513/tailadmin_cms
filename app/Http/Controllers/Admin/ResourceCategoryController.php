@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ResourceCategory\BulkDeleteResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\BulkResourceCategoryStatusRequest;
-use App\Http\Requests\ResourceCategory\CreateResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\DeleteResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\EditResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\IndexResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\OrderResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\StoreResourceCategoryRequest;
-use App\Http\Requests\ResourceCategory\UpdateResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\BulkDeleteResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\BulkResourceCategoryStatusRequest;
+use App\Http\Requests\Admin\ResourceCategory\CreateResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\DeleteResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\EditResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\IndexResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\OrderResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\StoreResourceCategoryRequest;
+use App\Http\Requests\Admin\ResourceCategory\UpdateResourceCategoryRequest;
 use App\Models\ResourceCategory;
 use App\Services\ResourceCategoryService;
 use Illuminate\Http\JsonResponse;
@@ -24,12 +24,12 @@ class ResourceCategoryController extends Controller
 
     public function index(IndexResourceCategoryRequest $request): View
     {
-        return view('pages.admin.resource-categories.index', ['records' => $this->service->index($request->validated()), 'title' => 'Resource Categories']);
+        return view('admin.pages.resource-categories.index', ['records' => $this->service->index($request->validated()), 'title' => 'Resource Categories']);
     }
 
     public function create(CreateResourceCategoryRequest $request): View
     {
-        return view('pages.admin.resource-categories.create', ['record' => $this->service->newRecord(), 'title' => 'Add Resource Category']);
+        return view('admin.pages.resource-categories.create', ['record' => $this->service->newRecord(), 'title' => 'Add Resource Category']);
     }
 
     public function store(StoreResourceCategoryRequest $request): RedirectResponse
@@ -42,7 +42,7 @@ class ResourceCategoryController extends Controller
 
     public function edit(EditResourceCategoryRequest $request, ResourceCategory $resourceCategory): View
     {
-        return view('pages.admin.resource-categories.edit', ['record' => $this->service->details($resourceCategory), 'title' => 'Edit Resource Category']);
+        return view('admin.pages.resource-categories.edit', ['record' => $this->service->details($resourceCategory), 'title' => 'Edit Resource Category']);
     }
 
     public function update(UpdateResourceCategoryRequest $request, ResourceCategory $resourceCategory): RedirectResponse

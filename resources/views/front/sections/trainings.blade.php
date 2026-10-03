@@ -32,9 +32,9 @@
                             <span>Lumbini Research and Training Academy</span>
                         </div>
                     </div>
-                    <a href="https://tmis.pcgg.lumbini.gov.np/routines?status=all" class="btn-primary hav-icon training-list__link">
-                        <span>View Details</span>
-                        <span class="btn-primary__icon icon-arrow-up-right" aria-hidden="true"></span>
+                    <a href="https://tmis.pcgg.lumbini.gov.np/routines?status=all" class="btn-primary hav-icon training-list__link bg-white! text-[#164491]!">
+                        <span class="font-medium hover:underline!">View Details</span>
+                        <span class="btn-primary__icon icon-arrow-up-right bg-[#10336F]/80!" aria-hidden="true"></span>
                     </a>
                 </article>
 @endfor

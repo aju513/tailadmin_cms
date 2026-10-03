@@ -46,5 +46,9 @@ class TeamMemberRepository implements TeamMemberRepositoryInterface
     {
         return (int) TeamMember::query()->max('sort_order') + 1;
     }
-    public function findByIds(array $ids): Collection { return TeamMember::query()->whereIn('id', $ids)->get(); }
+
+    public function findByIds(array $ids): Collection
+    {
+        return TeamMember::query()->whereIn('id', $ids)->get();
+    }
 }

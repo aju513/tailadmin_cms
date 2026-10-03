@@ -17,5 +17,6 @@ interface TeamMemberRepositoryInterface
     public function delete(TeamMember $member): void;
 
     public function nextSortOrder(): int;
+
     public function findByIds(array $ids): Collection;
 }

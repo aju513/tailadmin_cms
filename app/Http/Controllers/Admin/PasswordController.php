@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Profile\UpdatePasswordRequest;
+use App\Http\Requests\Admin\Profile\UpdatePasswordRequest;
 use App\Services\ProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -14,7 +14,7 @@ class PasswordController extends Controller
 
     public function edit(): View
     {
-        return view('pages.admin.password', ['title' => 'Change Password']);
+        return view('admin.pages.password', ['title' => 'Change Password']);
     }
 
     public function update(UpdatePasswordRequest $request): RedirectResponse

@@ -5,13 +5,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @include('front.partials.metadata')
-    @vite(['resources/front/css/app.css','resources/front/js/app.js'])
+    @include('front.partials.assets')
+    @stack('styles')
 </head>
 <body>
-    <main id="main">
-    @include('front.partials.header')
-    @yield('content')
-    @include('front.partials.footer')
-    </main>
+    <div id="main">
+        @include(config('frontend.layout.header'))
+        <main id="content">
+            @yield('content')
+        </main>
+        @include(config('frontend.layout.footer'))
+    </div>
+    @stack('scripts')
 </body>
 </html>

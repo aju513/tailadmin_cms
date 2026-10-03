@@ -20,5 +20,4 @@ class NoticeCategory extends Model
     {
         return 'slug';
     }
-
 }

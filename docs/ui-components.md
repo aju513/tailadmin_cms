@@ -2,8 +2,9 @@
 
 ## Layouts
 
-- `layouts.app` is the authenticated shell: responsive sidebar, header, flash/error feedback, dark mode, and content container.
-- `layouts.fullscreen-layout` is for login and password-reset screens.
+- `admin.layouts.app` is the authenticated shell: responsive sidebar, header, flash/error feedback, dark mode, and content container.
+- `admin.layouts.auth` is for login and password-reset screens under `admin.auth`.
+- `front.layouts.app` is the public shell with configurable header/footer partials, shared settings/menus and separate frontend assets.
 - Page views set a title, extend a layout, and render content through `@section('content')`.
 
 ## Reusable components
@@ -36,6 +37,8 @@ CRUD forms must compose the reusable `x-form.*` components below instead of dupl
 | `x-form.editor` | CKEditor rich-text editor with formatting, lists, links, tables, source view, and a custom block quote section action | `<x-form.editor name="body" label="Body" />` |
 
 All components accept `label`, `value`/`checked`, `required`, `disabled`, `help`, and `error` where applicable. They preserve old input, display validation feedback, support dark mode, and accept additional HTML attributes. The editor submits HTML through its backing textarea and must be sanitized server-side. CKEditor assets are vendored under `public/vendor/ckeditor`; this setup does not include a file manager or upload endpoint. File-upload forms must use `enctype="multipart/form-data"`; the component's client-side checks are only a usability aid, so every upload must be validated again in its FormRequest. Existing specialized components such as `x-form.input.radio` and file inputs should also be preferred when their control type is needed.
+
+Admin uploads pass `upload-profile` to `x-form.file-upload`, for example `<x-form.file-upload name="banner_image" label="Banner image" upload-profile="images.page.banner" />`. Profiles in `config/settings.php` supply accepted extensions, the maximum file size and recommended/required pixel dimensions. This profile takes precedence over individual `accept` and `max-size` attributes. The FormRequest uses `UploadProfile::rules('images.page.banner')` for the same server limits; `UploadProfile::rules($profile, 'required')` handles required fields and array entries. See [content-management.md](content-management.md) for all profiles and overrides.
 
 The shared TailAdmin font is Plus Jakarta Sans, including the rich-text editing area.
 

@@ -1,6 +1,54 @@
 <?php
 
 return [
+    'assets' => [
+        'entrypoints' => ['resources/front/css/app.css', 'resources/front/js/app.js'],
+        'build_directory' => 'build/front',
+        'hot_file' => 'framework/vite-front.hot',
+    ],
+    'layout' => [
+        'header' => 'front.partials.header',
+        'footer' => 'front.partials.footer',
+    ],
+    'branding' => [
+        'logo' => 'front/images/svg/nepal-emblem.svg',
+        'footer_illustration' => 'front/images/svg/footer.svg',
+    ],
+    'defaults' => [
+        'province_name' => 'Lumbini Province',
+        'training_url' => 'https://tmis.pcgg.lumbini.gov.np/routines?status=all',
+        'tmis_url' => 'https://tmis.pcgg.lumbini.gov.np/',
+        'footer_text' => 'All Rights Reserved.',
+        'office_hours' => "Summer (Magh 16–Kartik 15): Sun–Fri, 9:00 AM–5:00 PM\nWinter (Kartik 16–Magh 15): Sun–Fri, 9:00 AM–4:00 PM",
+    ],
+    'menu_locations' => ['header' => 'header', 'footer' => 'footer'],
+    // CMS menus take precedence; these entries are used when no menu exists.
+    'navigation' => [
+        'header' => [
+            ['label' => 'Home', 'route' => 'public.home'],
+            ['label' => 'Training', 'setting' => 'training_url', 'external' => true],
+            ['label' => 'Organization', 'route' => 'public.team.index', 'children' => [
+                ['label' => 'Our Team', 'route' => 'public.team.index'],
+                ['label' => 'Legal Documents', 'route' => 'public.resources.index'],
+            ]],
+            ['label' => 'Notice Board', 'route' => 'public.notices.index', 'children' => [
+                ['label' => 'News', 'route' => 'public.news.index'],
+                ['label' => 'Notice', 'route' => 'public.notices.index'],
+            ]],
+            ['label' => 'Downloads', 'route' => 'public.resources.index'],
+            ['label' => 'Contact Us', 'route' => 'public.contact'],
+        ],
+        'footer' => [
+            ['label' => 'Home', 'route' => 'public.home'],
+            ['label' => 'Our Team', 'route' => 'public.team.index'],
+            ['label' => 'Notice Board', 'route' => 'public.notices.index'],
+            ['label' => 'Resources', 'route' => 'public.resources.index'],
+            ['label' => 'Gallery', 'route' => 'public.gallery.index'],
+            ['label' => 'Videos', 'route' => 'public.videos.index'],
+            ['label' => 'Our Halls', 'route' => 'public.halls.index'],
+            ['label' => 'Contact Us', 'route' => 'public.contact'],
+        ],
+    ],
     'name' => 'Lumbini Research and Training Institute',
     'hero_title' => 'Building capable and future-ready civil servants',
     'hero_description' => 'Practical learning experiences that strengthen people, institutions, and the communities they serve.',

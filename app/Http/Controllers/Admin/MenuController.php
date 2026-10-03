@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Menu\AssignMenuPagesRequest;
-use App\Http\Requests\Menu\BulkDeleteMenuItemsRequest;
-use App\Http\Requests\Menu\DeleteMenuItemRequest;
-use App\Http\Requests\Menu\OrderMenuItemsRequest;
+use App\Http\Requests\Admin\Menu\AssignMenuPagesRequest;
+use App\Http\Requests\Admin\Menu\BulkDeleteMenuItemsRequest;
+use App\Http\Requests\Admin\Menu\DeleteMenuItemRequest;
+use App\Http\Requests\Admin\Menu\OrderMenuItemsRequest;
 use App\Models\MenuItem;
 use App\Services\MenuService;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +25,7 @@ class MenuController extends Controller
             $menus = $menus->where('location', $location)->values();
         }
 
-        return view('pages.admin.menus.index', [
+        return view('admin.pages.menus.index', [
             'headerMenus' => $menus->where('location', 'header')->values(),
             'footerMenus' => $menus->where('location', 'footer')->values(),
             'dynamicMenus' => $menus->whereNotIn('location', ['header', 'footer'])->values(),
@@ -52,7 +52,7 @@ class MenuController extends Controller
         return redirect()->route($menu->location === 'header' ? 'admin.menus.header' : ($menu->location === 'footer' ? 'admin.menus.footer' : 'admin.menus.index'))->with('success', 'Pages assigned to menu.');
     }
 
-    public function storeLink(\App\Http\Requests\Menu\StoreMenuLinkRequest $request): RedirectResponse
+    public function storeLink(\App\Http\Requests\Admin\Menu\StoreMenuLinkRequest $request): RedirectResponse
     {
         $this->menus->addLink($request->validated(), $request->user());
 

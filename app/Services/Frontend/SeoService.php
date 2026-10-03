@@ -50,7 +50,7 @@ class SeoService
         if ($item instanceof GalleryAlbum && ! $image) {
             $image = $item->photos->first()?->media?->url();
         }
-        $organization = array_filter(['@type' => 'Organization', '@id' => $this->absolute('/').'#organization', 'name' => $siteName, 'url' => $this->absolute('/'), 'logo' => ($settings['logo_url'] ?? null) ?: $this->absolute('/front/images/svg/nepal-emblem.svg'), 'telephone' => $settings['phone'] ?? null, 'email' => $settings['email'] ?? null, 'address' => empty($settings['address']) ? null : ['@type' => 'PostalAddress', 'streetAddress' => $settings['address'], 'addressCountry' => 'NP']]);
+        $organization = array_filter(['@type' => 'Organization', '@id' => $this->absolute('/').'#organization', 'name' => $siteName, 'url' => $this->absolute('/'), 'logo' => ($settings['logo_url'] ?? null) ?: $this->absolute(config('frontend.branding.logo')), 'telephone' => $settings['phone'] ?? null, 'email' => $settings['email'] ?? null, 'address' => empty($settings['address']) ? null : ['@type' => 'PostalAddress', 'streetAddress' => $settings['address'], 'addressCountry' => 'NP']]);
         $graph = [$organization, ['@type' => 'WebSite', '@id' => $this->absolute('/').'#website', 'url' => $this->absolute('/'), 'name' => $siteName, 'publisher' => ['@id' => $organization['@id']]]];
         $webpage = ['@type' => 'WebPage', '@id' => $canonical.'#webpage', 'url' => $canonical, 'name' => $heading, 'description' => $description, 'isPartOf' => ['@id' => $this->absolute('/').'#website']];
         if (isset($data['items'])) {

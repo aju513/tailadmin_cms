@@ -34,10 +34,9 @@
                             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                                 <?php foreach ($visibleResources as $slug => $resource): ?>
                                     <article class="resource-card h-full">
-                                        <span class="resource-card__type"><?= htmlspecialchars($resource['type'], ENT_QUOTES, 'UTF-8') ?></span>
                                         <h2 class="resource-card__title"><?= htmlspecialchars($resource['title'], ENT_QUOTES, 'UTF-8') ?></h2>
                                         <p class="resource-list-page__card-description"><?= htmlspecialchars($resource['description'], ENT_QUOTES, 'UTF-8') ?></p>
-                                        <p class="mt-3 text-xs leading-5 text-text_color/70">
+                                        <p class="mt-3 text-xs leading-5 text-white/80">
                                             Published: <?= htmlspecialchars($resource['published_date'], ENT_QUOTES, 'UTF-8') ?><br />
                                             Publisher: <?= htmlspecialchars($resource['publisher'], ENT_QUOTES, 'UTF-8') ?>
                                         </p>

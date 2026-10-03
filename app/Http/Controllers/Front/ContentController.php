@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Front\PublicContentRequest;
-use App\Http\Requests\ResourceDocument\DownloadPublicResourceRequest;
+use App\Http\Requests\Front\ResourceDocument\DownloadPublicResourceRequest;
 use App\Services\Frontend\FrontendService;
 use App\Services\ResourceDocumentService;
 use Illuminate\View\View;

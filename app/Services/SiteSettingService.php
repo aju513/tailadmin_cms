@@ -18,7 +18,10 @@ class SiteSettingService
 
     public function all(): array
     {
-        $values = array_replace(array_fill_keys([...self::KEYS, ...self::DESIGN_KEYS], null), ['site_name' => config('frontend.name'), 'hero_title' => config('frontend.hero_title'), 'hero_description' => config('frontend.hero_description'), 'about_title' => config('frontend.about_title'), 'about_description' => config('frontend.about_description'), 'province_name' => 'Lumbini Province'], $this->settings->allKeyed());
+        $values = array_replace(array_fill_keys([...self::KEYS, ...self::DESIGN_KEYS], null), ['site_name' => config('frontend.name'), 'hero_title' => config('frontend.hero_title'), 'hero_description' => config('frontend.hero_description'), 'about_title' => config('frontend.about_title'), 'about_description' => config('frontend.about_description')], $this->settings->allKeyed());
+        foreach (config('frontend.defaults', []) as $key => $default) {
+            $values[$key] = $values[$key] ?: $default;
+        }
         foreach (self::ARRAY_KEYS as $key) {
             $values[$key] = isset($values[$key]) ? (json_decode($values[$key], true) ?: []) : config('frontend.'.$key, []);
         }

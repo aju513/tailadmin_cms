@@ -69,3 +69,42 @@ test('unassigned ancestors do not add links and manual menu nesting is preserved
         ->and($tree->first()->children->pluck('id')->all())->toContain($manual->id)
         ->and($tree->first()->children->pluck('page_id')->all())->toContain($child->id)->not->toContain($middle->id);
 });
+
+test('navbar parents are dropdown buttons at every depth while leaves retain their links', function (): void {
+    $menu = Menu::firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
+    $parentId = null;
+    foreach (['Navbar parent', 'Navbar child', 'Navbar grandchild'] as $label) {
+        $parentId = MenuItem::create([
+            'menu_id' => $menu->id,
+            'parent_id' => $parentId,
+            'label' => $label,
+            'external_url' => '/parent-link',
+            'is_visible' => true,
+        ])->id;
+    }
+    MenuItem::create([
+        'menu_id' => $menu->id,
+        'parent_id' => $parentId,
+        'label' => 'Navbar leaf',
+        'external_url' => 'https://example.com/navbar-leaf',
+        'is_visible' => true,
+    ]);
+    MenuItem::create([
+        'menu_id' => $menu->id,
+        'label' => 'Navbar direct link',
+        'external_url' => '/contact',
+        'is_visible' => true,
+    ]);
+
+    $response = $this->get('/')->assertOk();
+    $document = new DOMDocument;
+    @$document->loadHTML($response->getContent());
+    $xpath = new DOMXPath($document);
+
+    foreach (['Navbar parent', 'Navbar child', 'Navbar grandchild'] as $label) {
+        expect($xpath->query("//header//button[@type='button' and @aria-expanded='false' and normalize-space(.)='$label']")->length)->toBe(2)
+            ->and($xpath->query("//header//a[normalize-space(.)='$label']")->length)->toBe(0);
+    }
+    expect($xpath->query("//header//a[@href='https://example.com/navbar-leaf' and normalize-space(.)='Navbar leaf']")->length)->toBe(2)
+        ->and($xpath->query("//header//a[contains(@href, '/contact') and normalize-space(.)='Navbar direct link']")->length)->toBe(2);
+});

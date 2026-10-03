@@ -1,5 +1,5 @@
 <div class="footer__illustration" aria-hidden="true">
-    <img src="/front/images/svg/footer.svg" alt="" />
+    <img src="{{ asset(config('frontend.branding.footer_illustration')) }}" alt="" />
 </div>
 <footer class="footer">
  
@@ -46,8 +46,7 @@
                                         </div>
                                         <div class="footer__contact-item-content footer__hours">
                                             <div class="mb-1 text-[15px] font-semibold">Office Hours</div>
-                                            <div class="text-sm leading-5">Summer (Magh 16–Kartik 15): Sun–Fri, 9:00 AM–5:00 PM</div>
-                                            <div class="mt-1 text-sm leading-5">Winter (Kartik 16–Magh 15): Sun–Fri, 9:00 AM–4:00 PM</div>
+                                            <div class="text-sm leading-5 whitespace-pre-line">{{ $settings['office_hours'] }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -94,7 +93,7 @@
                     <div class="footer__links">
                         <div class="text-primary uppercase font-heading text-xl font-bold mb-5">Quick Links</div>
                         <ul class="columns-2 gap-y-5 gap-5 flex-wrap">
-@foreach($footerNavigation as $link)<li><a href="{{ $link['href'] }}" class="text-[15px] transition-all duration-500 text-text_color hover:text-secondary">{{ $link['label'] }}</a></li>@endforeach
+@foreach($footerNavigation as $link)<li><a href="{{ $link['href'] }}" @if(!empty($link['external'])) target="_blank" rel="noopener noreferrer" @endif class="text-[15px] transition-all duration-500 text-text_color hover:text-secondary">{{ $link['label'] }}</a></li>@endforeach
 </ul>
                     </div>
                 </div>
@@ -106,7 +105,7 @@
   
             <div class="footer__copyright">
                 <div class=" text-sm text-[#424242] font-semibold text-center">
-                    © {{ now()->year }}, {{ $settings['site_name'] }}. {{ $settings['footer_text'] ?: 'All Rights Reserved.' }}
+                    © {{ now()->year }}, {{ $settings['site_name'] }}. {{ $settings['footer_text'] }}
                 </div>
       
             </div>

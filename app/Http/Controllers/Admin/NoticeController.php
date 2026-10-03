@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Notice\BulkDeleteNoticeRequest;
-use App\Http\Requests\Notice\BulkNoticeStatusRequest;
-use App\Http\Requests\Notice\CreateNoticeRequest;
-use App\Http\Requests\Notice\DeleteNoticeRequest;
-use App\Http\Requests\Notice\EditNoticeRequest;
-use App\Http\Requests\Notice\IndexNoticeRequest;
-use App\Http\Requests\Notice\OrderNoticeRequest;
-use App\Http\Requests\Notice\PublishNoticeRequest;
-use App\Http\Requests\Notice\StoreNoticeRequest;
-use App\Http\Requests\Notice\UpdateNoticeRequest;
+use App\Http\Requests\Admin\Notice\BulkDeleteNoticeRequest;
+use App\Http\Requests\Admin\Notice\BulkNoticeStatusRequest;
+use App\Http\Requests\Admin\Notice\CreateNoticeRequest;
+use App\Http\Requests\Admin\Notice\DeleteNoticeRequest;
+use App\Http\Requests\Admin\Notice\EditNoticeRequest;
+use App\Http\Requests\Admin\Notice\IndexNoticeRequest;
+use App\Http\Requests\Admin\Notice\OrderNoticeRequest;
+use App\Http\Requests\Admin\Notice\PublishNoticeRequest;
+use App\Http\Requests\Admin\Notice\StoreNoticeRequest;
+use App\Http\Requests\Admin\Notice\UpdateNoticeRequest;
 use App\Models\Notice;
 use App\Services\NoticeService;
 use Illuminate\Http\JsonResponse;
@@ -25,12 +25,12 @@ class NoticeController extends Controller
 
     public function index(IndexNoticeRequest $request): View
     {
-        return view('pages.admin.notices.index', ['items' => $this->service->index($request->validated()), 'sections' => $this->service->sectionOptions(), 'title' => 'Notices']);
+        return view('admin.pages.notices.index', ['items' => $this->service->index($request->validated()), 'sections' => $this->service->sectionOptions(), 'title' => 'Notices']);
     }
 
     public function create(CreateNoticeRequest $request): View
     {
-        return view('pages.admin.notices.create', ['item' => $this->service->newRecord(), 'sections' => $this->service->sectionOptions(), 'title' => 'Add Notice']);
+        return view('admin.pages.notices.create', ['item' => $this->service->newRecord(), 'sections' => $this->service->sectionOptions(), 'title' => 'Add Notice']);
     }
 
     public function store(StoreNoticeRequest $request): RedirectResponse
@@ -42,7 +42,7 @@ class NoticeController extends Controller
 
     public function edit(EditNoticeRequest $request, Notice $notice): View
     {
-        return view('pages.admin.notices.edit', ['item' => $this->service->details($notice), 'sections' => $this->service->sectionOptions(), 'title' => 'Edit Notice']);
+        return view('admin.pages.notices.edit', ['item' => $this->service->details($notice), 'sections' => $this->service->sectionOptions(), 'title' => 'Edit Notice']);
     }
 
     public function update(UpdateNoticeRequest $request, Notice $notice): RedirectResponse

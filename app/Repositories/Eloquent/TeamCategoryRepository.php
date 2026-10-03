@@ -35,5 +35,9 @@ class TeamCategoryRepository implements TeamCategoryRepositoryInterface
     {
         $category->delete();
     }
-    public function findByIds(array $ids): Collection { return TeamCategory::query()->whereIn('id', $ids)->get(); }
+
+    public function findByIds(array $ids): Collection
+    {
+        return TeamCategory::query()->whereIn('id', $ids)->get();
+    }
 }

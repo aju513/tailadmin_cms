@@ -1,13 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=DM+Sans:wght@400;500&display=swap");
 @import "tailwindcss" source(none);
+
 @source "../../views/front/**/*.blade.php";
 @source "../../views/components/front/**/*.blade.php";
 @source "../js/**/*.js";
-
-
-
-
-
 
 @font-face {
   font-family: "icomoon";
@@ -34,6 +30,7 @@
 @theme {
   --color-primary: #0057B8 ;
   --color-secondary: #EF4048 ;
+  --color-tertiary: #27569A;
   --color-text_color: #333333;
   --color-block: #111827;
   --color-dim_bg: #EDEDED ;
@@ -1223,49 +1220,49 @@ nav .dropdown {
   @apply bg-white z-10 rounded-b-[5px];
 }
 
-nav .dropdown li:first-child a {
+nav .dropdown li:first-child :is(a, button) {
   @apply pt-0;
 }
 
-nav .dropdown li:first-child .nested-dropdown li:first-child a {
+nav .dropdown li:first-child .nested-dropdown li:first-child :is(a, button) {
   @apply pt-0;
 }
 
-nav .dropdown li:first-child .nested-dropdown a {
+nav .dropdown li:first-child .nested-dropdown :is(a, button) {
   @apply py-2.5;
 }
 
-nav .dropdown li:last-child a {
+nav .dropdown li:last-child :is(a, button) {
   @apply mb-0! pb-0!;
 }
-nav .dropdown a {
+nav .dropdown :is(a, button) {
   @apply text-text_color;
 }
 
-nav .dropdown a:hover {
+nav .dropdown :is(a, button):hover {
   @apply text-text_color;
 }
 
-nav .dropdown a.text-text_color:hover {
+nav .dropdown :is(a, button).text-text_color:hover {
   @apply text-secondary;
 }
-nav .dropdown a.text-primary {
+nav .dropdown :is(a, button).text-primary {
   @apply text-primary;
 }
 
-nav .dropdown a.text-primary:hover {
+nav .dropdown :is(a, button).text-primary:hover {
   @apply text-secondary;
 }
 
-nav .dropdown .w-\[270px\] li:last-child a {
+nav .dropdown .w-\[270px\] li:last-child :is(a, button) {
   @apply pb-0;
 }
 
-nav .dropdown .w-\[270px\] li:last-child .nested-dropdown a {
+nav .dropdown .w-\[270px\] li:last-child .nested-dropdown :is(a, button) {
   @apply border-b border-dashed border-[#ebebeb] py-2.5;
 }
 
-nav .dropdown .w-\[270px\] li:last-child .nested-dropdown li:last-child a {
+nav .dropdown .w-\[270px\] li:last-child .nested-dropdown li:last-child :is(a, button) {
   @apply border-b-0 pb-0;
 }
 
@@ -1273,7 +1270,7 @@ nav .nested-dropdown {
   @apply bg-white;
 }
 
-nav .nested-dropdown li:last-child a {
+nav .nested-dropdown li:last-child :is(a, button) {
   @apply pb-0;
 }
 .mob-nav.sticky {
@@ -1306,36 +1303,35 @@ nav .nested-dropdown li:last-child a {
 .nested-dropdown {
   @apply hidden rounded-sm;
 }
-.nested-dropdown:hover {
-  @apply block;
-}
-.nested-dropdown li:first-child a {
+.nested-dropdown li:first-child :is(a, button) {
   @apply pt-0;
 }
 
-.nested-dropdown li:last-child a {
+.nested-dropdown li:last-child :is(a, button) {
   @apply border-b-0;
 }
 
-.nested-dropdown li a {
+.nested-dropdown li :is(a, button) {
   @apply pt-2.5;
 }
 
-.nested-dropdown a {
+.nested-dropdown :is(a, button) {
   @apply block border-b border-dashed border-[#ebebeb] py-2.5;
 }
-.nested-dropdown-wrap:hover + .nested-dropdown {
+.nested-dropdown-wrap[aria-expanded="true"] + .nested-dropdown {
   @apply block;
 }
-.menu-branch:hover > .nested-dropdown,
-.menu-branch:focus-within > .nested-dropdown {
-  @apply block;
+.dropdown .nested-dropdown-wrap {
+  @apply flex justify-between w-full text-left border-b border-dashed border-[#ebebeb] py-2.5;
 }
-a.nested-dropdown-wrap {
-  @apply border-b border-dashed border-[#ebebeb] py-2.5;
+button.nested-dropdown-wrap {
+  @apply cursor-pointer;
 }
-.dropdown li:last-child a {
+.dropdown li:last-child :is(a, button) {
   @apply border-b-0;
+}
+.header :is(.dropdown-toggle, button.nested-dropdown-wrap, .open-menu):focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary;
 }
 .search-suggest_image {
   @apply flex-[0_0_60px];
@@ -1622,24 +1618,20 @@ input[type="text"].date-picker {
 }
 /*  mobile menu */
 
-#mobile-nav ul li ul li .open-menu {
-  @apply top-3 min-h-[70%];
-}
-
-#mobile-nav ul li ul li a {
+#mobile-nav ul li ul li :is(a, button.open-menu) {
   @apply font-normal leading-5.5;
 }
 
-#mobile-nav ul li ul li ul li a {
+#mobile-nav ul li ul li ul li :is(a, button.open-menu) {
   @apply text-sm leading-5.5 relative;
 }
 
-#mobile-nav ul li ul li ul li a:before {
+#mobile-nav ul li ul li ul li :is(a, button.open-menu):before {
   @apply w-1.25 h-px bg-white absolute -left-3.5 top-2.75;
   content: "";
 }
 
-#mobile-nav ul li a {
+#mobile-nav ul li :is(a, button.open-menu) {
   @apply text-base font-bold text-white inline-block p-0 no-underline w-full leading-5;
 }
 
@@ -1663,16 +1655,16 @@ input[type="text"].date-picker {
   @apply border-t-0 py-1.25 px-4;
 }
 
-#mobile-nav .open-menu {
-  @apply text-white text-2xl font-bold cursor-pointer absolute -right-px w-full text-right top-4 leading-6;
+#mobile-nav ul li button.open-menu {
+  @apply flex items-center justify-between gap-3 cursor-pointer text-left;
+}
+
+#mobile-nav .open-menu:focus-visible {
+  @apply outline-white;
 }
 
 #mobile-nav .open-menu .icon-minus {
   @apply hidden;
-}
-
-#mobile-nav .open-menu .icon-plus {
-  @apply relative -top-1.25;
 }
 
 #mobile-nav .open-menu.rotate .icon-plus {
@@ -2282,7 +2274,7 @@ input[type="text"].date-picker {
 
 /* resources */
 .homepage__resources {
-  background-color: #fff;
+  /* background-color: #fff; */
   background-image: url("../images/home/resource-bg-image.png");
   background-position: center bottom;
   background-repeat: no-repeat;
@@ -2306,24 +2298,66 @@ input[type="text"].date-picker {
 }
 
 .resource-card {
-  @apply relative flex min-h-100 flex-col overflow-hidden bg-[#e6eef8] p-7 sm:p-10 rounded-[5px];
+  @apply relative flex min-h-100 flex-col overflow-hidden bg-tertiary p-7 sm:p-10 rounded-[5px];
 
   &[hidden] {
     display: none;
   }
 
-  .resource-card__type {
-    @apply relative z-10 inline-flex w-fit bg-primary/80 px-4 py-2 text-sm font-medium text-white rounded-[5px];
+  .resource-card__title {
+    @apply relative z-10 mt-5 max-w-[80%] font-heading text-2xl font-normal leading-[1.18] text-white sm:text-3xl lg:text-[34px] transition delay-100;
   }
 
-  .resource-card__title {
-    @apply relative z-10 mt-5 max-w-[80%] font-heading text-2xl font-normal leading-[1.18] text-text_color sm:text-3xl lg:text-[34px] hover:text-primary transition delay-100;
+  :is(.resource-card__title, .resource-list-page__card-description, .resource-card > p, .resource-card > a) {
+    @apply relative;
+
+    &::after {
+      content: '';
+      @apply absolute bottom-[-6px] left-0 h-[2px] w-6 origin-left scale-x-0 bg-white transition-transform duration-300;
+    }
+
+    &:hover::after {
+      @apply scale-x-100;
+    }
+  }
+
+  > .btn-primary {
+    @apply bg-white! text-[#164491]!;
+
+    > span:first-child {
+      @apply font-medium;
+    }
+
+    .btn-primary__icon {
+      @apply bg-[#10336F]/80!;
+    }
   }
 
 }
 
+.homepage__resources .training-list__item {
+  @apply min-h-72 p-5 sm:min-h-80 sm:p-6;
+
+  .training-list__title {
+    @apply mt-0 text-xl sm:text-2xl;
+  }
+}
+
+.homepage__resources .training-list__title a {
+  @apply relative block w-fit;
+
+  &::after {
+    content: '';
+    @apply absolute bottom-[-6px] left-0 h-[2px] w-6 origin-left scale-x-0 bg-white transition-transform duration-300;
+  }
+
+  &:is(:hover, :focus-visible)::after {
+    @apply scale-x-100;
+  }
+}
+
 .resource-list-page__card-description {
-  @apply relative z-10 mt-4 mb-6 text-sm leading-6 text-text_color/80;
+  @apply relative z-10 mt-4 mb-6 text-sm leading-6 text-white/80;
 }
 
 .resource-detail-page__category {
@@ -2388,7 +2422,7 @@ input[type="text"].date-picker {
 }
 
 .training-list__item {
-  @apply relative flex min-h-128 flex-col overflow-hidden rounded-[5px] bg-[#004693] p-7 text-white shadow-sm transition-all duration-500 sm:p-8;
+  @apply relative flex min-h-128 flex-col overflow-hidden rounded-[5px] bg-tertiary p-7 text-white shadow-sm transition-all duration-500 sm:p-8;
 
   &:hover {
     @apply -translate-y-1 shadow-xl;
@@ -2403,12 +2437,12 @@ input[type="text"].date-picker {
   }
 
   .training-list__badge--type {
-    @apply bg-primary text-white rounded-[5px];
+    @apply bg-[#4C7DD0] text-white rounded-[5px];
   }
   /* bg-[#168C83] teal */
   /* dda14c yellow */
   .training-list__badge--status {
-    @apply bg-[#dda14c] text-white rounded-[5px];
+    @apply bg-block/60 text-white rounded-[5px];
   }
 
   .training-list__title {
@@ -3045,7 +3079,7 @@ input[type="text"].date-picker {
 .homepage__about {
   @apply relative;
   .container-fluid {
-    @apply relative isolate overflow-visible max-w-full mx-auto rounded-none bg-primary px-0! py-10 lg:py-15 2xl:max-w-[calc(100%-70px)] 2xl:rounded-[40px] 2xl:px-7.5;
+    @apply relative isolate overflow-visible max-w-full mx-auto rounded-none bg-tertiary px-0! py-10 lg:py-15 2xl:max-w-[calc(100%-70px)] 2xl:rounded-[40px] 2xl:px-7.5;
 
     &::after {
       content: "";
@@ -3177,11 +3211,11 @@ input[type="text"].date-picker {
 }
 
 .capacity-report__card-header {
-  @apply min-h-28 bg-[#edf6ff] px-6 py-5;
+  @apply min-h-28  px-6 py-5;
 }
 
 .capacity-report__card-header h3 {
-  @apply mb-2 font-heading text-2xl font-bold leading-tight text-[#17336f] md:text-3xl;
+  @apply mb-2 font-heading text-2xl font-bold leading-tight text-text_color md:text-3xl;
 }
 
 .capacity-report__card-header p {
@@ -3197,7 +3231,7 @@ input[type="text"].date-picker {
 }
 
 .capacity-report__metric {
-  @apply flex min-h-18 items-center justify-between gap-2 px-2 py-4 text-[#4f6e9f] sm:gap-3 sm:px-5;
+  @apply flex min-h-18 items-center justify-between gap-2 px-2 py-4 text-text_color sm:gap-3 sm:px-5;
 }
 
 .capacity-report__metric:first-child {
@@ -3209,7 +3243,7 @@ input[type="text"].date-picker {
 }
 
 .capacity-report__metric strong {
-  @apply shrink-0 font-heading text-xl font-bold text-[#0863c4] sm:text-2xl;
+  @apply shrink-0 font-heading text-xl font-bold text-primary sm:text-2xl;
 }
 
 @media (max-width: 639px) {

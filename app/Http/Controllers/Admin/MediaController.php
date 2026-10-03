@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Media\DeleteMediaRequest;
-use App\Http\Requests\Media\StoreMediaRequest;
+use App\Http\Requests\Admin\Media\DeleteMediaRequest;
+use App\Http\Requests\Admin\Media\StoreMediaRequest;
 use App\Models\MediaAsset;
 use App\Repositories\Contracts\MediaAssetRepositoryInterface;
 use App\Services\MediaAssetService;
@@ -17,7 +17,7 @@ class MediaController extends Controller
 
     public function index(): View
     {
-        return view('pages.admin.media.index', ['media' => $this->media->all(), 'title' => 'Media Library']);
+        return view('admin.pages.media.index', ['media' => $this->media->all(), 'title' => 'Media Library']);
     }
 
     public function store(StoreMediaRequest $request): RedirectResponse

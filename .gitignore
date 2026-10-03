@@ -19,6 +19,7 @@
 /storage/*.key
 /storage/app/analytics/
 /storage/pail
+/storage/framework/vite-*.hot
 /vendor
 Homestead.json
 Homestead.yaml

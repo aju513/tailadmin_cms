@@ -57,7 +57,40 @@ Pages row status toggles and bulk Publish/Unpublish use CSRF-protected AJAX requ
 
 CMS uploads always use Laravel's local `public` disk and are stored under `storage/app/public/cms`. Run `php artisan storage:link` once per environment. No S3 bucket or cloud storage configuration is required.
 
-Allowed uploads are validated as images, PDFs, and common office documents with a 10 MB media-library limit. Homepage slide images and team member photos have a 5 MB limit.
+`config/settings.php` owns upload sizes, accepted formats and recommended pixel dimensions. `uploads.image` defaults to 5 MB; `uploads.media`, `uploads.notice_attachment` and `uploads.document` default to 10 MB. These values are in KB (`5120` = 5 MB). Each image field uses an `images` profile and can override `max_size_kb` or `mimes` independently.
+
+The shared upload component reads the same profile as its FormRequest, so the browser file-size checks, accepted extensions, displayed guidance and server validation agree. Home Slides and the Media Library also show their upload limits. Images keep their uploaded dimensions by default; the recommended dimensions guide selection. Set `enforce_dimensions` to `true` on an image profile to require its exact width and height on both create and update. Set it in `uploads.image` to enable it for all dimensioned image profiles. File-size and image-type checks always run on the server.
+
+| Image profile under `settings.images` | Recommended size |
+| --- | --- |
+| `homepage_slide` | 1600 × 900 px |
+| `page.banner`, `news.banner`, `hall.banner` | 1400 × 630 px |
+| `page.social`, `news.social`, `hall.social` | 1200 × 630 px |
+| `news.thumbnail` | 600 × 400 px |
+| `team_member` | 600 × 600 px |
+| `hall.thumbnail` | 600 × 450 px |
+| `hall.gallery`, `gallery_photo` | 1200 × 900 px |
+| `video_cover` | 1200 × 675 px |
+| `site_logo` | 150 × 126 px |
+| `contact_officer` | 400 × 400 px |
+
+Logo and contact-officer settings currently accept image URLs and show dimension guidance. File uploads are handled through their existing content forms and Media Library.
+
+For example, adjust one field in `config/settings.php`:
+
+```php
+'news' => [
+    'thumbnail' => [
+        'width' => 600,
+        'height' => 400,
+        'max_size_kb' => 2048,
+        'enforce_dimensions' => true,
+    ],
+    // Keep the other news profiles here.
+],
+```
+
+After editing the configuration, run `php artisan config:clear` locally or rebuild `config:cache` on a cached deployment. The PHP/web-server request-body limits must also accommodate the configured uploads, especially when multiple images are uploaded together. `AdminUploadSettingsTest` covers configured limits for every image field, successful uploads, exact dimension checks, MIME validation, authorization, document/media limits and admin guidance.
 
 Team member records are managed through the permission-protected admin directory. Photos use the shared media library and local public disk; deleting a member keeps the photo available in the library for reuse.
 

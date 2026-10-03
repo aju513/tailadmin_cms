@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\HomepageSlide\DeleteHomepageSlideRequest;
-use App\Http\Requests\HomepageSlide\StoreHomepageSlideRequest;
-use App\Http\Requests\HomepageSlide\UpdateHomepageSlideRequest;
+use App\Http\Requests\Admin\HomepageSlide\DeleteHomepageSlideRequest;
+use App\Http\Requests\Admin\HomepageSlide\StoreHomepageSlideRequest;
+use App\Http\Requests\Admin\HomepageSlide\UpdateHomepageSlideRequest;
 use App\Models\HomepageSlide;
 use App\Repositories\Contracts\HomepageSlideRepositoryInterface;
 use App\Services\HomepageSlideService;
@@ -20,12 +20,12 @@ class HomepageSlideController extends Controller
 
     public function index(): View
     {
-        return view('pages.admin.homepage-slides.index', ['slides' => $this->slides->paginateForIndex(), 'title' => 'Homepage Slides']);
+        return view('admin.pages.homepage-slides.index', ['slides' => $this->slides->paginateForIndex(), 'title' => 'Homepage Slides']);
     }
 
     public function create(): View
     {
-        return view('pages.admin.homepage-slides.create', ['slide' => new HomepageSlide(['status' => ContentStatus::Draft]), 'title' => 'Create Homepage Slide']);
+        return view('admin.pages.homepage-slides.create', ['slide' => new HomepageSlide(['status' => ContentStatus::Draft]), 'title' => 'Create Homepage Slide']);
     }
 
     public function store(StoreHomepageSlideRequest $request): RedirectResponse
@@ -37,7 +37,7 @@ class HomepageSlideController extends Controller
 
     public function edit(HomepageSlide $homepageSlide): View
     {
-        return view('pages.admin.homepage-slides.edit', ['slide' => $homepageSlide, 'title' => 'Edit Homepage Slide']);
+        return view('admin.pages.homepage-slides.edit', ['slide' => $homepageSlide, 'title' => 'Edit Homepage Slide']);
     }
 
     public function update(UpdateHomepageSlideRequest $request, HomepageSlide $homepageSlide): RedirectResponse
@@ -54,7 +54,7 @@ class HomepageSlideController extends Controller
         return back()->with('success', 'Homepage slide deleted.');
     }
 
-    public function bulkStatus(\App\Http\Requests\HomepageSlide\BulkHomepageSlideStatusRequest $request): RedirectResponse|JsonResponse
+    public function bulkStatus(\App\Http\Requests\Admin\HomepageSlide\BulkHomepageSlideStatusRequest $request): RedirectResponse|JsonResponse
     {
         $this->service->bulkStatus($request->validated('records'), \App\Enums\ContentStatus::from($request->validated('status')), $request->user());
 
@@ -68,7 +68,7 @@ class HomepageSlideController extends Controller
         return back()->with('success', 'Selected publication statuses updated.');
     }
 
-    public function bulkDestroy(\App\Http\Requests\HomepageSlide\BulkHomepageSlideDeleteRequest $request): RedirectResponse
+    public function bulkDestroy(\App\Http\Requests\Admin\HomepageSlide\BulkHomepageSlideDeleteRequest $request): RedirectResponse
     {
         $this->service->bulkDelete($request->validated('records'), $request->user());
 

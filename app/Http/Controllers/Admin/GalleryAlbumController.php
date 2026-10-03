@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GalleryAlbum\CreateGalleryAlbumRequest;
-use App\Http\Requests\GalleryAlbum\DeleteGalleryAlbumRequest;
-use App\Http\Requests\GalleryAlbum\EditGalleryAlbumRequest;
-use App\Http\Requests\GalleryAlbum\IndexGalleryAlbumRequest;
-use App\Http\Requests\GalleryAlbum\StoreGalleryAlbumRequest;
-use App\Http\Requests\GalleryAlbum\UpdateGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\CreateGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\DeleteGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\EditGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\IndexGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\StoreGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\UpdateGalleryAlbumRequest;
 use App\Models\GalleryAlbum;
 use App\Services\GalleryAlbumService;
 use Illuminate\Http\JsonResponse;
@@ -21,12 +21,12 @@ class GalleryAlbumController extends Controller
 
     public function index(IndexGalleryAlbumRequest $request): View
     {
-        return view('pages.admin.gallery.index', ['records' => $this->service->index($request->validated()), 'title' => 'Galleries']);
+        return view('admin.pages.gallery.index', ['records' => $this->service->index($request->validated()), 'title' => 'Galleries']);
     }
 
     public function create(CreateGalleryAlbumRequest $request): View
     {
-        return view('pages.admin.gallery.create', ['record' => $this->service->newRecord(), 'title' => 'Add Gallery']);
+        return view('admin.pages.gallery.create', ['record' => $this->service->newRecord(), 'title' => 'Add Gallery']);
     }
 
     public function store(StoreGalleryAlbumRequest $request): RedirectResponse
@@ -39,7 +39,7 @@ class GalleryAlbumController extends Controller
 
     public function edit(EditGalleryAlbumRequest $request, GalleryAlbum $galleryAlbum): View
     {
-        return view('pages.admin.gallery.edit', ['record' => $this->service->details($galleryAlbum), 'title' => 'Edit Gallery']);
+        return view('admin.pages.gallery.edit', ['record' => $this->service->details($galleryAlbum), 'title' => 'Edit Gallery']);
     }
 
     public function update(UpdateGalleryAlbumRequest $request, GalleryAlbum $galleryAlbum): RedirectResponse
@@ -56,7 +56,7 @@ class GalleryAlbumController extends Controller
         return back()->with('success', 'Gallery deleted. Uploaded files remain in the Media Library.');
     }
 
-    public function bulkStatus(\App\Http\Requests\GalleryAlbum\BulkGalleryAlbumStatusRequest $request): RedirectResponse|JsonResponse
+    public function bulkStatus(\App\Http\Requests\Admin\GalleryAlbum\BulkGalleryAlbumStatusRequest $request): RedirectResponse|JsonResponse
     {
         $this->service->bulkStatus($request->validated('records'), \App\Enums\ContentStatus::from($request->validated('status')), $request->user());
 
@@ -70,7 +70,7 @@ class GalleryAlbumController extends Controller
         return back()->with('success', 'Selected publication statuses updated.');
     }
 
-    public function bulkDestroy(\App\Http\Requests\GalleryAlbum\BulkGalleryAlbumDeleteRequest $request): RedirectResponse
+    public function bulkDestroy(\App\Http\Requests\Admin\GalleryAlbum\BulkGalleryAlbumDeleteRequest $request): RedirectResponse
     {
         $this->service->bulkDelete($request->validated('records'), $request->user());
 

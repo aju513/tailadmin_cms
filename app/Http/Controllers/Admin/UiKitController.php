@@ -12,6 +12,6 @@ class UiKitController extends Controller
     {
         Gate::authorize('ui-kit.view');
 
-        return view('pages.admin.ui-kit', ['title' => 'UI Kit']);
+        return view('admin.pages.ui-kit', ['title' => 'UI Kit']);
     }
 }

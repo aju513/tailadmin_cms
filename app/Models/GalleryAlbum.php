@@ -33,5 +33,4 @@ class GalleryAlbum extends Model
     {
         return $this->hasMany(GalleryPhoto::class)->orderBy('sort_order')->orderBy('id');
     }
-
 }

@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\News\BulkDeleteNewsRequest;
-use App\Http\Requests\News\BulkNewsStatusRequest;
-use App\Http\Requests\News\DeleteNewsRequest;
-use App\Http\Requests\News\IndexNewsRequest;
-use App\Http\Requests\News\OrderNewsRequest;
-use App\Http\Requests\News\PublishNewsRequest;
-use App\Http\Requests\News\ShowNewsRequest;
-use App\Http\Requests\News\StoreNewsRequest;
-use App\Http\Requests\News\UpdateNewsRequest;
+use App\Http\Requests\Admin\News\BulkDeleteNewsRequest;
+use App\Http\Requests\Admin\News\BulkNewsStatusRequest;
+use App\Http\Requests\Admin\News\DeleteNewsRequest;
+use App\Http\Requests\Admin\News\IndexNewsRequest;
+use App\Http\Requests\Admin\News\OrderNewsRequest;
+use App\Http\Requests\Admin\News\PublishNewsRequest;
+use App\Http\Requests\Admin\News\ShowNewsRequest;
+use App\Http\Requests\Admin\News\StoreNewsRequest;
+use App\Http\Requests\Admin\News\UpdateNewsRequest;
 use App\Models\News;
 use App\Repositories\Contracts\NewsRepositoryInterface;
 use App\Services\NewsService;
@@ -26,12 +26,12 @@ class NewsController extends Controller
 
     public function index(IndexNewsRequest $request): View
     {
-        return view('pages.admin.news.index', ['items' => $this->news->paginateAdmin($request->validated()), 'title' => 'News']);
+        return view('admin.pages.news.index', ['items' => $this->news->paginateAdmin($request->validated()), 'title' => 'News']);
     }
 
     public function create(): View
     {
-        return $this->formView('pages.admin.news.create', new News(['status' => ContentStatus::Draft, 'featured' => false]), 'Create News');
+        return $this->formView('admin.pages.news.create', new News(['status' => ContentStatus::Draft, 'featured' => false]), 'Create News');
     }
 
     public function store(StoreNewsRequest $request): RedirectResponse
@@ -43,12 +43,12 @@ class NewsController extends Controller
 
     public function show(ShowNewsRequest $request, News $news): View
     {
-        return view('pages.admin.news.show', ['item' => $news->load(['thumbnailMedia', 'bannerMedia', 'socialMedia']), 'title' => 'News Details']);
+        return view('admin.pages.news.show', ['item' => $news->load(['thumbnailMedia', 'bannerMedia', 'socialMedia']), 'title' => 'News Details']);
     }
 
     public function edit(News $news): View
     {
-        return $this->formView('pages.admin.news.edit', $news->load(['tags', 'thumbnailMedia', 'bannerMedia', 'socialMedia']), 'Edit News');
+        return $this->formView('admin.pages.news.edit', $news->load(['tags', 'thumbnailMedia', 'bannerMedia', 'socialMedia']), 'Edit News');
     }
 
     public function update(UpdateNewsRequest $request, News $news): RedirectResponse

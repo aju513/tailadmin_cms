@@ -13,6 +13,6 @@ class PermissionController extends Controller
     {
         Gate::authorize('permissions.view');
 
-        return view('pages.admin.permissions.index', ['permissionGroups' => PermissionCatalog::groups(), 'title' => 'Permissions']);
+        return view('admin.pages.permissions.index', ['permissionGroups' => PermissionCatalog::groups(), 'title' => 'Permissions']);
     }
 }

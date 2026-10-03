@@ -24,7 +24,7 @@ document.querySelectorAll('.homepage__about-award-item[data-gallery-image]').for
 });
 document.querySelectorAll('.homepage__resources .resource-swiper').forEach((element) => {
     const panel = element.closest('[role="tabpanel"]');
-    new Swiper(element, { modules: [Navigation, A11y], slidesPerView: 1, spaceBetween: 20, navigation: { nextEl: panel.querySelector('.resource-next'), prevEl: panel.querySelector('.resource-prev') }, breakpoints: { 640: { slidesPerView: 2 } } });
+    new Swiper(element, { modules: [Navigation, A11y], slidesPerView: 1, spaceBetween: 20, navigation: { nextEl: panel.querySelector('.resource-next'), prevEl: panel.querySelector('.resource-prev') }, breakpoints: { 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } } });
 });
 document.querySelectorAll('[data-resource-tabs]').forEach((library) => {
     const tabs = [...library.querySelectorAll('[data-resource-tab]')];
@@ -51,7 +51,7 @@ document.querySelectorAll('[data-report-year]').forEach((button) => button.addEv
     document.querySelectorAll('[data-report-panel]').forEach((panel) => { panel.hidden = panel.dataset.reportPanel !== button.dataset.reportYear; });
 }));
 
-const header = document.querySelector('header.header');
+const desktopNav = document.querySelector('.header .header__menu');
 const spacer = document.querySelector('.header-height');
 const mobileNav = document.querySelector('.mob-nav');
 const mobileMenu = document.querySelector('.mob-nav .overflow > ul');
@@ -59,7 +59,7 @@ const menuToggle = document.getElementById('menu-toggle');
 const stickyHeader = () => {
     const desktop = innerWidth >= 1024;
     const sticky = desktop && scrollY > 300;
-    header?.classList.toggle('sticky', sticky);
+    desktopNav?.classList.toggle('sticky', sticky);
     if (spacer) spacer.style.height = sticky ? '59px' : '0';
     mobileNav?.classList.toggle('sticky', !desktop && scrollY > 120);
 };
@@ -81,25 +81,34 @@ document.querySelectorAll('.open-menu').forEach((button) => button.addEventListe
     button.classList.toggle('rotate', open);
     button.setAttribute('aria-expanded', String(open));
 }));
-document.querySelectorAll('.open-menu').forEach((button) => button.addEventListener('keydown', (event) => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); button.click(); } }));
+const closeNestedDropdowns = (root) => {
+    root.querySelectorAll('button.nested-dropdown-wrap').forEach((toggle) => {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('.icon')?.classList.remove('rotate-180');
+    });
+};
 const closeDropdowns = () => {
     document.querySelectorAll('.header .dropdown').forEach((dropdown) => dropdown.classList.add('hidden'));
     document.querySelectorAll('.dropdown-toggle').forEach((toggle) => { toggle.setAttribute('aria-expanded', 'false'); toggle.querySelector('.icon')?.classList.remove('rotate-180'); });
+    closeNestedDropdowns(document);
 };
 document.querySelectorAll('.dropdown-toggle').forEach((toggle) => {
-    toggle.tabIndex = 0;
-    toggle.setAttribute('role', 'button');
-    toggle.setAttribute('aria-expanded', 'false');
-    const activate = () => {
+    toggle.addEventListener('click', () => {
         const dropdown = toggle.nextElementSibling;
         const open = dropdown?.classList.contains('hidden');
         closeDropdowns();
         dropdown?.classList.toggle('hidden', !open);
         toggle.setAttribute('aria-expanded', String(open));
         toggle.querySelector('.icon')?.classList.toggle('rotate-180', open);
-    };
-    toggle.addEventListener('click', activate);
-    toggle.addEventListener('keydown', (event) => { if (['Enter', ' '].includes(event.key)) { event.preventDefault(); activate(); } });
+    });
+});
+document.querySelectorAll('button.nested-dropdown-wrap').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') !== 'true';
+        closeNestedDropdowns(toggle.parentElement);
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.querySelector('.icon')?.classList.toggle('rotate-180', open);
+    });
 });
 document.querySelectorAll('.websearch-wrap').forEach((wrapper) => {
     const box = wrapper.querySelector('.search-box-elements');

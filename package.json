@@ -3,8 +3,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "build": "npm run build:front && npm run build:admin",
+        "build:front": "vite build",
+        "build:admin": "vite build --config vite.admin.config.js",
+        "dev": "concurrently --kill-others --names front,admin \"npm run dev:front\" \"npm run dev:admin\"",
+        "dev:front": "vite",
+        "dev:admin": "vite --config vite.admin.config.js"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.1.12",

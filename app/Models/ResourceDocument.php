@@ -32,5 +32,4 @@ class ResourceDocument extends Model
     {
         return $this->belongsTo(MediaAsset::class, 'file_media_id');
     }
-
 }

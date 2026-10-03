@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TeamMember\BulkDeleteTeamMemberRequest;
-use App\Http\Requests\TeamMember\BulkTeamMemberStatusRequest;
-use App\Http\Requests\TeamMember\DeleteTeamMemberRequest;
-use App\Http\Requests\TeamMember\IndexTeamMemberRequest;
-use App\Http\Requests\TeamMember\StoreTeamMemberRequest;
-use App\Http\Requests\TeamMember\UpdateTeamMemberRequest;
+use App\Http\Requests\Admin\TeamMember\BulkDeleteTeamMemberRequest;
+use App\Http\Requests\Admin\TeamMember\BulkTeamMemberStatusRequest;
+use App\Http\Requests\Admin\TeamMember\DeleteTeamMemberRequest;
+use App\Http\Requests\Admin\TeamMember\IndexTeamMemberRequest;
+use App\Http\Requests\Admin\TeamMember\StoreTeamMemberRequest;
+use App\Http\Requests\Admin\TeamMember\UpdateTeamMemberRequest;
 use App\Models\TeamMember;
 use App\Repositories\Contracts\TeamCategoryRepositoryInterface;
 use App\Repositories\Contracts\TeamMemberRepositoryInterface;
@@ -23,7 +23,7 @@ class TeamMemberController extends Controller
 
     public function index(IndexTeamMemberRequest $request): View
     {
-        return view('pages.admin.team-members.index', [
+        return view('admin.pages.team-members.index', [
             'members' => $this->members->paginate($request->validated()),
             'title' => 'Team Members',
             'categories' => $this->categories->active(),
@@ -32,7 +32,7 @@ class TeamMemberController extends Controller
 
     public function create(): View
     {
-        return view('pages.admin.team-members.create', [
+        return view('admin.pages.team-members.create', [
             'member' => new TeamMember(['is_active' => false]),
             'title' => 'Add Team Member',
             'categories' => $this->categories->active(),
@@ -48,7 +48,7 @@ class TeamMemberController extends Controller
 
     public function edit(TeamMember $teamMember): View
     {
-        return view('pages.admin.team-members.edit', [
+        return view('admin.pages.team-members.edit', [
             'member' => $teamMember->load('photoMedia'),
             'title' => 'Edit Team Member',
             'categories' => $this->categories->active(),

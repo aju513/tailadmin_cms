@@ -6,6 +6,7 @@
     'multiple' => false,
     'maxFiles' => null,
     'maxSize' => null,
+    'uploadProfile' => null,
     'placeholder' => 'Drag and drop files here or browse',
     'help' => null,
     'error' => null,
@@ -15,6 +16,12 @@
 
 @php
     $id ??= str_replace(['[]', '[', ']', '.'], ['', '-', '', '-'], $name);
+    $dimensionHint = null;
+    if ($uploadProfile) {
+        $accept = \App\Support\UploadProfile::accept($uploadProfile);
+        $maxSize = \App\Support\UploadProfile::maxBytes($uploadProfile);
+        $dimensionHint = \App\Support\UploadProfile::dimensionHint($uploadProfile);
+    }
 @endphp
 
 <x-form.field :name="$name" :label="$label" :id="$id" :required="$required" :error="$error" :help="$help">
@@ -125,6 +132,9 @@
             </div>
             <p class="mt-4 font-semibold text-gray-800 dark:text-white/90" x-text="isDragging ? 'Drop files here' : '{{ $placeholder }}'"></p>
             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ $accept ? 'Accepted: '.$accept : 'Choose a file from your device.' }}{{ $maxSize ? ' Maximum size: '.number_format($maxSize / 1048576, 1).' MB.' : '' }}</p>
+            @if($dimensionHint)
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $dimensionHint }}</p>
+            @endif
         </div>
 
         <ul x-show="errors.length" x-cloak class="space-y-1 text-xs text-error-500" role="alert">
