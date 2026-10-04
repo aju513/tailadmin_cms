@@ -3,6 +3,6 @@
 @inject('embeds','App\Services\Frontend\VideoEmbedService')
 @section('content')
 @include('front.partials.breadcrumbs')
-@if($kind === 'news')@include('front.partials.innerbanner',['banner'=>$item->bannerMedia ?? $item->thumbnailMedia])@endif
+@if($kind === 'news' && ($item->bannerMedia || $item->thumbnailMedia))@include('front.partials.innerbanner',['banner'=>$item->bannerMedia ?? $item->thumbnailMedia])@endif
 @include('front.details.'.(in_array($kind,['notices','resources']) ? 'document' : $kind))
 @endsection

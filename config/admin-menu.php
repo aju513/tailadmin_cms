@@ -13,9 +13,11 @@ return [
         'key' => 'pages',
         'label' => 'Pages',
         'icon' => 'pages',
-        'route' => 'admin.pages.index',
-        'permission' => 'pages.manage',
         'order' => 20,
+        'children' => [
+            ['key' => 'homepage', 'label' => 'Homepage', 'icon' => 'pages', 'route' => 'admin.homepage.edit', 'permission' => 'homepage.manage', 'order' => 10],
+            ['key' => 'pages-manage', 'label' => 'Manage Pages', 'icon' => 'pages', 'route' => 'admin.pages.index', 'active_routes' => ['admin.pages.*'], 'permission' => 'pages.manage', 'order' => 20],
+        ],
     ],
     [
         'key' => 'news',
@@ -77,6 +79,7 @@ return [
         'children' => [
             ['key' => 'header-menu', 'label' => 'Main Menu', 'icon' => 'menus', 'route' => 'admin.menus.header', 'permission' => 'menus.manage', 'order' => 10],
             ['key' => 'footer-menu', 'label' => 'Footer Menu', 'icon' => 'menus', 'route' => 'admin.menus.footer', 'permission' => 'menus.manage', 'order' => 20],
+            ['key' => 'important-links-menu', 'label' => 'Important Links Menu', 'icon' => 'menus', 'route' => 'admin.menus.important-links', 'permission' => 'menus.manage', 'order' => 30],
         ],
     ],
     [

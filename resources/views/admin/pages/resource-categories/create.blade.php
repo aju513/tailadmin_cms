@@ -3,14 +3,12 @@
 @section('content')
 <x-common.page-breadcrumb pageTitle="Add Resource Category">
     <x-slot:actions>
-        @can('resource-categories.manage')
-            <a href="{{ route('admin.resource-categories.index') }}" class="inline-flex h-11 items-center rounded-lg border border-gray-300 px-4 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300">Close</a>
-        @endcan
-        <x-ui.button type="submit" form="resource-categories-form">Save</x-ui.button>
+        <x-common.form-actions form-id="resource-categories-form" close-route="admin.resource-categories.index" close-permission="resource-categories.manage" />
     </x-slot:actions>
 </x-common.page-breadcrumb>
 <form id="resource-categories-form" method="POST" action="{{ route('admin.resource-categories.store') }}" enctype="multipart/form-data" class="space-y-6">
     @csrf
+    <x-common.form-actions form-id="resource-categories-form" close-route="admin.resource-categories.index" close-permission="resource-categories.manage" :sticky="true" />
 
     @include('admin.pages.resource-categories._form')
 </form>

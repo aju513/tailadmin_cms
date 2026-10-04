@@ -12,6 +12,11 @@ class Menu extends Model
 
     protected $fillable = ['name', 'location'];
 
+    public function isImportantLinks(): bool
+    {
+        return $this->location === 'important_links';
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(MenuItem::class)->orderBy('sort_order');

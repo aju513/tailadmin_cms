@@ -2,6 +2,7 @@
 
 namespace App\Services\Frontend;
 
+use App\Models\Menu;
 use App\Repositories\Contracts\MenuRepositoryInterface;
 use App\Services\SiteSettingService;
 use Illuminate\Support\Collection;
@@ -21,26 +22,41 @@ class FrontendLayoutService
         $settings['site_name'] = $settings['site_name'] ?: config('frontend.name');
         $headerLocation = config('frontend.menu_locations.header', 'header');
         $footerLocation = config('frontend.menu_locations.footer', 'footer');
+        $importantLinksLocation = config('frontend.menu_locations.important_links', 'important_links');
         $mainMenu = $this->cache->remember('menu.'.$headerLocation, fn () => $this->menus->forLocation($headerLocation));
         $footerMenu = $this->cache->remember('menu.'.$footerLocation, fn () => $this->menus->forLocation($footerLocation));
+        $importantLinksMenu = $this->cache->remember('menu.'.$importantLinksLocation, fn () => $this->menus->forLocation($importantLinksLocation));
 
         return [
             'settings' => $settings,
             'mainMenu' => $mainMenu,
             'footerMenu' => $footerMenu,
+            'importantLinksMenu' => $importantLinksMenu,
             'navigation' => $mainMenu ? $this->navigation($mainMenu->items) : $this->configuredNavigation(config('frontend.navigation.header', []), $settings),
             'footerNavigation' => $footerMenu ? $this->navigation($footerMenu->items) : $this->configuredNavigation(config('frontend.navigation.footer', []), $settings),
-            'importantNavigation' => collect($settings['important_links'])->map(fn ($link) => ['label' => $link['label'], 'href' => $link['url']])->all(),
+            'importantNavigation' => $this->importantNavigation($importantLinksMenu),
             'mapEmbedUrl' => $this->mapEmbedUrl($settings['map_url']),
         ];
     }
 
-    private function navigation(Collection $items): array
+    private function importantNavigation(?Menu $menu): array
+    {
+        $links = $menu
+            ? $menu->items->whereNull('page_id')->map(fn ($item) => ['label' => $item->label, 'url' => $item->external_url])
+            : collect(config('frontend.important_links', []));
+
+        return $links->filter(fn ($link) => is_string($link['url'] ?? null) && $this->html->externalUrl($link['url']))
+            ->map(fn ($link) => ['label' => $link['label'], 'href' => $link['url'], 'external' => true, 'children' => []])
+            ->values()->all();
+    }
+
+    private function navigation(Collection $items, bool $openExternalLinks = false): array
     {
         return $items->filter(fn ($item) => $this->html->safeUrl($item->url(), true))->map(fn ($item) => [
             'label' => $item->label,
             'href' => $item->url(),
-            'children' => $this->navigation($item->children),
+            'external' => $openExternalLinks && filled($item->external_url) && in_array(strtolower(parse_url($item->external_url, PHP_URL_SCHEME) ?? ''), ['http', 'https'], true),
+            'children' => $this->navigation($item->children, $openExternalLinks),
         ])->values()->all();
     }
 

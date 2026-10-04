@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Repositories\Contracts\MenuRepositoryInterface;
+use App\Services\Frontend\SafeHtml;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -20,14 +21,19 @@ class MenuService
 
     public function availablePages(Menu $menu)
     {
-        return $this->menus->availablePages($menu);
+        return $menu->isImportantLinks() ? collect() : $this->menus->availablePages($menu);
     }
 
     /** @param array{menu_id: int|string, page_ids: array<int, int|string>} $data */
     public function assignPages(array $data, Authenticatable $actor): Menu
     {
+        \Illuminate\Support\Facades\Gate::forUser($actor)->authorize('menus.manage');
+
         return DB::transaction(function () use ($data, $actor): Menu {
             $menu = $this->menus->lock((int) $data['menu_id']);
+            if ($menu->isImportantLinks()) {
+                throw ValidationException::withMessages(['menu_id' => 'Important Links accepts external links only.']);
+            }
             $descendantIds = $this->menus->descendantPageIds($data['page_ids']);
             $pageIds = array_values(array_unique([...$descendantIds, ...$this->menus->requiredNoticeAncestors($descendantIds)]));
             $assigned = $this->menus->assignPages($menu, $pageIds);
@@ -48,6 +54,17 @@ class MenuService
         return DB::transaction(function () use ($data, $actor): MenuItem {
             $menu = $this->menus->lock((int) $data['menu_id']);
             $parentId = filled($data['parent_id'] ?? null) ? (int) $data['parent_id'] : null;
+            if ($menu->isImportantLinks()) {
+                if ($parentId !== null) {
+                    throw ValidationException::withMessages(['parent_id' => 'Important Links does not support parent items.']);
+                }
+                if (filled($data['page_id'] ?? null) || filled($data['page_ids'] ?? null)) {
+                    throw ValidationException::withMessages(['page_id' => 'Important Links accepts external links only.']);
+                }
+                if (! is_string($data['external_url'] ?? null) || ! app(SafeHtml::class)->externalUrl($data['external_url'])) {
+                    throw ValidationException::withMessages(['external_url' => 'Enter a full HTTP or HTTPS URL for an external link.']);
+                }
+            }
             if ($parentId && $this->menus->itemsByIds($menu, [$parentId])->count() !== 1) {
                 throw ValidationException::withMessages(['parent_id' => 'Choose a parent from this menu.']);
             }
@@ -76,6 +93,9 @@ class MenuService
         DB::transaction(function () use ($data, $actor): void {
             $menu = $this->menus->find((int) $data['menu_id']);
             $parentId = filled($data['parent_id'] ?? null) ? (int) $data['parent_id'] : null;
+            if ($menu->isImportantLinks() && $parentId !== null) {
+                throw ValidationException::withMessages(['parent_id' => 'Important Links does not support parent items.']);
+            }
             $itemIds = array_map('intval', $data['menu_items']);
             $items = $this->menus->itemsByIds($menu, $itemIds);
 

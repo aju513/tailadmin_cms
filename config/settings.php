@@ -3,6 +3,8 @@
 return [
     'nepali' => env('SETTINGS_NEPALI', false),
 
+    'homepage' => ['gallery_limit' => 30],
+
     // File sizes are in KB. Image profiles inherit these defaults.
     'uploads' => [
         'image' => [
@@ -27,6 +29,10 @@ return [
     // enforce_dimensions in an individual profile when needed.
     'images' => [
         'homepage_slide' => ['width' => 1600, 'height' => 900],
+        'homepage' => [
+            'gallery' => ['width' => 1200, 'height' => 950, 'mimes' => ['jpg', 'jpeg', 'png', 'webp']],
+            'social' => ['width' => 1200, 'height' => 630, 'mimes' => ['jpg', 'jpeg', 'png', 'webp']],
+        ],
         'page' => [
             'banner' => ['width' => 1400, 'height' => 630],
             'social' => ['width' => 1200, 'height' => 630],

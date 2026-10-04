@@ -22,24 +22,26 @@ The October 2026 sync includes the reference's latest working files, including i
 
 | Admin content | Public behavior |
 | --- | --- |
-| Site Settings | Identity/contact/footer, province, office hours, hero/About text, four service cards, capacity reports by year, important footer links, TMIS/map/social links, contact officer details and default meta description. Save stays in breadcrumb actions; About uses full-width CKEditor. |
+| Site Settings | Identity/contact/footer, province, office hours, hero text, four service cards, capacity reports by year, TMIS/map/social links, contact officer details and default meta description. Save stays in breadcrumb actions. |
+| Homepage | Welcome/About text, optional subtitle, gallery main image and thumbnail slider, social sharing image, and homepage SEO. The editor is under Pages and imports existing About content and displayed album images. See [Homepage content](homepage.md). |
 | Home Slides | Published photos and captions in the original fading Swiper banner, with five-second autoplay and pagination. Original design photos are the fallback when no slides are published. |
 | Trainings | **Static**, copied from the provided homepage, including its six cards. No training records, API client or admin module is added; API integration is deferred. Links open the supplied TMIS training listing. |
 | Pages | Published articles and nested URLs, banners, social images, meta overrides, translated content and visible children. |
-| News | `/news`, active category/tag/author routes, details, homepage updates and search. |
+| News | `/news`, active category/tag/author routes, reusable news item cards, details, homepage updates and search. Public presentation omits author, category and tag metadata. |
 | Notices | `/notices`, published category filter, details, attachment/deadline, latest-notice bar and typed Notices pages. |
 | Resources | `/resources`, details/downloads, homepage cards and typed Resource pages with their selected category. |
-| Team | `/team`, category tabs and numeric member detail URLs. Active members of active categories. Optional public email/phone fields are editable on the existing team form. |
+| Team | `/team`, category filter buttons and numeric member detail URLs. Filters use filled blue for the selected category and gray backgrounds for other options, with wrapping on small screens and visible keyboard focus. Active members of active categories. Optional public email/phone fields are editable on the existing team form. |
 | Halls | `/halls` and slug details, capacity, location, amenities, photos and contact information. Display only; no booking workflow or CTA. |
 | Galleries | `/gallery` uses the design's album-grid layout; gallery slug pages use its photo grid with ordered images and Fancybox previews. |
 | Videos | `/videos` and detail pages retain the source iframe layout with lazy loading. Homepage previews use the source Fancybox video controls. Other safe URLs remain provider links. |
 | Menus | Nested main/footer assignments and ordering. Add link supports module paths, external links and a parent item under `menus.manage`. Unpublished pages and descendants of hidden parents are omitted. |
+| Important Links | A flat list of full HTTP/HTTPS external URLs managed under Menus. Links open in a new tab with `noopener noreferrer`; page assignments, internal URLs and parent items are excluded. |
 
 A published CMS page at a module root such as `resources`, `notices`, `halls`, `gallery`, `team`, `videos`, `news`, `contact` or `sitemap` takes precedence over the default catalogue heading/body. Its page type selects its module. Resource and Notices category selections continue to constrain listings. If a detail slug has no public module record, a published CMS child page at that path can still render. Keep taxonomy paths (`news/category`, `news/tag`, `news/author`) and admin/search/robots/XML paths reserved for their routes.
 
 Contact retains the provided floating-label form and information/map layout. `POST /contact` validates the original fields, limits submissions to three per minute and sends a message to the Site Settings office email. The visitor is a Reply-To address; the sender uses Laravel mail configuration. Missing recipients and transport failures return an error rather than a delivery confirmation. Configure a real mail transport for production. No inquiry database is introduced. Google embed URLs render in the original iframe; other map URLs are links.
 
-FAQ pages use the existing rich-text page body. Homepage service and About defaults are copied from the design in `config/frontend.php` and can be edited in Site Settings. Capacity reports and important links use validated structured settings, with reporting years/add/remove controls in the existing settings screen. Missing report figures show a dash. Managed collections retain the original containers when empty. No demo staff, news, documents, rates, statistics or contact numbers are inserted into the database.
+FAQ pages use the existing rich-text page body. Homepage service defaults are copied from the design in `config/frontend.php` and can be edited in Site Settings; About content is managed in Homepage. Capacity reports use validated structured settings, with reporting years/add/remove controls in the existing settings screen. Important Links are managed under Menus; see [Permissions and Menus](menus-permissions.md) for URL validation and migration details. Missing report figures show a dash. Managed collections retain the original containers when empty. No demo staff, news, documents, rates, statistics or contact numbers are inserted into the database.
 
 `lang=en|ne` preserves the existing language preference when Nepali is enabled. Selected language gets the appropriate canonical URL. Hreflang links are emitted for Pages with actual Nepali title and body translations; English remains the fallback. Public rich text is sanitized with an allowlist before rendering, removing dangerous tags, event handlers, styles and protocols. Homepage About text is also sanitized when saved.
 

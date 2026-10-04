@@ -366,10 +366,12 @@ test('team members can be created searched edited and deleted from the admin', f
 });
 
 test('team member requests validate required fields and enforce permissions', function (): void {
-    $this->actingAs($this->admin)->post(route('admin.team-members.store'), [
+    $response = $this->actingAs($this->admin)->post(route('admin.team-members.store'), [
         'name' => '',
         'designation' => '',
-    ])->assertSessionHasErrors(['name', 'designation', 'photo']);
+    ]);
+    $response->assertSessionHasErrors(['name', 'designation']);
+    expect($response->getSession()->get('errors')->has('photo'))->toBeFalse();
 
     $role = Role::create(['name' => 'team-member-viewer', 'guard_name' => 'web']);
     $role->givePermissionTo('team-members.manage');
@@ -519,7 +521,7 @@ test('menu manager renders reference controls and reorders sibling groups', func
     $this->actingAs($this->admin)->get(route('admin.menus.header'))
         ->assertOk()
         ->assertSee('Main Menu Manager')
-        ->assertSee('S.N.')
+        ->assertSee('Menu item')
         ->assertSee('Order')
         ->assertSee('Bulk Delete')
         ->assertSee('data-drag-handle', false);

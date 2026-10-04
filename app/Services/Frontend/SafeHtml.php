@@ -5,6 +5,7 @@ namespace App\Services\Frontend;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use Illuminate\Support\Str;
 
 class SafeHtml
 {
@@ -78,5 +79,10 @@ class SafeHtml
         }
 
         return (str_starts_with($url, '/') && ! str_starts_with($url, '//')) || str_starts_with($url, '#') || in_array(strtolower(parse_url($url, PHP_URL_SCHEME) ?: ''), $links ? ['https', 'http', 'mailto', 'tel'] : ['https', 'http'], true);
+    }
+
+    public function externalUrl(?string $url): bool
+    {
+        return $this->safeUrl($url) && Str::isUrl($url, ['http', 'https']);
     }
 }

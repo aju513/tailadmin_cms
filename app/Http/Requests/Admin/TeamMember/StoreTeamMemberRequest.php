@@ -21,7 +21,7 @@ class StoreTeamMemberRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:100'],
             'category_id' => ['nullable', 'integer', 'exists:team_categories,id'],
             'bio' => ['nullable', 'string', 'max:10000'],
-            'photo' => UploadProfile::rules('images.team_member', 'required'),
+            'photo' => UploadProfile::rules('images.team_member'),
             'photo_alt_text' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
         ];

@@ -4,13 +4,14 @@ namespace App\Services\Frontend;
 
 use App\Enums\PageType;
 use App\Repositories\Contracts\FrontendRepositoryInterface;
+use App\Repositories\Contracts\HomepageContentRepositoryInterface;
 use App\Repositories\Contracts\NewsRepositoryInterface;
 use App\Services\NoticeService;
 use App\Services\ResourceDocumentService;
 
 class FrontendService
 {
-    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache) {}
+    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache, private readonly HomepageContentRepositoryInterface $homepage) {}
 
     private function setLocale(array $filters): void
     {
@@ -25,6 +26,13 @@ class FrontendService
     {
         $this->setLocale($filters);
         $data = [...$data, ...$this->layout->data()];
+        if (($data['kind'] ?? null) === 'home') {
+            $data['homepageImages'] = $data['homepageContent']
+                ? $data['homepageContent']->galleryImages->pluck('mediaAsset')->filter()->values()
+                : $data['galleries']->map(fn ($gallery) => $gallery->photos->first()?->media)->filter()->values();
+            $data['item'] = $data['homepageContent'];
+            $data['heading'] = $data['settings']['site_name'];
+        }
         if (isset($data['latestResources'])) {
             $data['resourceGroups'] = $data['latestResources']->groupBy('resource_category_id');
         }
@@ -42,7 +50,7 @@ class FrontendService
     {
         $this->setLocale($filters);
 
-        return $this->prepare($this->cache->remember('homepage', fn () => ['kind' => 'home', 'slides' => $this->content->recent('slides', 12), 'latestNews' => $this->content->recent('news', 3), 'latestNotices' => $this->content->recent('notices', 4), 'latestResources' => $this->content->recent('resources', 24), 'galleries' => $this->content->recent('gallery', 8), 'halls' => $this->content->recent('halls', 1), 'team' => $this->content->recent('team', 4), 'videos' => $this->content->recent('videos', 2)]), $filters);
+        return $this->prepare($this->cache->remember('homepage', fn () => ['kind' => 'home', 'homepageContent' => $this->homepage->find(), 'slides' => $this->content->recent('slides', 12), 'latestNews' => $this->content->recent('news', 3), 'latestNotices' => $this->content->recent('notices', 4), 'latestResources' => $this->content->recent('resources', 24), 'galleries' => $this->content->recent('gallery', 8), 'halls' => $this->content->recent('halls', 1), 'team' => $this->content->recent('team', 4), 'videos' => $this->content->recent('videos', 2)]), $filters);
     }
 
     public function page(string $path, array $filters): array

@@ -4,6 +4,7 @@ namespace App\Services\Frontend;
 
 use App\Models\GalleryAlbum;
 use App\Models\Hall;
+use App\Models\HomepageContent;
 use App\Models\News;
 use App\Models\Notice;
 use App\Models\Page;
@@ -31,7 +32,7 @@ class SeoService
         $siteName = $settings['site_name'] ?: config('frontend.name');
         $heading = (string) ($data['heading'] ?? $item?->title ?? $item?->name ?? $siteName);
         $title = $item?->meta_title ?: ($heading === $siteName ? $siteName : $heading.' | '.$siteName);
-        $description = Str::limit(trim(html_entity_decode(strip_tags($item?->meta_description ?: $item?->summary ?: $item?->description ?: $settings['meta_description'] ?? config('frontend.hero_description')), ENT_QUOTES, 'UTF-8')), 160, '');
+        $description = Str::limit(trim(html_entity_decode(strip_tags($item?->meta_description ?: ($item instanceof HomepageContent ? $item->body : null) ?: $item?->summary ?: $item?->description ?: $settings['meta_description'] ?? config('frontend.hero_description')), ENT_QUOTES, 'UTF-8')), 160, '');
         $path = request()->getPathInfo();
         $canonical = $this->absolute($path);
         if (config('settings.nepali') && app()->getLocale() === 'ne') {
@@ -80,7 +81,7 @@ class SeoService
             $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $this->absolute('/')], ['@type' => 'ListItem', 'position' => 2, 'name' => $heading, 'item' => $canonical]]];
         }
         $alternates = [];
-        if ($item instanceof Page && config('settings.nepali') && $item->getTranslation('title', 'ne', false) && $item->getTranslation('body', 'ne', false)) {
+        if (($item instanceof Page || $item instanceof HomepageContent) && config('settings.nepali') && $item->getTranslation('title', 'ne', false) && $item->getTranslation('body', 'ne', false)) {
             $alternates = ['en' => $this->absolute($path), 'ne' => $this->absolute($path).'?lang=ne', 'x-default' => $this->absolute($path)];
         }
 

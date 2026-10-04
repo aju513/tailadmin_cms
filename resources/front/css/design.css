@@ -2751,20 +2751,20 @@ input[type="text"].date-picker {
 }
 /*  team page */
 
-.team-tabs {
-  @apply mt-8 mb-0 flex flex-nowrap gap-6 overflow-hidden border-b border-primary;
+.team-filters {
+  @apply mt-8 flex flex-wrap gap-3;
 }
 
-.team-tabs__item {
-  @apply relative -mb-px shrink-0 whitespace-nowrap border-b-2 border-transparent px-1 pb-4 pt-0 text-sm font-semibold text-text_color transition-all duration-300 hover:border-primary hover:text-primary;
+.team-filter {
+  @apply inline-flex min-h-11 items-center justify-center rounded-lg bg-dim_bg px-5 py-2.5 text-sm font-semibold text-text_color transition-colors duration-200 hover:bg-primary/10 hover:text-primary;
 }
 
-.team-tabs__item.is-active {
-  @apply border-primary text-primary;
+.team-filter.is-active {
+  @apply bg-primary text-white hover:bg-primary/90 hover:text-white;
 }
 
-.team-tabs__item:focus-visible {
-  @apply rounded-sm ring-2 ring-primary ring-offset-2;
+.team-filter:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2;
 }
 
 .team-list__item .placeholder__img-wrapper {
@@ -3302,7 +3302,7 @@ input[type="text"].date-picker {
 }
 
 .homepage__team .team-card__name {
-  @apply mb-5 font-heading text-2xl font-semibold leading-tight text-text_color transition-colors duration-300 hover:text-primary lg:text-[26px];
+  @apply mb-5 font-heading text-2xl font-semibold leading-tight text-text_color transition-colors duration-300 hover:text-primary lg:text-[26px] text-primary!;
 }
 
 .homepage__team .team-card__detail {

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Menu;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AssignMenuPagesRequest extends FormRequest
 {
@@ -14,9 +15,14 @@ class AssignMenuPagesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'menu_id' => ['required', 'integer', 'exists:menus,id'],
+            'menu_id' => ['required', 'integer', Rule::exists('menus', 'id')->whereNot('location', 'important_links')],
             'page_ids' => ['required', 'array', 'min:1'],
             'page_ids.*' => ['integer', 'distinct', 'exists:pages,id'],
         ];
+    }
+
+    public function messages(): array
+    {
+        return ['menu_id.exists' => 'Choose a menu that supports page assignments. Important Links accepts external links only.'];
     }
 }

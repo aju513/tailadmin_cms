@@ -85,7 +85,7 @@
                     <div class="footer__links">
                         <div class="text-primary uppercase font-heading text-xl font-bold mb-5">Important Links</div>
                         <ul class="columns-1 gap-y-5 gap-5 flex-wrap">
-@foreach($importantNavigation as $link)<li><a href="{{ $link['href'] }}" target="_blank" rel="noopener noreferrer" class="text-[15px] transition-all duration-500 text-text_color hover:text-secondary">{{ $link['label'] }}</a></li>@endforeach
+@foreach($importantNavigation as $link)@include('front.partials.important-menu-item', ['link' => $link])@endforeach
 </ul>
                     </div>
                 </div>

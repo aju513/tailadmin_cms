@@ -56,10 +56,10 @@
                                 <div class="package-list__item-meta">
                                     <div class="package-list__item-calendar">
                                         <span class="icon-users text-lg text-secondary" aria-hidden="true"></span>
-                                        <span class="text-xs text-text_color">Capacity: <span class="text-text_color"><?= $hallCapacity ?> seats</span></span>
+                                        <span class="text-xs text-primary">Capacity: <span class="text-primary"><?= $hallCapacity ?> seats</span></span>
                                     </div>
                                     <div class="package-list__item-passenger">
-                                        <div class="package-list__item-reviews flex items-center gap-2 text-text_color text-xs">
+                                        <div class="package-list__item-reviews flex items-center gap-2 text-primary text-xs">
                                             <span class="icon-tag text-lg text-secondary" aria-hidden="true"></span>
                                             <span>Price: <?= $hallPrice ?></span>
                                         </div>
@@ -67,8 +67,8 @@
                                 </div>
                                 <div class="package-list__item-bottom">
                                     <div class="package-list__item-price">
-                                        <div class="text-sm text-text_color">Rental Rate</div>
-                                        <div class="text-lg font-semibold text-secondary"><?= $hallPrice ?></div>
+                                        <div class="text-sm text-primary">Rental Rate</div>
+                                        <div class="text-lg font-semibold text-primary"><?= $hallPrice ?></div>
                                     </div>
                                     <div class="package-list__item-link">
                                         <a href="<?= $hallBooking ?>">

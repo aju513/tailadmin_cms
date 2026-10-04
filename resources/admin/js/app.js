@@ -3,6 +3,8 @@ import Alpine from 'alpinejs';
 import { pageManager } from './components/page-manager';
 import { multiselect } from './components/multiselect';
 import { newsEditor } from './components/news-editor';
+import { homepageEditor } from './components/homepage-editor';
+import { stickyFormActions } from './components/sticky-form-actions';
 import ApexCharts from 'apexcharts';
 
 // flatpickr
@@ -17,6 +19,8 @@ window.Alpine = Alpine;
 window.pageManager = pageManager;
 window.multiselect = multiselect;
 Alpine.data('newsEditor', newsEditor);
+Alpine.data('homepageEditor', homepageEditor);
+Alpine.data('stickyFormActions', stickyFormActions);
 window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
 window.FullCalendar = Calendar;

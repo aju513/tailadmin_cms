@@ -21,7 +21,7 @@ return [
         'footer_text' => 'All Rights Reserved.',
         'office_hours' => "Summer (Magh 16–Kartik 15): Sun–Fri, 9:00 AM–5:00 PM\nWinter (Kartik 16–Magh 15): Sun–Fri, 9:00 AM–4:00 PM",
     ],
-    'menu_locations' => ['header' => 'header', 'footer' => 'footer'],
+    'menu_locations' => ['header' => 'header', 'footer' => 'footer', 'important_links' => 'important_links'],
     // CMS menus take precedence; these entries are used when no menu exists.
     'navigation' => [
         'header' => [

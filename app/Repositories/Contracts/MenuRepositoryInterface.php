@@ -21,6 +21,8 @@ interface MenuRepositoryInterface
 
     public function find(int $id): Menu;
 
+    public function location(int $id): ?string;
+
     public function lock(int $id): Menu;
 
     public function createLink(Menu $menu, array $data): MenuItem;

@@ -34,17 +34,3 @@
         <x-ui.button type="button" variant="outline" x-on:click="addReport()" x-bind:disabled="reports.length >= 20">Add reporting year</x-ui.button>
     </div>
 </x-common.component-card>
-
-<x-common.component-card title="Important links" desc="External links in the footer. Manage the header and quick links in Menus.">
-    <div x-data="{ links: {{ Js::from(old('important_links', $settings['important_links'])) }} }" x-effect="links.length; $nextTick(() => $el.querySelectorAll('label[for]').forEach(label => { const input = label.parentElement.querySelector('input'); if(input) label.htmlFor = input.id; }))" class="space-y-6">
-        <input type="hidden" name="important_links" value="">
-        <template x-for="(link, index) in links" :key="index">
-            <div class="grid items-end gap-6 md:grid-cols-3">
-                <x-form.input name="important-link-label" label="Link title" x-bind:name="'important_links[' + index + '][label]'" x-bind:id="'important-link-label-' + index" x-model="link.label" required />
-                <x-form.input name="important-link-url" label="URL" type="url" x-bind:name="'important_links[' + index + '][url]'" x-bind:id="'important-link-url-' + index" x-model="link.url" required />
-                <x-ui.button type="button" variant="outline" x-on:click="links.splice(index, 1)">Remove link</x-ui.button>
-            </div>
-        </template>
-        <x-ui.button type="button" variant="outline" x-on:click="links.push({label:'',url:''})" x-bind:disabled="links.length >= 20">Add important link</x-ui.button>
-    </div>
-</x-common.component-card>

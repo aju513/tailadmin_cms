@@ -12,7 +12,6 @@
     <div class="grid gap-6 md:grid-cols-2">
         <x-form.input name="title" label="News title" :value="old('title', $item->title)" x-bind:value="title" @input="updateTitle($event.target.value)" maxlength="255" required />
         <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" x-bind:value="slug" @input="updateSlug($event.target.value)" maxlength="255" pattern="[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*" />
-        <x-form.input name="subtitle" label="Subtitle" :value="old('subtitle', $item->subtitle)" />
         <x-form.date-picker name="published_at" label="Publish date" :value="old('published_at', $item->published_at?->format('Y-m-d'))" help="A future date schedules visibility after publication." />
         <div class="md:col-span-2 flex flex-wrap items-center gap-x-8 gap-y-4">
             @can('news.publish')

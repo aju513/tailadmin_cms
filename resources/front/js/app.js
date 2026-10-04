@@ -128,7 +128,6 @@ document.querySelectorAll('[data-language-switcher]').forEach((switcher) => {
         option.addEventListener('click', () => { const url = new URL(location.href); url.searchParams.set('lang', option.dataset.language); location.assign(url); });
     });
 });
-document.querySelector('#news-category')?.addEventListener('change', (event) => event.currentTarget.form.requestSubmit());
 const shareToggle = document.getElementById('newsShareToggle');
 const shareMenu = document.getElementById('newsShareMenu');
 shareToggle?.addEventListener('click', () => { const open = shareMenu?.classList.toggle('show'); shareToggle.setAttribute('aria-expanded', String(open)); });

@@ -6,16 +6,16 @@
                     <div class="welcome-content">
 
                         <div class="section-title-wrap">
-                            <div class="section-title-sm text-white! mb-1.5!">
-                                Our About Us
-                            </div>
+                            @if(!$homepageContent || filled($homepageContent->subtitle))
+                                <div class="section-title-sm text-white! mb-1.5!">{{ $homepageContent?->subtitle ?? 'Our About Us' }}</div>
+                            @endif
 
                             <h1 class="section-title text-white!">
-                                {{ $settings['about_title'] ?: $settings['site_name'] }}
+                                {{ $homepageContent?->title ?? ($settings['about_title'] ?: $settings['site_name']) }}
                             </h1>
                         </div>
 
-                        {!! preg_replace('/<p>/', '<p class="text-white/80!">', $safeHtml->clean($settings['about_description'])) !!}
+                        {!! preg_replace('/<p>/', '<p class="text-white/80!">', $safeHtml->clean($homepageContent?->body ?? $settings['about_description'])) !!}
 <a href="{{ $settings['about_url'] ?: url('/about-us') }}" class="btn-outline-text hav-icon mt-2 group text-white!">
                             <span class="underline">
                                 More About Us
@@ -32,7 +32,7 @@
                         <div class="homepage__about-image">
                             <div class="placeholder__img-wrapper">
                                 <div class="placeholder__img">
-                                    <img id="homepage-about-main-image" src="{{ $galleries->first()?->photos->first()?->media?->url() ?: asset('front/images/placeholder-logo.svg') }}" alt="{{ $galleries->first()?->title ?? '' }}" width="600" height="475" loading="lazy" decoding="async">
+                                    <img id="homepage-about-main-image" src="{{ $homepageImages->first()?->url() ?: asset('front/images/placeholder-logo.svg') }}" alt="{{ $homepageImages->first()?->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" width="600" height="475" loading="lazy" decoding="async">
                                 </div>
                             </div>
                         </div>
@@ -42,10 +42,10 @@
                             </button>
                             <div class="swiper homepage-about-award-swiper">
                                 <div class="swiper-wrapper">
-@foreach($galleries as $gallery)
+@foreach($homepageImages as $image)
 <div class="swiper-slide">
-                                        <button type="button" class="homepage__about-award-item {{ $loop->first ? 'is-active' : '' }}" data-gallery-image="{{ $gallery->photos->first()?->media?->url() }}" data-gallery-alt="{{ $gallery->title }}" aria-label="Show {{ $gallery->title }}" aria-pressed="{{ $loop->first ? 'true' : 'false' }}">
-                                            <x-front.image :media="$gallery->photos->first()?->media" :alt="$gallery->title" width="107" height="107" />
+                                        <button type="button" class="homepage__about-award-item {{ $loop->first ? 'is-active' : '' }}" data-gallery-image="{{ $image->url() }}" data-gallery-alt="{{ $image->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" aria-label="Show gallery image {{ $loop->iteration }}" aria-pressed="{{ $loop->first ? 'true' : 'false' }}">
+                                            <x-front.image :media="$image" :alt="$image->alt_text ?: ($homepageContent?->title ?? $settings['about_title'])" width="107" height="107" />
                                         </button>
                                     </div>
 @endforeach

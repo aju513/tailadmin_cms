@@ -10,9 +10,9 @@ class SiteSettingService
 {
     public const KEYS = ['site_name', 'office_name', 'logo_url', 'phone', 'email', 'address', 'footer_text', 'meta_description', 'hero_title', 'hero_description', 'about_title', 'about_description', 'training_url', 'office_hours', 'map_url', 'facebook_url', 'youtube_url', 'linkedin_url'];
 
-    public const DESIGN_KEYS = ['province_name', 'about_url', 'tmis_url', 'instagram_url', 'x_url', 'contact_officer_phone', 'contact_officer_photo_url', 'homepage_services', 'capacity_reports', 'important_links'];
+    public const DESIGN_KEYS = ['province_name', 'about_url', 'tmis_url', 'instagram_url', 'x_url', 'contact_officer_phone', 'contact_officer_photo_url', 'homepage_services', 'capacity_reports'];
 
-    public const ARRAY_KEYS = ['homepage_services', 'capacity_reports', 'important_links'];
+    public const ARRAY_KEYS = ['homepage_services', 'capacity_reports'];
 
     public function __construct(private readonly SiteSettingRepositoryInterface $settings) {}
 

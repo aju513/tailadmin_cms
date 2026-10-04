@@ -1,7 +1,18 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<x-common.page-breadcrumb pageTitle="UI Kit" />
+<x-common.page-breadcrumb pageTitle="UI Kit">
+    <x-slot:actions>
+        <x-common.form-actions form-id="ui-kit-sticky-form" close-route="admin.ui-kit" close-permission="ui-kit.view" submit-label="Demo save" />
+    </x-slot:actions>
+</x-common.page-breadcrumb>
+<form id="ui-kit-sticky-form" x-data="{ submitted: false }" @submit.prevent="submitted = true" class="mb-6">
+    <x-common.form-actions form-id="ui-kit-sticky-form" close-route="admin.ui-kit" close-permission="ui-kit.view" submit-label="Demo save" :sticky="true" />
+    <x-common.component-card title="Sticky form actions" desc="Scroll past the header Save button to show the same actions below the admin header.">
+        <x-form.textarea name="ui-kit-sticky-notes" label="Example notes" rows="18" placeholder="This demonstration does not persist changes." />
+        <p x-show="submitted" x-cloak role="status" class="text-sm text-success-600">Demo form submitted.</p>
+    </x-common.component-card>
+</form>
 <div class="grid gap-6 lg:grid-cols-2">
     <x-common.component-card title="Buttons" desc="Use x-ui.button with semantic variants and sm/md sizes."><div class="flex flex-wrap gap-3"><x-ui.button variant="primary">Primary</x-ui.button><x-ui.button variant="secondary">Secondary</x-ui.button><x-ui.button variant="success">Success</x-ui.button><x-ui.button variant="danger">Danger</x-ui.button><x-ui.button variant="warning">Warning</x-ui.button><x-ui.button variant="info">Info</x-ui.button><x-ui.button variant="outline">Outline</x-ui.button><x-ui.button variant="primary" disabled>Disabled</x-ui.button></div></x-common.component-card>
     <x-common.component-card title="Badges" desc="Status and categorization labels."><div class="flex flex-wrap gap-2"><x-ui.badge color="primary">Primary</x-ui.badge><x-ui.badge color="success">Active</x-ui.badge><x-ui.badge color="warning">Pending</x-ui.badge><x-ui.badge color="error">Inactive</x-ui.badge></div></x-common.component-card>

@@ -124,6 +124,11 @@ class MenuRepository implements MenuRepositoryInterface
         return Menu::query()->findOrFail($id);
     }
 
+    public function location(int $id): ?string
+    {
+        return Menu::query()->whereKey($id)->value('location');
+    }
+
     public function lock(int $id): Menu
     {
         return Menu::query()->whereKey($id)->lockForUpdate()->firstOrFail();
@@ -220,7 +225,9 @@ class MenuRepository implements MenuRepositoryInterface
             $item->delete();
         }
 
-        $this->assignPages($menu, []);
+        if (! $menu->isImportantLinks()) {
+            $this->assignPages($menu, []);
+        }
     }
 
     public function deleteItem(MenuItem $item): void
@@ -228,6 +235,8 @@ class MenuRepository implements MenuRepositoryInterface
         $menu = $item->menu;
         $item->children()->update(['parent_id' => $item->parent_id]);
         $item->delete();
-        $this->assignPages($menu, []);
+        if (! $menu->isImportantLinks()) {
+            $this->assignPages($menu, []);
+        }
     }
 }

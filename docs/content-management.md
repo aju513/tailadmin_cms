@@ -6,13 +6,15 @@ Menu assignment selects a complete page branch when its parent is picked: childr
 
 ## Implemented modules
 
+- Dedicated **Pages → Homepage** editor for welcome text, ordered gallery images, social sharing image, and SEO. It uses the existing TailAdmin form patterns and immediately updates the public About section. See [Homepage content](homepage.md).
+
 All selectable admin content indexes now use the same animated 22px white-tick checkboxes and select-all controls. News, Notices, Resources, their categories, Team Members/Categories, Halls, Homepage Slides, Gallery, Videos, and Users share AJAX row and bulk status updates, loading guards, error feedback, and server-side authorization. Select-all affects only displayed records; nested Resource Category controls share the header's selection state. Menu item tables reuse the checkbox styling and keep their existing selection and reorder logic. Existing labels, status values, permission gates, and non-JavaScript redirect responses are preserved.
 
 - Hall catalogue with seating capacity, NPR rates and rate units, operational availability, amenities, bilingual content, contacts, images/gallery, and SEO. See [Halls and bookings](halls-and-bookings.md) for the detailed implementation and booking roadmap. Date reservations and public booking forms are planned separately.
 
 - Pages with nested parent/child hierarchy, generated public paths, editable slugs, drag-and-drop ordering, and validated page types: Article, News, Notices, Resource, Team, Contact Us, Sitemap, Hall, FAQs, Videos, and Gallery.
 - Shared local upload storage for images and office documents, attached through each content form.
-- Menu positions default to Main Menu and Footer Menu; additional database-defined locations appear under Dynamic Menus. The main position retains the internal `header` location for existing routes and data. Each position has a searchable page-assignment control and an assigned-item manager with serial numbers, sibling-level drag ordering, row selection, single deletion, and bulk deletion. The assignment control remains available when every page is already assigned, and there is no separate menu-item creation or edit screen. Pages retain their hierarchy, dragging only changes order within the same parent, and surviving descendants reconnect to their nearest assigned ancestor after deletion. Main and footer links render recursively on the public site.
+- Menu positions default to Main Menu, Footer Menu, and Important Links Menu; additional database-defined locations appear under Dynamic Menus. The main position retains the internal `header` location; the other two use `footer` and `important_links`. Main, Footer, and dynamic menus have a searchable page-assignment control, custom internal/external links, and an assigned-item manager with serial numbers, sibling-level drag ordering, row selection, single deletion, and bulk deletion. The assignment control remains available when every page is already assigned. Pages retain their hierarchy, dragging only changes order within the same parent, and surviving descendants reconnect to their nearest assigned ancestor after deletion. Main branches render recursively on the public site; Footer Menu supplies the top-level Quick Links. Important Links accepts only a label and full HTTP/HTTPS external URL, with a flat ordered footer list, no parent selector, and no page assignment. It retains drag ordering and single/bulk deletion. Important Links use Menus rather than Site Settings. Migrations preserve existing saved links and their display order; see [Permissions and menus](menus-permissions.md) for deployment and rollback behavior.
 - Site identity and contact settings.
 - Homepage slides.
 - Team member directory with names, designations, biographies, photos, and active status.
@@ -24,7 +26,7 @@ News taxonomy data is retained for existing public content, but its management a
 
 ## News
 
-News is managed at `/admin/news` and published at `/news` and `/news/{slug}`. Category, tag, and author listing routes use `/news/category/{slug}`, `/news/tag/{slug}`, and `/news/author/{slug}`. The public listing provides a featured story, category selector, search, article cards, and pagination. Article pages show the author, publication date, tags, banner, story, and recent articles. The homepage shows the three latest published articles.
+News is managed at `/admin/news` and published at `/news` and `/news/{slug}`. Category, tag, and author listing routes use `/news/category/{slug}`, `/news/tag/{slug}`, and `/news/author/{slug}`. The public listing provides search, reusable news item cards, and pagination. News cards and article pages show the image, title, publication date, story, sharing controls, and recent articles without displaying author, category, or tag metadata. The homepage shows the three latest published articles.
 
 The admin News index displays article titles, featured labels, status and selection controls, creation dates, and permission-controlled Edit and Delete actions. Clicking an editable row opens the editor.
 
@@ -74,6 +76,8 @@ The shared upload component reads the same profile as its FormRequest, so the br
 | `page.banner`, `news.banner`, `hall.banner` | 1400 × 630 px |
 | `page.social`, `news.social`, `hall.social` | 1200 × 630 px |
 | `news.thumbnail` | 600 × 400 px |
+| `homepage.gallery` | 1200 × 950 px |
+| `homepage.social` | 1200 × 630 px |
 | `team_member` | 600 × 600 px |
 | `hall.thumbnail` | 600 × 450 px |
 | `hall.gallery`, `gallery_photo` | 1200 × 900 px |
@@ -137,6 +141,8 @@ Admin notices now select a Notice Section from the Pages hierarchy (Page Type No
 ## Category editors and ordering
 
 Team Members and Team Categories index screens share the Resources manager layout: title and breadcrumb on the left; Publish, Unpublish, Add Team Member/Add Category, and Bulk delete in the breadcrumb actions slot. Bulk actions enable when rows are selected and submit to the existing team bulk routes. Publish/Unpublish maps to the member `is_active` or category `status` boolean. Each table has five columns, with member designation/category or category slug/member count inside the title cell. Status icons submit a single-record status change; Edit/Delete and the created date share the final cell. The existing team reorder icons remain display-only.
+
+Team Category forms expose the category name, Active toggle, and description in that order. URL slugs continue to be generated and stored by the service from the category name, but the slug is not an editable admin field.
 
 Resource Categories use full-width CKEditor descriptions and Published toggles. Numeric display-order inputs are removed; reorder rows using drag handles or arrow buttons in the manager. Inactive categories hide associated public content. Notice Category administration has been replaced by Notice Sections; legacy notice category visibility remains in force on the public site.
 

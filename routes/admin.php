@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HallController;
+use App\Http\Controllers\Admin\HomepageController;
 use App\Http\Controllers\Admin\HomepageSlideController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsController;
@@ -35,6 +36,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/halls/{hall}', [HallController::class, 'show'])->middleware('can:halls.show')->name('halls.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('/homepage', [HomepageController::class, 'edit'])->middleware('can:homepage.manage')->name('homepage.edit');
+    Route::put('/homepage', [HomepageController::class, 'update'])->middleware('can:homepage.edit')->name('homepage.update');
 
     Route::get('/pages', [PageController::class, 'index'])->middleware('can:pages.manage')->name('pages.index');
     Route::get('/pages/create', [PageController::class, 'create'])->middleware('can:pages.create')->name('pages.create');
@@ -132,6 +136,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::get('/menus', [MenuController::class, 'index'])->middleware('can:menus.manage')->name('menus.index');
     Route::get('/menus/header', [MenuController::class, 'header'])->middleware('can:menus.manage')->name('menus.header');
     Route::get('/menus/footer', [MenuController::class, 'footer'])->middleware('can:menus.manage')->name('menus.footer');
+    Route::get('/menus/important-links', [MenuController::class, 'importantLinks'])->middleware('can:menus.manage')->name('menus.important-links');
     Route::post('/menus/links', [MenuController::class, 'storeLink'])->middleware('can:menus.manage')->name('menus.links.store');
     Route::post('/menus/assign', [MenuController::class, 'assign'])->middleware('can:menus.manage')->name('menus.assign');
     Route::patch('/menus/order', [MenuController::class, 'order'])->middleware('can:menus.manage')->name('menus.order');

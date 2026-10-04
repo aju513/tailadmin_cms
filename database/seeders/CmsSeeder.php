@@ -12,6 +12,7 @@ class CmsSeeder extends Seeder
     {
         Menu::query()->firstOrCreate(['location' => 'header'], ['name' => 'Main Menu']);
         Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer Menu']);
+        Menu::query()->firstOrCreate(['location' => 'important_links'], ['name' => 'Important Links Menu']);
 
         foreach ([
             'site_name' => config('app.name'),

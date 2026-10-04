@@ -1,5 +1,8 @@
 <title>{{ $seo['title'] }}</title>
 <meta name="description" content="{{ $seo['description'] }}">
+@isset($homepageContent)
+    @if(filled($homepageContent->meta_keywords))<meta name="keywords" content="{{ $homepageContent->meta_keywords }}">@endif
+@endisset
 <meta name="robots" content="{{ $seo['robots'] }}">
 <link rel="canonical" href="{{ $seo['canonical'] }}">
 @foreach($seo['alternates'] as $language=>$url)<link rel="alternate" hreflang="{{ $language }}" href="{{ $url }}">@endforeach

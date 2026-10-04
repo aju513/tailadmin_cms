@@ -10,9 +10,12 @@
 </div>
         </div>
 
-        <nav class="team-tabs" aria-label="Team categories">
-<a class="team-tabs__item {{ !request('team_category_id') ? 'is-active' : '' }}" href="{{ url()->current() }}">All Members</a>@foreach($teamCategories as $id=>$name)<a class="team-tabs__item {{ (string)request('team_category_id') === (string)$id ? 'is-active' : '' }}" href="{{ request()->fullUrlWithQuery(['team_category_id'=>$id,'page'=>null]) }}">{{ $name }}</a>@endforeach
-</nav>
+        <nav class="team-filters" aria-label="Team categories">
+            <a class="team-filter {{ !request('team_category_id') ? 'is-active' : '' }}" href="{{ url()->current() }}" @if(!request('team_category_id')) aria-current="page" @endif>All Members</a>
+            @foreach($teamCategories as $id=>$name)
+                <a class="team-filter {{ (string)request('team_category_id') === (string)$id ? 'is-active' : '' }}" href="{{ request()->fullUrlWithQuery(['team_category_id'=>$id,'page'=>null]) }}" @if((string)request('team_category_id') === (string)$id) aria-current="page" @endif>{{ $name }}</a>
+            @endforeach
+        </nav>
 
         <section class="mt-10 team-list__wrapper" aria-labelledby="team-category-title">
             <h2 id="team-category-title" class="team-list__wrapper-title">

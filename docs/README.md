@@ -34,3 +34,4 @@ The bootstrap credential is intentionally predictable and must never remain unch
 - [Feature development](feature-development.md): required implementation workflow.
 - [Testing and operations](testing-operations.md): verification, deployment, and maintenance commands.
 - [Content management](content-management.md): pages, media, menus, settings, homepage slides, categories, tags, and authors.
+- [Homepage content](homepage.md): welcome text, gallery images, SEO, translation tabs, permissions, and public integration.

@@ -72,13 +72,14 @@ Public pages extend `front.layouts.app`. It includes the header and footer outsi
 - `layout.header` and `layout.footer`: Blade partial names.
 - `branding`: fallback logo and footer illustration paths under `public/`.
 - `defaults`: fallback province, office hours, copyright and training/TMIS URLs.
-- `menu_locations`: CMS menu locations used for the header and footer.
+- `menu_locations`: CMS menu locations used for Main Menu (`header`), Footer Menu (`footer`), and Important Links Menu (`important_links`).
 - `navigation.header` and `navigation.footer`: fallback links when that CMS menu does not exist. Entries accept `label` and a named `route`, a `setting` key or a `url`, plus optional `children` and `external`.
+- `important_links`: fallback Important Links when that CMS menu does not exist, and the source imported by the migration when there is no saved Site Settings list.
 - `assets`: entrypoints, build directory and development hot-file path.
 
 Saved Site Settings override defaults. Existing CMS menus override configured navigation, including intentionally empty menus. The repository enforces published-page visibility and menu hierarchy. The footer displays configured office hours; Blade escapes settings and labels, and unsafe navigation protocols are excluded.
 
-Use **Site Settings**, **Header Menu**, and **Footer Menu** to manage content. Clear the frontend cache after changing configuration defaults: `php artisan frontend:cache-clear`. Rebuild Laravel's configuration cache if deployment uses `config:cache`.
+Use **Site Settings**, **Main Menu**, **Footer Menu**, and **Important Links Menu** to manage content. Important Links are stored in the shared menu tables; contact details, office hours, social profiles, and copyright remain Site Settings. Clear the frontend cache after changing configuration defaults: `php artisan frontend:cache-clear`. Rebuild Laravel's configuration cache if deployment uses `config:cache`.
 
 ## Assets and development
 

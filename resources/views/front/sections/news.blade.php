@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="homepage__news-grid grid grid-cols-12">
-@foreach($latestNews as $item)@include('front.components.news-card',['cardClass'=>'col-span-4'])@endforeach
+@foreach($latestNews as $item)@include('front.components.news_item',['cardClass'=>'col-span-4'])@endforeach
 </div>
         </div>
     </div>

@@ -43,6 +43,10 @@ return [
             'description' => 'Allows access to the main administration dashboard.',
         ],
     ],
+    'homepage' => [
+        'homepage.manage' => ['view_title' => 'View homepage editor', 'description' => 'Allows viewing the homepage content, gallery, and SEO editor.'],
+        'homepage.edit' => ['view_title' => 'Edit homepage content', 'description' => 'Allows saving live homepage text, gallery images, and SEO details.'],
+    ],
     'pages' => [
         'pages.manage' => ['view_title' => 'Manage pages', 'description' => 'Allows access to the page index, filters, and pagination.'],
         'pages.show' => ['view_title' => 'View pages', 'description' => 'Allows viewing page details.'],

@@ -16,8 +16,7 @@
     <x-common.component-card title="Homepage" desc="Banner photos use the existing Home Slides module. Published catalogues fill the homepage sections automatically."><div class="grid gap-6 md:grid-cols-2">
         <div class="md:col-span-2"><x-form.input name="hero_title" label="Banner heading" :value="$settings['hero_title']" /></div>
         <div class="md:col-span-2"><x-form.textarea name="hero_description" label="Banner description" :value="$settings['hero_description']" /></div>
-        <div class="md:col-span-2"><x-form.input name="about_title" label="About heading" :value="$settings['about_title']" /></div>
-        <div class="md:col-span-2"><x-form.editor name="about_description" label="About description" :value="$settings['about_description']" /></div>
+        @can('homepage.manage')<p class="md:col-span-2 text-sm text-gray-500 dark:text-gray-400">Manage welcome text and gallery images in <a href="{{ route('admin.homepage.edit') }}" class="text-brand-600 underline">Homepage content</a>.</p>@endcan
         <x-form.input name="about_url" label="About page URL" type="url" :value="$settings['about_url']" />
     </div></x-common.component-card>
     @include('admin.pages.settings.design-fields')

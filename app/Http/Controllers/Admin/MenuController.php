@@ -28,7 +28,8 @@ class MenuController extends Controller
         return view('admin.pages.menus.index', [
             'headerMenus' => $menus->where('location', 'header')->values(),
             'footerMenus' => $menus->where('location', 'footer')->values(),
-            'dynamicMenus' => $menus->whereNotIn('location', ['header', 'footer'])->values(),
+            'importantLinksMenus' => $menus->where('location', 'important_links')->values(),
+            'dynamicMenus' => $menus->whereNotIn('location', ['header', 'footer', 'important_links'])->values(),
             'availablePages' => $menus->mapWithKeys(fn ($menu) => [$menu->id => $this->menus->availablePages($menu)]),
             'menuLocation' => $location,
             'title' => 'Public Menus',
@@ -45,11 +46,21 @@ class MenuController extends Controller
         return $this->index('footer');
     }
 
+    public function importantLinks(): View
+    {
+        return $this->index('important_links');
+    }
+
     public function assign(AssignMenuPagesRequest $request): RedirectResponse
     {
         $menu = $this->menus->assignPages($request->validated(), $request->user());
 
-        return redirect()->route($menu->location === 'header' ? 'admin.menus.header' : ($menu->location === 'footer' ? 'admin.menus.footer' : 'admin.menus.index'))->with('success', 'Pages assigned to menu.');
+        return redirect()->route(match ($menu->location) {
+            'header' => 'admin.menus.header',
+            'footer' => 'admin.menus.footer',
+            'important_links' => 'admin.menus.important-links',
+            default => 'admin.menus.index',
+        })->with('success', 'Pages assigned to menu.');
     }
 
     public function storeLink(\App\Http\Requests\Admin\Menu\StoreMenuLinkRequest $request): RedirectResponse

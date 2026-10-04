@@ -18,11 +18,11 @@
                     <p class="team-card__position">
 {{ $member->designation }}
 </p>
-                    <h3 class="team-card__name">
-<a href="{{ route('public.team.show',$member->id) }}">{{ $member->name }}</a>
+                    <h3 class="team-card__name text-primary!">
+<a href="{{ route('public.team.show',$member->id) }}" class="text-primary!">{{ $member->name }}</a>
 </h3>
-                    
-                    
+
+
                 @if($member->email)<a class="team-card__detail" href="mailto:{{ $member->email }}">{{ $member->email }}</a>@endif
 @if($member->phone)<a class="team-card__detail" href="tel:{{ $member->phone }}">{{ $member->phone }}</a>@endif
 </article>

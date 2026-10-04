@@ -9,7 +9,6 @@
         <p><strong>Status:</strong> {{ ucfirst($item->status->value) }} @if($item->featured) · Featured @endif</p>
         <p><strong>Published:</strong> {{ $item->published_at?->format('M d, Y') ?? '—' }}</p>
         @if($item->thumbnailMedia)<img src="{{ $item->thumbnailMedia->url() }}" alt="{{ $item->thumbnailMedia->alt_text ?: $item->title }}" class="h-48 w-auto rounded-xl object-cover">@endif
-        @if($item->subtitle)<p class="text-lg font-medium">{{ $item->subtitle }}</p>@endif
         @if($item->summary)<div class="prose max-w-none">{!! $item->summary !!}</div>@endif
         <div class="prose max-w-none">{!! $item->body !!}</div>
         @if($item->status->value === 'published')<a href="{{ route('public.news.show', $item->slug) }}" target="_blank" rel="noopener" class="text-brand-600 underline">View public article</a>@endif
