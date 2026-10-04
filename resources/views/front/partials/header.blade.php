@@ -159,7 +159,7 @@
         @foreach ($siteNavigation as $navItem)
             <li class="relative">
                 @if (!empty($navItem['children']))
-                    <button type="button" aria-label="Toggle {{ $navItem['label'] }} submenu" aria-expanded="false" class="dropdown-toggle inline-flex items-center gap-1 text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">
+                    <button type="button" aria-label="Toggle {{ $navItem['label'] }} submenu" aria-expanded="false" class="dropdown-toggle inline-flex items-center gap-1 text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-primary">
                         {{ $navItem['label'] }}
                         <span class="icon icon-dropdown text-sm xl:text-base" aria-hidden="true"></span>
                     </button>
@@ -171,7 +171,7 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ $navItem['href'] }}" @if(!empty($navItem['external'])) target="_blank" rel="noopener noreferrer" @endif class="text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-secondary">
+                    <a href="{{ $navItem['href'] }}" @if(!empty($navItem['external'])) target="_blank" rel="noopener noreferrer" @endif class="text-sm font-semibold uppercase leading-3.5 font-heading text-text_color transition-all duration-500 hover:text-primary">
                         {{ $navItem['label'] }}
                     </a>
                 @endif

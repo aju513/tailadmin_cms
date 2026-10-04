@@ -8,7 +8,9 @@ use App\Models\Page;
 use App\Models\TeamMember;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -379,17 +381,43 @@ test('team member requests validate required fields and enforce permissions', fu
     $this->actingAs($viewer)->post(route('admin.team-members.store'), [])->assertForbidden();
 });
 
-test('media uploads use the local public disk', function (): void {
+test('content form uploads use the local public disk without a media library', function (): void {
     Storage::fake('public');
 
-    $this->actingAs($this->admin)->post(route('admin.media.store'), [
-        'file' => UploadedFile::fake()->image('crest.png'),
+    $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'title' => 'Office crest',
-        'alt_text' => 'Office crest',
+        'status' => 'draft',
+        'banner_image' => UploadedFile::fake()->image('crest.png'),
+        'banner_alt_text' => 'Office crest',
     ])->assertRedirect();
 
     $asset = MediaAsset::firstOrFail();
-    expect($asset->disk)->toBe('public');
+    expect($asset->disk)->toBe('public')
+        ->and($asset->alt_text)->toBe('Office crest')
+        ->and(Page::firstOrFail()->banner_media_id)->toBe($asset->id);
+    Storage::disk('public')->assertExists($asset->path);
+});
+
+test('removed media library cannot be accessed and existing uploads are preserved', function (): void {
+    Storage::fake('public');
+    $this->actingAs($this->admin)->post(route('admin.pages.store'), [
+        'title' => 'Preserved image', 'status' => 'draft',
+        'banner_image' => UploadedFile::fake()->image('banner.jpg'),
+    ])->assertSessionHasNoErrors();
+    $asset = MediaAsset::firstOrFail();
+
+    foreach (['admin.media.index', 'admin.media.store', 'admin.media.destroy'] as $name) {
+        expect(Route::has($name))->toBeFalse();
+    }
+    expect(Permission::query()->whereIn('name', ['media.manage', 'media.create', 'media.delete'])->exists())->toBeFalse();
+    $this->artisan('admin:menu-regenerate')->assertSuccessful();
+    $this->get(route('admin.pages.index'))->assertOk()->assertDontSee('Media Library');
+    $this->get('/admin/media')->assertNotFound();
+    $this->post('/admin/media', ['file' => UploadedFile::fake()->image('blocked.jpg')])->assertNotFound();
+    $this->delete('/admin/media/'.$asset->id)->assertNotFound();
+
+    expect($asset->fresh())->not->toBeNull();
+    $this->assertDatabaseCount('media_assets', 1);
     Storage::disk('public')->assertExists($asset->path);
 });
 

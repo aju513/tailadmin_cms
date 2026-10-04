@@ -31,7 +31,7 @@ class SeoService
         $siteName = $settings['site_name'] ?: config('frontend.name');
         $heading = (string) ($data['heading'] ?? $item?->title ?? $item?->name ?? $siteName);
         $title = $item?->meta_title ?: ($heading === $siteName ? $siteName : $heading.' | '.$siteName);
-        $description = Str::limit(trim(html_entity_decode(strip_tags($item?->meta_description ?: $item?->excerpt ?: $item?->summary ?: $item?->description ?: $settings['meta_description'] ?? config('frontend.hero_description')), ENT_QUOTES, 'UTF-8')), 160, '');
+        $description = Str::limit(trim(html_entity_decode(strip_tags($item?->meta_description ?: $item?->summary ?: $item?->description ?: $settings['meta_description'] ?? config('frontend.hero_description')), ENT_QUOTES, 'UTF-8')), 160, '');
         $path = request()->getPathInfo();
         $canonical = $this->absolute($path);
         if (config('settings.nepali') && app()->getLocale() === 'ne') {

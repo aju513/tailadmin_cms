@@ -1,12 +1,12 @@
 # Photo gallery and videos
 
-Both modules live under Media, alongside Home Slides and the reusable Media Library. Their Add and Manage pages use the existing TailAdmin shell, breadcrumb Save/Close actions, form components, dark mode, simple title search, and pagination.
+Both modules live under Media, alongside Home Slides. Their Add and Manage pages use the existing TailAdmin shell, breadcrumb Save/Close actions, form components, dark mode, simple title search, and pagination.
 
 ## Photo gallery
 
 Routes use /admin/gallery and the admin.gallery.* names. Add/Edit Gallery is a single card with a title, stable unique URL slug, Published toggle beside the slug, and multiple-image upload. There are no separate album, cover, or publication cards, and no event date, description, caption, or ordering controls. Publication time is set automatically by the service on publishing and preserved while published; unpublishing clears it.
 
-Upload up to 30 JPG/PNG/WebP images per save, up to 100 per gallery, and 5 MB per image. Existing images show previews with Remove image checkboxes. Removing an image detaches it from that gallery. Deleting a gallery removes its image associations. Uploaded files remain in Media Library. Images appear in their stored upload order.
+Upload up to 30 JPG/PNG/WebP images per save, up to 100 per gallery, and 5 MB per image. Existing images show previews with Remove image checkboxes. Removing an image detaches it from that gallery. Deleting a gallery removes its image associations. Uploaded files remain in shared media storage. Images appear in their stored upload order.
 
 The existing GalleryAlbum/gallery_albums and GalleryPhoto storage structure is retained. Legacy optional fields and captions remain stored, but the simplified form no longer edits them. No schema migration is required for this simplification.
 

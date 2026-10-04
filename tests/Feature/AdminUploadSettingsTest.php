@@ -83,20 +83,23 @@ test('image validation rejects disallowed types and retains authorization', func
     $this->assertDatabaseCount('media_assets', 0);
 });
 
-test('media and document uploads use configured file limits', function (): void {
-    config(['settings.uploads.media.max_size_kb' => 1, 'settings.uploads.document.max_size_kb' => 1]);
-    $this->actingAs($this->admin)->post(route('admin.media.store'), ['file' => UploadedFile::fake()->create('large.pdf', 2, 'application/pdf')])
-        ->assertSessionHasErrors('file');
-    $this->post(route('admin.media.store'), ['file' => UploadedFile::fake()->image('valid.png')->size(1)])
-        ->assertSessionHasNoErrors();
-
+test('document uploads use configured file limits', function (): void {
+    config(['settings.uploads.document.max_size_kb' => 1]);
     $category = ResourceCategory::factory()->create();
-    $this->post(route('admin.resources.store'), [
+    $this->actingAs($this->admin)->post(route('admin.resources.store'), [
         'title' => 'Document', 'status' => 'draft', 'sort_order' => 0, 'resource_category_id' => $category->id,
         'attachment' => UploadedFile::fake()->create('large.pdf', 2, 'application/pdf'),
     ])->assertSessionHasErrors('attachment');
     $this->assertDatabaseCount('resource_documents', 0);
+    $this->assertDatabaseCount('media_assets', 0);
+
+    $this->post(route('admin.resources.store'), [
+        'title' => 'Document', 'status' => 'draft', 'sort_order' => 0, 'resource_category_id' => $category->id,
+        'attachment' => UploadedFile::fake()->create('valid.pdf', 1, 'application/pdf'),
+    ])->assertSessionHasNoErrors();
+    $this->assertDatabaseCount('resource_documents', 1);
     $this->assertDatabaseCount('media_assets', 1);
+    Storage::disk('public')->assertExists(MediaAsset::firstOrFail()->path);
 });
 
 test('admin upload guidance reflects configured pixels formats and file size', function (): void {
@@ -114,5 +117,5 @@ test('admin upload guidance reflects configured pixels formats and file size', f
     $this->get(route('admin.news.create'))->assertOk()->assertSee('Required dimensions: 820 × 460 px.');
     $this->get(route('admin.homepage-slides.create'))->assertOk()->assertSee('Recommended dimensions: 1600 × 900 px.')
         ->assertSee('Maximum size: 5.0 MB.');
-    $this->get(route('admin.media.index'))->assertOk()->assertSee('Maximum size: 10.0 MB.');
+    $this->get(route('admin.resources.create'))->assertOk()->assertSee('Maximum size: 10.0 MB.');
 });

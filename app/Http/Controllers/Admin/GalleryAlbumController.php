@@ -53,7 +53,7 @@ class GalleryAlbumController extends Controller
     {
         $this->service->delete($galleryAlbum, $request->user());
 
-        return back()->with('success', 'Gallery deleted. Uploaded files remain in the Media Library.');
+        return back()->with('success', 'Gallery deleted. Uploaded files are preserved.');
     }
 
     public function bulkStatus(\App\Http\Requests\Admin\GalleryAlbum\BulkGalleryAlbumStatusRequest $request): RedirectResponse|JsonResponse

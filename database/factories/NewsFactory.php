@@ -17,7 +17,7 @@ class NewsFactory extends Factory
     {
         $title = fake()->unique()->sentence(5);
 
-        return ['title' => $title, 'slug' => Str::slug($title), 'excerpt' => fake()->paragraph(), 'body' => '<p>'.fake()->paragraph().'</p>', 'status' => ContentStatus::Draft, 'featured' => false, 'created_by' => User::factory(), 'updated_by' => User::factory()];
+        return ['title' => $title, 'slug' => Str::slug($title), 'summary' => fake()->paragraph(), 'body' => '<p>'.fake()->paragraph().'</p>', 'status' => ContentStatus::Draft, 'featured' => false, 'created_by' => User::factory(), 'updated_by' => User::factory()];
     }
 
     public function published(): static

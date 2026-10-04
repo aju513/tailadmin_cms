@@ -2,6 +2,7 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 import { pageManager } from './components/page-manager';
 import { multiselect } from './components/multiselect';
+import { newsEditor } from './components/news-editor';
 import ApexCharts from 'apexcharts';
 
 // flatpickr
@@ -15,6 +16,7 @@ import { Calendar } from '@fullcalendar/core';
 window.Alpine = Alpine;
 window.pageManager = pageManager;
 window.multiselect = multiselect;
+Alpine.data('newsEditor', newsEditor);
 window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
 window.FullCalendar = Calendar;

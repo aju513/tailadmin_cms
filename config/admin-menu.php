@@ -90,7 +90,6 @@ return [
             ['key' => 'videos', 'label' => 'Manage Videos', 'icon' => 'media', 'route' => 'admin.videos.index', 'active_routes' => ['admin.videos.index', 'admin.videos.edit'], 'permission' => 'videos.manage', 'order' => 25],
             ['key' => 'gallery-create', 'label' => 'Add Gallery', 'icon' => 'create', 'route' => 'admin.gallery.create', 'permission' => 'gallery.create', 'order' => 30],
             ['key' => 'gallery', 'label' => 'Manage Galleries', 'icon' => 'media', 'route' => 'admin.gallery.index', 'active_routes' => ['admin.gallery.index', 'admin.gallery.edit'], 'permission' => 'gallery.manage', 'order' => 35],
-            ['key' => 'media-library', 'label' => 'Media Library', 'icon' => 'media', 'route' => 'admin.media.index', 'permission' => 'media.manage', 'order' => 40],
         ],
     ],
     [

@@ -4,7 +4,6 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\HomepageSlideController;
-use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\NoticeController;
@@ -129,10 +128,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::post('/resource-categories/order', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'order'])->middleware('can:resource-categories.edit')->name('resource-categories.order');
     Route::patch('/resource-categories/bulk-status', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'bulkStatus'])->middleware('can:resource-categories.edit')->name('resource-categories.bulk-status');
     Route::delete('/resource-categories/bulk', [\App\Http\Controllers\Admin\ResourceCategoryController::class, 'bulkDestroy'])->middleware('can:resource-categories.delete')->name('resource-categories.bulk-destroy');
-
-    Route::get('/media', [MediaController::class, 'index'])->middleware('can:media.manage')->name('media.index');
-    Route::post('/media', [MediaController::class, 'store'])->middleware('can:media.create')->name('media.store');
-    Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('can:media.delete')->name('media.destroy');
 
     Route::get('/menus', [MenuController::class, 'index'])->middleware('can:menus.manage')->name('menus.index');
     Route::get('/menus/header', [MenuController::class, 'header'])->middleware('can:menus.manage')->name('menus.header');

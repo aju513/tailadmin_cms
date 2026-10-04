@@ -53,7 +53,7 @@ class VideoController extends Controller
     {
         $this->service->delete($video, $request->user());
 
-        return back()->with('success', 'Video deleted. Uploaded files remain in the Media Library.');
+        return back()->with('success', 'Video deleted. Uploaded files are preserved.');
     }
 
     public function bulkStatus(\App\Http\Requests\Admin\Video\BulkVideoStatusRequest $request): RedirectResponse|JsonResponse

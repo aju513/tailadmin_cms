@@ -18,13 +18,18 @@ class NewsService
     public function save(array $data, Authenticatable $actor, ?News $item = null): News
     {
         return DB::transaction(function () use ($data, $actor, $item): News {
-            $data['slug'] = Str::slug(($data['slug'] ?? null) ?: $data['title']);
+            $data['slug'] = Str::slug(filled($data['slug'] ?? null) ? $data['slug'] : $data['title']);
             if ($data['slug'] === '') {
                 throw ValidationException::withMessages(['slug' => 'Enter a URL slug using letters or numbers.']);
+            }
+            if (Str::length($data['slug']) > 255) {
+                throw ValidationException::withMessages(['slug' => 'The URL slug must not exceed 255 characters.']);
             }
             if ($this->news->slugExists($data['slug'], $item)) {
                 throw ValidationException::withMessages(['slug' => 'That URL slug is already in use.']);
             }
+
+            $data['meta_title'] = filled($data['meta_title'] ?? null) ? $data['meta_title'] : $data['title'];
 
             $status = ContentStatus::from($data['status']);
             if ($status === ContentStatus::Published && ! $actor->can('news.publish')) {

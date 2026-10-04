@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin\News;
 use App\Enums\ContentStatus;
 use App\Support\UploadProfile;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 abstract class SaveNewsRequest extends FormRequest
@@ -15,6 +16,10 @@ abstract class SaveNewsRequest extends FormRequest
             'status' => $this->input('status', $this->route('news')?->status?->value ?? ContentStatus::Draft->value),
             'featured' => $this->boolean('featured'),
         ]);
+
+        if (is_string($this->input('slug'))) {
+            $this->merge(['slug' => Str::lower($this->input('slug'))]);
+        }
     }
 
     public function rules(): array
@@ -26,9 +31,9 @@ abstract class SaveNewsRequest extends FormRequest
 
         return [
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'alpha_dash:ascii', $slug],
+            'slug' => ['nullable', 'string', 'max:255', 'regex:/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/', $slug],
             'subtitle' => ['nullable', 'string', 'max:255'],
-            'excerpt' => ['nullable', 'string', 'max:10000'],
+            'summary' => ['nullable', 'string', 'max:10000'],
             'body' => ['nullable', 'string'],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'featured' => ['required', 'boolean'],
@@ -43,5 +48,18 @@ abstract class SaveNewsRequest extends FormRequest
             'meta_keywords' => ['nullable', 'string', 'max:500'],
             'meta_description' => ['nullable', 'string', 'max:1000'],
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'slug.regex' => 'Use letters and numbers separated by single hyphens for the URL slug.',
+            'slug.unique' => 'That URL slug is already in use.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return ['slug' => 'URL slug', 'meta_title' => 'SEO title'];
     }
 }

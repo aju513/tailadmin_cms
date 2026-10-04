@@ -1240,18 +1240,18 @@ nav .dropdown :is(a, button) {
 }
 
 nav .dropdown :is(a, button):hover {
-  @apply text-text_color;
+  @apply text-primary;
 }
 
 nav .dropdown :is(a, button).text-text_color:hover {
-  @apply text-secondary;
+  @apply text-primary;
 }
 nav .dropdown :is(a, button).text-primary {
   @apply text-primary;
 }
 
 nav .dropdown :is(a, button).text-primary:hover {
-  @apply text-secondary;
+  @apply text-primary;
 }
 
 nav .dropdown .w-\[270px\] li:last-child :is(a, button) {
@@ -1635,6 +1635,10 @@ input[type="text"].date-picker {
   @apply text-base font-bold text-white inline-block p-0 no-underline w-full leading-5;
 }
 
+#mobile-nav ul li :is(a, button.open-menu):hover {
+  @apply text-primary;
+}
+
 #mobile-nav ul li {
   @apply border-t border-white/10 list-none mb-0 relative py-3.75;
 }
@@ -1848,7 +1852,7 @@ input[type="text"].date-picker {
 
 .header .nav-menu > ul > li > a:hover,
 .header .nav-menu > ul > li > .dropdown-toggle:hover {
-  @apply text-secondary;
+  @apply text-primary;
 }
 
 .header .header__menu li.active .leading-\[14px\] {

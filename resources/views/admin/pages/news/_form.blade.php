@@ -1,7 +1,17 @@
-<div x-data="{ activeImage: '{{ $errors->hasAny(['thumbnail', 'thumbnail_alt_text']) ? 'thumbnail' : ($errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner') }}' }" class="space-y-8">
+@php
+    $editorState = [
+        'title' => old('title', $item->title),
+        'slug' => old('slug', $item->slug),
+        'seoTitle' => old('meta_title', $item->meta_title),
+        'originalTitle' => $item->title,
+        'existing' => $item->exists,
+        'activeImage' => $errors->hasAny(['thumbnail', 'thumbnail_alt_text']) ? 'thumbnail' : ($errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner'),
+    ];
+@endphp
+<div x-data="newsEditor(@js($editorState))" class="space-y-8">
     <div class="grid gap-6 md:grid-cols-2">
-        <x-form.input name="title" label="News title" :value="old('title', $item->title)" required />
-        <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" help="Leave blank to generate from the title." />
+        <x-form.input name="title" label="News title" :value="old('title', $item->title)" x-bind:value="title" @input="updateTitle($event.target.value)" maxlength="255" required />
+        <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" x-bind:value="slug" @input="updateSlug($event.target.value)" maxlength="255" pattern="[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*" />
         <x-form.input name="subtitle" label="Subtitle" :value="old('subtitle', $item->subtitle)" />
         <x-form.date-picker name="published_at" label="Publish date" :value="old('published_at', $item->published_at?->format('Y-m-d'))" help="A future date schedules visibility after publication." />
         <div class="md:col-span-2 flex flex-wrap items-center gap-x-8 gap-y-4">
@@ -16,7 +26,7 @@
     </div>
 
     <div class="space-y-6 border-t border-gray-200 pt-6 dark:border-gray-800">
-        <x-form.editor name="excerpt" label="Excerpt" :value="old('excerpt', $item->excerpt)" placeholder="A short introduction for the news listing..." />
+        <x-form.editor name="summary" label="Summary" :value="old('summary', $item->summary)" placeholder="A short summary of the article..." />
         <x-form.editor name="body" label="Article content" :value="old('body', $item->body)" placeholder="Write the full article..." />
     </div>
 
@@ -46,12 +56,8 @@
 
     <div class="space-y-6 border-t border-gray-200 pt-6 dark:border-gray-800">
         <h2 class="text-base font-semibold text-gray-800 dark:text-white">SEO details</h2>
-        <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $item->meta_title)" />
+        <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $item->meta_title ?: $item->title)" x-bind:value="seoTitle" @input="updateSeoTitle($event.target.value)" maxlength="255" help="Generated from the news title. You can edit it for search engines." />
         <x-form.textarea name="meta_description" label="SEO description" :value="old('meta_description', $item->meta_description)" />
     </div>
 
-    <div class="flex justify-end gap-3">
-        <a href="{{ route('admin.news.index') }}" class="rounded-lg border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200">Cancel</a>
-        <button type="submit" class="rounded-lg bg-brand-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-brand-600">{{ $submitLabel }}</button>
-    </div>
 </div>

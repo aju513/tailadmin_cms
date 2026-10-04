@@ -57,7 +57,7 @@ class ResourceDocumentController extends Controller
     {
         $this->service->delete($resourceDocument, $request->user());
 
-        return back()->with('success', 'Resource deleted. Uploaded files remain in the Media Library.');
+        return back()->with('success', 'Resource deleted. Uploaded files are preserved.');
     }
 
     public function publish(PublishResourceDocumentRequest $request, ResourceDocument $resourceDocument): RedirectResponse

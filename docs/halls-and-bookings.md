@@ -57,7 +57,7 @@ Each operational entity should own its structured data. Pages remain the shared 
 | Operations | `availability_status` | Available for requests, under maintenance, or unavailable for requests. This does not indicate date-specific calendar availability. |
 | Publication | `status`, `published_at` | Draft/published status; optional future publication date. Publishing, unpublishing, and changing a published hall require `halls.publish`. Public enforcement will be introduced with public integration. |
 | Ordering | `sort_order` | Non-negative display order; results sort by this, then creation date. No new drag-and-drop workflow in this phase. |
-| Media | thumbnail, banner, social image, gallery | Media library relationships; JPG/PNG/WebP, 5 MB per file; up to 12 gallery images. Dedicated image alt text accompanies new primary uploads. Gallery alt text defaults to the English title. Individual gallery removals are scoped to the current hall; new images append in upload order. |
+| Media | thumbnail, banner, social image, gallery | Shared media asset relationships; JPG/PNG/WebP, 5 MB per file; up to 12 gallery images. Dedicated image alt text accompanies new primary uploads. Gallery alt text defaults to the English title. Individual gallery removals are scoped to the current hall; new images append in upload order. |
 | SEO | `meta_title`, `meta_description` | Shared fields matching Pages. |
 | Audit | `created_by`, `updated_by`, `published_by`, timestamps | Server-owned user identifiers; never accepted from submitted input. |
 
@@ -67,7 +67,7 @@ The model uses Spatie translations for `title`, `summary`, `body`, and `booking_
 
 `Route → Hall FormRequest → HallController → HallService → HallRepositoryInterface → HallRepository → Hall / HallGalleryImage`
 
-`HallService` owns create/update/delete transactions, publication permission checks, translation fallback, stable slug generation, media attachment/removal, the gallery size limit, and activity events. Repositories own queries, pagination, eager loading, persistence, row locking, and gallery relationships. Existing hall updates lock the hall row during the transaction to serialize gallery changes. New files are cleaned up if the database workflow rolls back. Removing or replacing attachments preserves media library files for reuse. Deleting a hall removes its gallery relationships but preserves reusable media assets.
+`HallService` owns create/update/delete transactions, publication permission checks, translation fallback, stable slug generation, media attachment/removal, the gallery size limit, and activity events. Repositories own queries, pagination, eager loading, persistence, row locking, and gallery relationships. Existing hall updates lock the hall row during the transaction to serialize gallery changes. New files are cleaned up if the database workflow rolls back. Removing or replacing attachments preserves uploaded files. Deleting a hall removes its gallery relationships but preserves reusable media assets.
 
 Permissions are code-owned: `halls.manage`, `halls.show`, `halls.create`, `halls.edit`, `halls.delete`, and `halls.publish`. Routes and FormRequests check the matching ability; service mutations also enforce authorization. The repository contract is bound in `AppServiceProvider`. No role names, direct user permissions, soft deletes, public registration, or new authentication systems are introduced.
 

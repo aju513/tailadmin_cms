@@ -23,7 +23,7 @@
                             <div class="package-list__item-image"><div class="placeholder__img-wrapper"><div class="placeholder__img"><a href="{{ $urls->recordPath($resultKind,$item) }}"><x-front.image :media="$item->thumbnailMedia ?? $item->bannerMedia ?? $item->coverMedia ?? $item->photos?->first()?->media" :alt="$item->title" width="600" height="450" /></a></div></div></div>
                             <div class="package-list__item-content">
                                 <h3 class="package-list__item-title"><a href="{{ $urls->recordPath($resultKind,$item) }}">{{ $item->title }}</a></h3>
-                                <div class="package-list__item-meta"><span class="text-xs text-text_color">{{ Str::limit(strip_tags($item->excerpt ?? $item->summary ?? $item->description ?? ''),160) }}</span></div>
+                                <div class="package-list__item-meta"><span class="text-xs text-text_color">{{ Str::limit(strip_tags($item->summary ?? $item->description ?? ''),160) }}</span></div>
                                 <div class="package-list__item-bottom"><div class="package-list__item-link"><a href="{{ $urls->recordPath($resultKind,$item) }}">View Details</a></div></div>
                             </div>
                         </div>

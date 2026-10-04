@@ -11,7 +11,7 @@ All selectable admin content indexes now use the same animated 22px white-tick c
 - Hall catalogue with seating capacity, NPR rates and rate units, operational availability, amenities, bilingual content, contacts, images/gallery, and SEO. See [Halls and bookings](halls-and-bookings.md) for the detailed implementation and booking roadmap. Date reservations and public booking forms are planned separately.
 
 - Pages with nested parent/child hierarchy, generated public paths, editable slugs, drag-and-drop ordering, and validated page types: Article, News, Notices, Resource, Team, Contact Us, Sitemap, Hall, FAQs, Videos, and Gallery.
-- Local media library for images and office documents.
+- Shared local upload storage for images and office documents, attached through each content form.
 - Menu positions default to Main Menu and Footer Menu; additional database-defined locations appear under Dynamic Menus. The main position retains the internal `header` location for existing routes and data. Each position has a searchable page-assignment control and an assigned-item manager with serial numbers, sibling-level drag ordering, row selection, single deletion, and bulk deletion. The assignment control remains available when every page is already assigned, and there is no separate menu-item creation or edit screen. Pages retain their hierarchy, dragging only changes order within the same parent, and surviving descendants reconnect to their nearest assigned ancestor after deletion. Main and footer links render recursively on the public site.
 - Site identity and contact settings.
 - Homepage slides.
@@ -26,11 +26,17 @@ News taxonomy data is retained for existing public content, but its management a
 
 News is managed at `/admin/news` and published at `/news` and `/news/{slug}`. Category, tag, and author listing routes use `/news/category/{slug}`, `/news/tag/{slug}`, and `/news/author/{slug}`. The public listing provides a featured story, category selector, search, article cards, and pagination. Article pages show the author, publication date, tags, banner, story, and recent articles. The homepage shows the three latest published articles.
 
+The admin News index displays article titles, featured labels, status and selection controls, creation dates, and permission-controlled Edit and Delete actions. Clicking an editable row opens the editor.
+
 The sidebar has a nested News group with Add News and Manage News. News category, tag, and author admin routes, menu entries, permissions, selectors, filters, and detail fields have been removed. Existing taxonomy data and public category/tag/author URLs remain available for previously configured content. System and Users Management remain hidden.
 
-The editor follows the existing page form pattern with article text, a publish toggle, images stored through the media library, and SEO fields. Taxonomy assignments are no longer accepted from admin requests; existing assignments remain stored for public compatibility. The URL slug is generated from the title if left empty and must be unique. `news.publish` is required to publish or edit a published article. A future publish date holds the article off the public site until that date. Only a currently published article can be featured; the service clears the previous flag in a transaction. Removing an article leaves media library assets available for reuse.
+The editor has the same header Save news and permission-controlled Close actions as Resources, with article text, a publish toggle, images stored through the shared upload service, and SEO fields. Taxonomy assignments are no longer accepted from admin requests; existing assignments remain stored for public compatibility. New articles suggest a URL slug and SEO title as the title changes. Both fields are editable, and custom values survive subsequent title edits and validation errors. Existing URLs remain unchanged in the edit form until edited or cleared. An SEO title matching the article title continues to follow title changes; a custom SEO title is preserved.
 
-The reference travel blog's package offers, view counter, inquiry panel, and travel-specific links are not part of news. News body and excerpt, like page content, are rendered as administrator-provided HTML. Sanitize rich text before granting publishing to untrusted editors.
+The server generates a slug and SEO title from the title when their submitted values are empty, including without JavaScript. Slugs are stored in lowercase, must be unique, and accept ASCII letters/numbers separated by single hyphens, with a maximum of 255 characters. Titles that cannot generate a usable slug require a manually entered alias. SEO titles have a 255-character limit. Summary replaces Excerpt in the editor, model, public search snippets, and SEO description fallback; it accepts up to 10,000 characters of rich text. The `2026_10_03_100000_rename_excerpt_to_summary_in_news_table` migration renames the column while preserving existing content; run `php artisan migrate` when deploying this change.
+
+`news.publish` is required to publish or edit a published article. A future publish date holds the article off the public site until that date. Only a currently published article can be featured; the service clears the previous flag in a transaction. Removing an article preserves uploaded image files.
+
+The reference travel blog's package offers, view counter, inquiry panel, and travel-specific links are not part of news. News body and summary, like page content, are rendered as administrator-provided HTML. Sanitize rich text before granting publishing to untrusted editors.
 
 ## Pages
 
@@ -54,12 +60,13 @@ Pages row status toggles and bulk Publish/Unpublish use CSRF-protected AJAX requ
 
 ## Media storage
 
+The standalone Media Library screen, sidebar entry, admin routes, `media.manage`, `media.create`, and `media.delete` permissions, and unused `uploads.media` profile have been removed. Each content module continues to validate and attach uploads through its own permissions and forms. `MediaAsset`, `MediaAssetService`, and the bound repository contract remain shared infrastructure for uploaded files; existing asset rows and files are preserved. Run `php artisan admin:permissions-sync` and `php artisan admin:menu-regenerate` when deploying this removal. No database migration is needed.
 
 CMS uploads always use Laravel's local `public` disk and are stored under `storage/app/public/cms`. Run `php artisan storage:link` once per environment. No S3 bucket or cloud storage configuration is required.
 
-`config/settings.php` owns upload sizes, accepted formats and recommended pixel dimensions. `uploads.image` defaults to 5 MB; `uploads.media`, `uploads.notice_attachment` and `uploads.document` default to 10 MB. These values are in KB (`5120` = 5 MB). Each image field uses an `images` profile and can override `max_size_kb` or `mimes` independently.
+`config/settings.php` owns upload sizes, accepted formats and recommended pixel dimensions. `uploads.image` defaults to 5 MB; `uploads.notice_attachment` and `uploads.document` default to 10 MB. These values are in KB (`5120` = 5 MB). Each image field uses an `images` profile and can override `max_size_kb` or `mimes` independently.
 
-The shared upload component reads the same profile as its FormRequest, so the browser file-size checks, accepted extensions, displayed guidance and server validation agree. Home Slides and the Media Library also show their upload limits. Images keep their uploaded dimensions by default; the recommended dimensions guide selection. Set `enforce_dimensions` to `true` on an image profile to require its exact width and height on both create and update. Set it in `uploads.image` to enable it for all dimensioned image profiles. File-size and image-type checks always run on the server.
+The shared upload component reads the same profile as its FormRequest, so the browser file-size checks, accepted extensions, displayed guidance and server validation agree. Home Slides also shows its upload limits. Images keep their uploaded dimensions by default; the recommended dimensions guide selection. Set `enforce_dimensions` to `true` on an image profile to require its exact width and height on both create and update. Set it in `uploads.image` to enable it for all dimensioned image profiles. File-size and image-type checks always run on the server.
 
 | Image profile under `settings.images` | Recommended size |
 | --- | --- |
@@ -74,7 +81,7 @@ The shared upload component reads the same profile as its FormRequest, so the br
 | `site_logo` | 150 × 126 px |
 | `contact_officer` | 400 × 400 px |
 
-Logo and contact-officer settings currently accept image URLs and show dimension guidance. File uploads are handled through their existing content forms and Media Library.
+Logo and contact-officer settings currently accept image URLs and show dimension guidance. Content uploads are handled through their own forms.
 
 For example, adjust one field in `config/settings.php`:
 
@@ -92,7 +99,7 @@ For example, adjust one field in `config/settings.php`:
 
 After editing the configuration, run `php artisan config:clear` locally or rebuild `config:cache` on a cached deployment. The PHP/web-server request-body limits must also accommodate the configured uploads, especially when multiple images are uploaded together. `AdminUploadSettingsTest` covers configured limits for every image field, successful uploads, exact dimension checks, MIME validation, authorization, document/media limits and admin guidance.
 
-Team member records are managed through the permission-protected admin directory. Photos use the shared media library and local public disk; deleting a member keeps the photo available in the library for reuse.
+Team member records are managed through the permission-protected admin directory. Photos use shared media storage on the local public disk; deleting a member preserves the uploaded photo.
 
 ## Feature workflow
 
@@ -115,7 +122,7 @@ php artisan admin:menu-regenerate
 
 Homepage Slides has a select-all checkbox for the current paginated page. Its header shows a partial-selection dash when some rows are selected, and is disabled for an empty list. Header and row controls use the shared larger square checkbox with brand-color transitions and white checkmarks; selections continue to drive the existing bulk forms.
 
-Homepage Slides uses the same Resources-style index header and table, with Publish, Unpublish, Add Slide, and Bulk delete. The existing homepage-slides.edit permission controls publication status. Row checkboxes enable bulk forms, and status icons toggle an individual slide through the same status endpoint. Bulk workflows are transactional and audited; uploaded media remains in the Media Library. Reorder icons remain display-only.
+Homepage Slides uses the same Resources-style index header and table, with Publish, Unpublish, Add Slide, and Bulk delete. The existing homepage-slides.edit permission controls publication status. Row checkboxes enable bulk forms, and status icons toggle an individual slide through the same status endpoint. Bulk workflows are transactional and audited; uploaded media files are preserved. Reorder icons remain display-only.
 
 Dedicated album and video management now lives under Media. See [Photo gallery and videos](media-catalogues.md) for fields, permissions, upload limits, and setup commands.
 

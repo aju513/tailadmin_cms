@@ -21,7 +21,7 @@ Public listings are ordered by display order, then latest publication date and I
 
 Public URLs /resources/{slug} and /resources/{slug}/download are reserved for resource documents; avoid using those paths for generic child Pages. A generic /resources page itself is supported.
 
-Attachments follow the existing public Media Library storage model. The download endpoint checks publication status; underlying public storage URLs are not private draft access controls. This catalogue is intended for public documents. Replacing or deleting a resource preserves old uploaded files in Media Library.
+Attachments follow the existing public shared media storage model. The download endpoint checks publication status; underlying public storage URLs are not private draft access controls. This catalogue is intended for public documents. Replacing or deleting a resource preserves old uploaded files in shared media storage.
 
 Inactive categories hide their documents on all public listings/detail/download routes. Existing category assignments stay editable in admin. Categories cannot be deleted while referenced by documents or Pages. Foreign keys reinforce that rule, and transactions lock category selections. Move references first.
 

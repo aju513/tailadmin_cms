@@ -11,11 +11,6 @@ return [
             'mimes' => ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp'],
             'enforce_dimensions' => false,
         ],
-        'media' => [
-            'type' => 'file',
-            'max_size_kb' => 10240,
-            'mimes' => ['jpg', 'jpeg', 'png', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx'],
-        ],
         'notice_attachment' => [
             'type' => 'file',
             'max_size_kb' => 10240,
