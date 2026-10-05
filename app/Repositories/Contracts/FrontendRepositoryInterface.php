@@ -23,7 +23,7 @@ interface FrontendRepositoryInterface
 
     public function teamCategories(): Collection;
 
-    public function search(string $term): array;
+    public function search(string $term, array $filters = []): array;
 
     public function sitemapCount(string $type): int;
 

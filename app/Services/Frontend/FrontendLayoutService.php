@@ -36,6 +36,7 @@ class FrontendLayoutService
             'footerNavigation' => $footerMenu ? $this->navigation($footerMenu->items) : $this->configuredNavigation(config('frontend.navigation.footer', []), $settings),
             'importantNavigation' => $this->importantNavigation($importantLinksMenu),
             'mapEmbedUrl' => $this->mapEmbedUrl($settings['map_url']),
+            'socialLinks' => $this->socialLinks($settings['social_links']),
         ];
     }
 
@@ -48,6 +49,21 @@ class FrontendLayoutService
         return $links->filter(fn ($link) => is_string($link['url'] ?? null) && $this->html->externalUrl($link['url']))
             ->map(fn ($link) => ['label' => $link['label'], 'href' => $link['url'], 'external' => true, 'children' => []])
             ->values()->all();
+    }
+
+    private function socialLinks(array $links): array
+    {
+        return collect($links)->filter(fn ($link) => is_array($link) && filled($link['label'] ?? null) && is_string($link['url'] ?? null) && $this->html->externalUrl($link['url']))
+            ->map(function ($link): array {
+                $host = preg_replace('/^www\./', '', strtolower(parse_url($link['url'], PHP_URL_HOST) ?? ''));
+                $icon = match ($host) {
+                    'facebook.com' => 'icon-facebook', 'instagram.com' => 'icon-instagram',
+                    'linkedin.com' => 'icon-linkedin', 'youtube.com', 'youtu.be' => 'icon-youtube',
+                    'x.com', 'twitter.com' => 'icon-x', default => 'icon-arrow-up-right',
+                };
+
+                return [...$link, 'icon' => $icon];
+            })->values()->all();
     }
 
     private function navigation(Collection $items, bool $openExternalLinks = false): array
@@ -79,6 +95,6 @@ class FrontendLayoutService
         $host = strtolower(parse_url($url ?? '', PHP_URL_HOST) ?? '');
         $isEmbed = str_contains(parse_url($url ?? '', PHP_URL_PATH) ?? '', '/embed') || str_contains(parse_url($url ?? '', PHP_URL_QUERY) ?? '', 'output=embed');
 
-        return $url && in_array($host, ['google.com', 'www.google.com', 'maps.google.com'], true) && $isEmbed ? $url : null;
+        return $url && $this->html->externalUrl($url) && in_array($host, ['google.com', 'www.google.com', 'maps.google.com'], true) && $isEmbed ? $url : null;
     }
 }

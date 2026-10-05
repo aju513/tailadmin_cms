@@ -18,6 +18,12 @@ Routes use /admin/videos and the admin.videos.* names. A video has a title, stab
 
 Videos are URL-based catalogue entries, not uploaded video files. The manager opens links in a new tab. No remote fetching or arbitrary iframe rendering is performed.
 
+## Public media
+
+Published Gallery and Videos page types render the same searchable, paginated listings as `/gallery` and `/videos`, including at nested CMS URLs. Clicking an album opens `/gallery/{slug}` with all its photos in saved order; photo links open a grouped Fancybox viewer with keyboard navigation. Homepage thumbnails update the main image and open the same gallery group. The main image opens the currently selected photo.
+
+Video catalogue, detail and homepage previews use the existing local Fancybox distribution. Only normalized YouTube/Vimeo URLs become iframe previews; other valid HTTP/HTTPS URLs remain external links. The reusable `front.components.video_item` supplies catalogue/detail cards and placeholders for missing thumbnails. Captions remain escaped text. Search retains its query while paginating and clear resets the page.
+
 ## Architecture and permissions
 
 Both workflows follow FormRequest -> Controller -> Service -> Repository contract -> Eloquent repository -> Model. Contracts are bound in AppServiceProvider. Services own authorization, transactions, audit events, and upload rollback cleanup. Existing records are locked while saving or deleting. Photo IDs are scoped to their owning gallery during validation and persistence.

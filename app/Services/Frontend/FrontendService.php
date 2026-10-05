@@ -17,7 +17,7 @@ class FrontendService
 
     private function setLocale(array $filters): void
     {
-        $locale = config('settings.nepali') ? ($filters['lang'] ?? request()->session()->get('page_locale', 'en')) : 'en';
+        $locale = config('frontend.translation.mode') === 'gtranslate' ? 'en' : (config('settings.nepali') ? ($filters['lang'] ?? request()->session()->get('page_locale', 'en')) : 'en');
         app()->setLocale($locale);
         if (config('settings.nepali') && isset($filters['lang'])) {
             request()->session()->put('page_locale', $locale);
@@ -32,6 +32,7 @@ class FrontendService
             $data['recaptchaConfigured'] = app(SiteSettingService::class)->recaptchaConfigured();
         }
         if (($data['kind'] ?? null) === 'home') {
+            $data['bannerSlides'] = $data['slides']->map(fn ($slide): array => ['id' => $slide->id, 'title' => $slide->title, 'media' => $slide->media]);
             $data['trainingCatalogue'] = $this->trainings->homepage();
             $data['capacityReports'] = $this->cache->remember('capacity-reports', fn () => $this->capacityReports->publicReports());
             $data['homepageImages'] = $data['homepageContent']
@@ -124,9 +125,9 @@ class FrontendService
     public function search(array $filters): array
     {
         $this->setLocale($filters);
-        $term = trim($filters['q'] ?? '');
+        $term = trim($filters['q'] ?? $filters['search'] ?? '');
 
-        return $this->prepare(['kind' => 'search', 'heading' => 'Search', 'term' => $term, 'results' => $this->content->search($term)], $filters);
+        return $this->prepare(['kind' => 'search', 'heading' => 'Search', 'term' => $term, 'results' => $this->content->search($term, $filters)], $filters);
     }
 
     public function contact(array $filters): array

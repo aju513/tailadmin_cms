@@ -10,6 +10,9 @@ class PublicContentRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {
+        if ($this->has('search') && ! $this->has('q')) {
+            $this->merge(['q' => $this->input('search')]);
+        }
         if ($this->has('q') && ! $this->has('search')) {
             $this->merge(['search' => $this->input('q')]);
         }
@@ -27,6 +30,12 @@ class PublicContentRequest extends FormRequest
             'page' => ['nullable', 'integer', 'min:1', 'max:100000'],
             'resources_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
             'notices_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'pages_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'news_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'halls_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'gallery_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'videos_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'team_page' => ['nullable', 'integer', 'min:1', 'max:100000'],
             'notice_category_id' => ['nullable', 'integer', 'min:1'],
             'team_category_id' => ['nullable', 'integer', 'min:1'],
             'category' => ['nullable', 'string', 'max:180'],

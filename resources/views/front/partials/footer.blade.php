@@ -14,69 +14,29 @@
                                     {{ $settings['site_name'] }}
                                 </div>
                                 <div class="footer__contact">
-                                    <div class="flex items-start gap-3 footer__contact-item mb-3 last:mb-0">
-                                        <div class="footer__contact-item-image ">
-                                            <span class="text-sm text-white icon-location" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="footer__contact-item-content">
-                                            <div class="text-[15px]">{{ $settings['address'] }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3 footer__contact-item mb-3 last:mb-0">
-                                        <div class="footer__contact-item-image ">
-                                            <span class="text-sm text-white icon-envelope" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="footer__contact-item-content">
-                                            <a href="mailto:{{ $settings['email'] }}" class="text-[15px] break-all transition-all duration-500 text-text_color hover:text-secondary">
-                                                {{ $settings['email'] }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3 footer__contact-item mb-3 last:mb-0">
-                                        <div class="footer__contact-item-image ">
-                                            <span class="text-sm text-white icon-phone" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="footer__contact-item-content">
-                                            <a href="tel:{{ $settings['phone'] }}" class="text-[15px] transition-all duration-500 text-text_color hover:text-secondary">{{ $settings['phone'] }}</a>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-start gap-3 footer__contact-item mb-3 last:mb-0">
-                                        <div class="footer__contact-item-image">
-                                            <span class="text-sm text-white icon-clock" aria-hidden="true"></span>
-                                        </div>
-                                        <div class="footer__contact-item-content footer__hours">
-                                            <div class="mb-1 text-[15px] font-semibold">Office Hours</div>
-                                            <div class="text-sm leading-5 whitespace-pre-line">{{ $settings['office_hours'] }}</div>
-                                        </div>
-                                    </div>
+                                    @foreach(['address' => 'icon-location', 'email' => 'icon-envelope', 'phone' => 'icon-phone', 'website_url' => 'icon-arrow-up-right', 'office_hours' => 'icon-clock'] as $key => $icon)
+                                        @if(filled($settings[$key]))
+                                            <div class="mb-3 flex items-start gap-3 footer__contact-item last:mb-0">
+                                                <span class="text-sm text-white {{ $icon }}" aria-hidden="true"></span>
+                                                <div class="footer__contact-item-content min-w-0 break-words text-[15px] text-white">
+                                                    @if($key === 'email')
+                                                        <a href="mailto:{{ $settings[$key] }}">{{ $settings[$key] }}</a>
+                                                    @elseif($key === 'phone')
+                                                        <a href="tel:{{ $settings[$key] }}">{{ $settings[$key] }}</a>
+                                                    @elseif($key === 'website_url')
+                                                        <a href="{{ $settings[$key] }}" target="_blank" rel="noopener noreferrer">{{ $settings[$key] }}</a>
+                                                    @elseif($key === 'office_hours')
+                                                        <div class="mb-1 font-semibold">Office Hours</div>
+                                                        <div class="whitespace-pre-line text-sm leading-5">{{ $settings[$key] }}</div>
+                                                    @else
+                                                        {{ $settings[$key] }}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
-                                <div class="footer__social">
-                                    @if($settings['facebook_url'])<div class="footer__social-item">
-                                        <a href="{{ $settings['facebook_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="facebook" class="group w-8 h-8 bg-[#c8e7f6] flex items-center justify-center hover:bg-[#3b5998] hover:border-[#3b5998] rounded-full transition-all duration-500">
-                                            <span class="transition-all duration-500 icon-facebook text-primary group-hover:text-white"></span>
-                                        </a>
-                                    </div>@endif
-                                    @if($settings['instagram_url'])<div class="footer__social-item">
-                                        <a href="{{ $settings['instagram_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="instagram" class="group w-8 h-8 bg-[#c8e7f6] flex items-center justify-center hover:bg-[#c32aa3] hover:border-[#c32aa3] rounded-full transition-all duration-500">
-                                            <span class="transition-all duration-500 icon-instagram text-primary group-hover:text-white"></span>
-                                        </a>
-                                    </div>@endif
-                                    @if($settings['linkedin_url'])<div class="footer__social-item">
-                                        <a href="{{ $settings['linkedin_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="linkedin" class="group w-8 h-8 bg-[#c8e7f6] flex items-center justify-center hover:bg-[#0A66C2] hover:border-[#0A66C2] rounded-full transition-all duration-500">
-                                            <span class="transition-all duration-500 icon-linkedin text-primary group-hover:text-white"></span>
-                                        </a>
-                                    </div>@endif
-                                    @if($settings['x_url'])<div class="footer__social-item">
-                                        <a href="{{ $settings['x_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="x" class="group w-8 h-8 bg-[#c8e7f6] flex items-center justify-center hover:bg-black hover:border-black rounded-full transition-all duration-500">
-                                            <span class="transition-all duration-500 icon-x text-primary group-hover:text-white"></span>
-                                        </a>
-                                    </div>@endif
-                                    @if($settings['youtube_url'])<div class="footer__social-item">
-                                        <a href="{{ $settings['youtube_url'] }}" target="_blank" rel="noopener noreferrer" aria-label="youtube" class="group w-8 h-8 bg-[#c8e7f6] flex items-center justify-center hover:bg-[#ff0000] hover:border-[#ff0000] rounded-full transition-all duration-500">
-                                            <span class="transition-all duration-500 icon-youtube text-primary group-hover:text-white"></span>
-                                        </a>
-                                    </div>@endif
-                                </div>
+                                @include('front.components.social-links')
                             </div>
                         </div>
                     </div>

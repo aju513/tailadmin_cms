@@ -41,7 +41,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // Resolve local media against the current site origin, including its port.
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

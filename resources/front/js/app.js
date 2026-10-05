@@ -1,27 +1,30 @@
 import Swiper from 'swiper';
 import { Navigation, Pagination, Autoplay, EffectFade, A11y } from 'swiper/modules';
-import '../vendor/fancybox.js';
+import './media-viewer.js';
+import './language-switcher.js';
 import './grievance-form.js';
 
 // Keep the supplied design's selectors and interactions.
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.querySelectorAll('.homepage-banner-swiper').forEach((element) => {
     const multiple = element.querySelectorAll('.swiper-slide').length > 1;
-    new Swiper(element, { modules: [Pagination, Autoplay, EffectFade, A11y], slidesPerView: 1, loop: multiple, effect: 'fade', fadeEffect: { crossFade: true }, autoplay: multiple && !reducedMotion ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false, pagination: { el: element.querySelector('.homepage__banner-pagination'), clickable: true } });
+    const banner = element.closest('.homepage__banner');
+    const swiper = new Swiper(element, { modules: [Pagination, Autoplay, EffectFade, A11y], slidesPerView: 1, loop: multiple, effect: 'fade', fadeEffect: { crossFade: true }, autoplay: multiple && !reducedMotion ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false, pagination: { el: element.querySelector('.homepage__banner-pagination'), clickable: true } });
+    if (multiple && !reducedMotion && banner) {
+        const updateAutoplay = () => {
+            const interacting = banner.matches(':hover') || banner.contains(document.activeElement);
+            if (interacting && swiper.autoplay.running) swiper.autoplay.stop();
+            else if (!interacting && !swiper.autoplay.running) swiper.autoplay.start();
+        };
+        banner.addEventListener('pointerenter', updateAutoplay);
+        banner.addEventListener('pointerleave', updateAutoplay);
+        banner.addEventListener('focusin', updateAutoplay);
+        banner.addEventListener('focusout', () => requestAnimationFrame(updateAutoplay));
+    }
 });
 document.querySelectorAll('.homepage-about-award-swiper').forEach((element) => {
     const media = element.closest('.homepage__about-media');
     new Swiper(element, { modules: [Navigation, A11y], slidesPerView: 3, spaceBetween: 23, navigation: { nextEl: media.querySelector('.homepage__about-award-next'), prevEl: media.querySelector('.homepage__about-award-prev') } });
-});
-document.querySelectorAll('.homepage__about-award-item[data-gallery-image]').forEach((thumbnail) => {
-    thumbnail.addEventListener('click', () => {
-        const image = document.getElementById('homepage-about-main-image');
-        if (!image || !thumbnail.dataset.galleryImage) return;
-        image.src = thumbnail.dataset.galleryImage;
-        image.removeAttribute('srcset');
-        image.alt = thumbnail.dataset.galleryAlt || '';
-        document.querySelectorAll('.homepage__about-award-item').forEach((item) => { item.classList.toggle('is-active', item === thumbnail); item.setAttribute('aria-pressed', String(item === thumbnail)); });
-    });
 });
 document.querySelectorAll('.homepage__resources .resource-swiper').forEach((element) => {
     const panel = element.closest('[role="tabpanel"]');
@@ -116,19 +119,7 @@ document.querySelectorAll('.websearch-wrap').forEach((wrapper) => {
     wrapper.querySelector('.search-btn')?.addEventListener('click', () => { box?.classList.toggle('hidden'); if (!box?.classList.contains('hidden')) box?.querySelector('input')?.focus(); });
     wrapper.querySelector('.search-close')?.addEventListener('click', (event) => { event.preventDefault(); box?.classList.add('hidden'); });
 });
-document.getElementById('open-search')?.addEventListener('click', (event) => location.assign(event.currentTarget.dataset.searchUrl));
-document.querySelectorAll('[data-language-switcher]').forEach((switcher) => {
-    const toggle = switcher.querySelector('.language-switcher__toggle');
-    const menu = switcher.querySelector('.language-switcher__menu');
-    toggle?.addEventListener('click', () => { if (menu) { menu.hidden = !menu.hidden; toggle.setAttribute('aria-expanded', String(!menu.hidden)); } });
-    switcher.querySelectorAll('[data-language-option]').forEach((option) => {
-        const selected = option.dataset.language === document.documentElement.lang;
-        option.classList.toggle('is-selected', selected);
-        option.setAttribute('aria-pressed', String(selected));
-        if (selected) { const flag = switcher.querySelector('[data-current-language-flag]'); if (flag) flag.src = option.dataset.flag; }
-        option.addEventListener('click', () => { const url = new URL(location.href); url.searchParams.set('lang', option.dataset.language); location.assign(url); });
-    });
-});
+
 const shareToggle = document.getElementById('newsShareToggle');
 const shareMenu = document.getElementById('newsShareMenu');
 shareToggle?.addEventListener('click', () => { const open = shareMenu?.classList.toggle('show'); shareToggle.setAttribute('aria-expanded', String(open)); });
@@ -168,4 +159,3 @@ document.addEventListener('keydown', (event) => {
     document.querySelectorAll('.language-switcher__menu').forEach((menu) => { menu.hidden = true; });
     if (menuToggle?.getAttribute('aria-expanded') === 'true') menuToggle.click();
 });
-window.Fancybox?.bind('[data-fancybox]', {});

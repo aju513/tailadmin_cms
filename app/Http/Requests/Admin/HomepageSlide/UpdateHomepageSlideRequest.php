@@ -16,6 +16,6 @@ class UpdateHomepageSlideRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['title' => ['required', 'string', 'max:255'], 'subtitle' => ['nullable', 'string', 'max:500'], 'link_url' => ['nullable', 'url', 'max:1000'], 'image' => UploadProfile::rules('images.homepage_slide'), 'status' => ['required', Rule::enum(ContentStatus::class)]];
+        return ['title' => ['required', 'string', 'max:255'], 'image' => UploadProfile::rules('images.homepage_slide'), 'status' => ['required', Rule::enum(ContentStatus::class)]];
     }
 }

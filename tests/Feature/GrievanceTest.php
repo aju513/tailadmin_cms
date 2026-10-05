@@ -103,7 +103,7 @@ test('unpublished scheduled and other page types cannot receive grievances', fun
 test('missing or unreadable keys disable the form and block direct posts', function (string $key, ?string $value): void {
     SiteSetting::where('key', $key)->update(['value' => $value]);
     app(\App\Services\Frontend\FrontendCache::class)->clear();
-    $this->get('/grievance')->assertOk()->assertSee('temporarily unavailable')->assertDontSee('data-grievance-form', false);
+    $this->get('/grievance')->assertOk()->assertSee('temporarily unavailable')->assertSee('name="message"', false)->assertSee('disabled', false)->assertDontSee('data-grievance-form', false);
     $this->from('/grievance')->post(route('public.grievances.store', $this->page->id), $this->payload)->assertSessionHasErrors('recaptcha_token');
     expect(Grievance::count())->toBe(0);
     Http::assertNothingSent();

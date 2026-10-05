@@ -10,8 +10,8 @@
 @foreach($item->photos as $photo)@if($photo->media)
 <div class="col-span-6 md:col-span-4 lg:col-span-3">
                     <div class="gallery-list__item ">
-                        <a href="{{ $photo->media?->url() }}" data-caption="{{ $photo->caption }}"
-                            data-fancybox="gallery">
+                        <a href="{{ $photo->media?->url() }}" data-caption="{{ e($photo->caption ?: $item->title) }}"
+                            data-fancybox="album-{{ $item->id }}">
                             <div class="placeholder__img-wrapper">
                                 <div class="w-full placeholder__img">
                                     <x-front.image :media="$photo->media" :alt="$photo->caption ?: $item->title" width="600" height="450" class="rounded-[5px]" :priority="$loop->first" />

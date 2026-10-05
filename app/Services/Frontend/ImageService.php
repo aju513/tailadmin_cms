@@ -52,7 +52,7 @@ class ImageService
             }
             $path = $this->directory($asset).'/'.$width.'.webp';
             if ($disk->exists($path)) {
-                $variants[] = $disk->url($path).' '.$width.'w';
+                $variants[] = url($disk->url($path)).' '.$width.'w';
             }
         }
         $result['srcset'] = implode(', ', $variants);

@@ -35,7 +35,7 @@ class SeoService
         $description = Str::limit(trim(html_entity_decode(strip_tags($item?->meta_description ?: ($item instanceof HomepageContent ? $item->body : null) ?: $item?->summary ?: $item?->description ?: $settings['meta_description'] ?? config('frontend.hero_description')), ENT_QUOTES, 'UTF-8')), 160, '');
         $path = request()->getPathInfo();
         $canonical = $this->absolute($path);
-        if (config('settings.nepali') && app()->getLocale() === 'ne') {
+        if (config('frontend.translation.mode') !== 'gtranslate' && config('settings.nepali') && app()->getLocale() === 'ne') {
             $canonical .= '?lang=ne';
         }
         $filtered = collect(request()->query())->except('lang')->filter(fn ($value) => $value !== null && $value !== '')->isNotEmpty();
@@ -51,7 +51,7 @@ class SeoService
         if ($item instanceof GalleryAlbum && ! $image) {
             $image = $item->photos->first()?->media?->url();
         }
-        $organization = array_filter(['@type' => 'Organization', '@id' => $this->absolute('/').'#organization', 'name' => $siteName, 'url' => $this->absolute('/'), 'logo' => ($settings['logo_url'] ?? null) ?: $this->absolute(config('frontend.branding.logo')), 'telephone' => $settings['phone'] ?? null, 'email' => $settings['email'] ?? null, 'address' => empty($settings['address']) ? null : ['@type' => 'PostalAddress', 'streetAddress' => $settings['address'], 'addressCountry' => 'NP']]);
+        $organization = array_filter(['@type' => 'Organization', '@id' => $this->absolute('/').'#organization', 'name' => $siteName, 'url' => $settings['website_url'] ?: $this->absolute('/'), 'sameAs' => array_column($data['socialLinks'] ?? [], 'url'), 'logo' => ($settings['logo_url'] ?? null) ?: $this->absolute(config('frontend.branding.logo')), 'telephone' => $settings['phone'] ?? null, 'email' => $settings['email'] ?? null, 'address' => empty($settings['address']) ? null : ['@type' => 'PostalAddress', 'streetAddress' => $settings['address'], 'addressCountry' => 'NP']]);
         $graph = [$organization, ['@type' => 'WebSite', '@id' => $this->absolute('/').'#website', 'url' => $this->absolute('/'), 'name' => $siteName, 'publisher' => ['@id' => $organization['@id']]]];
         $webpage = ['@type' => 'WebPage', '@id' => $canonical.'#webpage', 'url' => $canonical, 'name' => $heading, 'description' => $description, 'isPartOf' => ['@id' => $this->absolute('/').'#website']];
         if (isset($data['items'])) {
@@ -81,7 +81,7 @@ class SeoService
             $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $this->absolute('/')], ['@type' => 'ListItem', 'position' => 2, 'name' => $heading, 'item' => $canonical]]];
         }
         $alternates = [];
-        if (($item instanceof Page || $item instanceof HomepageContent) && config('settings.nepali') && $item->getTranslation('title', 'ne', false) && $item->getTranslation('body', 'ne', false)) {
+        if (config('frontend.translation.mode') !== 'gtranslate' && ($item instanceof Page || $item instanceof HomepageContent) && config('settings.nepali') && $item->getTranslation('title', 'ne', false) && $item->getTranslation('body', 'ne', false)) {
             $alternates = ['en' => $this->absolute($path), 'ne' => $this->absolute($path).'?lang=ne', 'x-default' => $this->absolute($path)];
         }
 

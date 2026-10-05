@@ -32,7 +32,9 @@
                         <div class="homepage__about-image">
                             <div class="placeholder__img-wrapper">
                                 <div class="placeholder__img">
+                                    @if($homepageImages->isNotEmpty())<a href="{{ $homepageImages->first()->url() }}" data-home-gallery-open aria-label="Open gallery image">@endif
                                     <img id="homepage-about-main-image" @class(['logo-placeholder' => $homepageImages->isEmpty()]) src="{{ $homepageImages->first()?->url() ?: asset('front/images/placeholder-logo.svg') }}" alt="{{ $homepageImages->first()?->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" width="600" height="475" loading="lazy" decoding="async">
+                                    @if($homepageImages->isNotEmpty())</a>@endif
                                 </div>
                             </div>
                         </div>
@@ -44,9 +46,9 @@
                                 <div class="swiper-wrapper">
 @foreach($homepageImages as $image)
 <div class="swiper-slide">
-                                        <button type="button" class="homepage__about-award-item {{ $loop->first ? 'is-active' : '' }}" data-gallery-image="{{ $image->url() }}" data-gallery-alt="{{ $image->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" aria-label="Show gallery image {{ $loop->iteration }}" aria-pressed="{{ $loop->first ? 'true' : 'false' }}">
+                                        <a class="homepage__about-award-item {{ $loop->first ? 'is-active' : '' }}" href="{{ $image->url() }}" data-home-gallery data-fancybox="homepage-gallery" data-caption="{{ e($image->alt_text ?: $settings['about_title']) }}" data-gallery-alt="{{ $image->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" aria-label="Show gallery image {{ $loop->iteration }}" >
                                             <x-front.image :media="$image" :alt="$image->alt_text ?: ($homepageContent?->title ?? $settings['about_title'])" width="107" height="107" />
-                                        </button>
+                                        </a>
                                     </div>
 @endforeach
 </div>

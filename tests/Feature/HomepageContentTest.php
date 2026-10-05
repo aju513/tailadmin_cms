@@ -194,7 +194,7 @@ test('failed homepage upload rolls back text and gallery changes and removes new
 });
 
 test('homepage optional translations appear publicly and survive disabling Nepali editing', function (): void {
-    config(['settings.nepali' => true]);
+    config(['settings.nepali' => true, 'frontend.translation.mode' => 'manual']);
     $this->actingAs($this->admin)->get(route('admin.homepage.edit'))->assertOk()->assertSee('Welcome title (Nepali)');
     $this->put(route('admin.homepage.update'), ['translations' => [
         'en' => ['title' => 'English welcome', 'subtitle' => 'About', 'body' => '<p>English content.</p>'],

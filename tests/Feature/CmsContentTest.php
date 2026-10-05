@@ -45,6 +45,7 @@ test('pages support nested paths and only published pages are public', function 
 
 test('pages store and filter by page type', function (): void {
     config()->set('settings.nepali', true);
+    config()->set('frontend.translation.mode', 'manual');
 
     $response = $this->actingAs($this->admin)->get(route('admin.pages.create'))
         ->assertOk()
@@ -115,6 +116,7 @@ test('pages accept a custom URL slug', function (): void {
 
 test('page translations are saved, edited, and displayed by language', function (): void {
     config()->set('settings.nepali', true);
+    config()->set('frontend.translation.mode', 'manual');
 
     $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'translations' => [
@@ -154,6 +156,7 @@ test('page translations are saved, edited, and displayed by language', function 
 
 test('missing Nepali content falls back to English and English title is required', function (): void {
     config()->set('settings.nepali', true);
+    config()->set('frontend.translation.mode', 'manual');
 
     $this->actingAs($this->admin)->post(route('admin.pages.store'), [
         'translations' => ['en' => ['title' => '', 'body' => 'Body']], 'status' => 'draft',

@@ -20,6 +20,6 @@ class MediaAsset extends Model
 
     public function url(): string
     {
-        return Storage::disk($this->disk)->url($this->path);
+        return url(Storage::disk($this->disk)->url($this->path));
     }
 }

@@ -74,8 +74,10 @@ test('media forms append new entries without numeric order and preserve the posi
     } elseif ($module === 'gallery') {
         $response->assertSeeInOrder(['Gallery details', 'name="title"', 'name="slug"', 'name="status"', 'Gallery images'], false);
     } else {
-        $response->assertSeeInOrder(['Slide details', 'name="title"', 'name="subtitle"', 'name="link_url"', 'name="status"', 'Slide image'], false)
+        $response->assertSeeInOrder(['Slide details', 'name="title"', 'name="status"', 'Slide image'], false)
+            ->assertDontSee('name="subtitle"', false)->assertDontSee('name="link_url"', false)
             ->assertSee($record->media->url(), false);
+        expect($record->subtitle)->toBeNull()->and($record->link_url)->toBeNull();
     }
 })->with('ordered media modules');
 

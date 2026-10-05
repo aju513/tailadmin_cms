@@ -81,7 +81,7 @@ test('training descriptions render sanitized rich text without breaking or trunc
 });
 
 test('Nepali homepage uses the BS training dates supplied by TIMS', function (): void {
-    config(['settings.nepali' => true]);
+    config(['settings.nepali' => true, 'frontend.translation.mode' => 'manual']);
     Http::fake(['*' => Http::response(['status' => true, 'data' => [homepageTrainingRecord()]])]);
 
     $this->get(route('public.home', ['lang' => 'ne']))->assertOk()->assertSee('2083-06-15')->assertSee('2083-06-24 BS')->assertDontSee('01 Oct, 2026');

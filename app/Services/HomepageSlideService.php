@@ -36,6 +36,7 @@ class HomepageSlideService
     public function save(array $data, Authenticatable $actor, ?HomepageSlide $slide = null): HomepageSlide
     {
         Gate::forUser($actor)->authorize($slide ? 'homepage-slides.edit' : 'homepage-slides.create');
+        unset($data['subtitle'], $data['link_url']);
         $asset = null;
         try {
             return DB::transaction(function () use ($data, $actor, $slide, &$asset): HomepageSlide {

@@ -49,7 +49,7 @@
                             <td class="w-12 px-2 py-4 text-center"><x-common.table-checkbox value="{{ $record->id }}" x-model="selected" aria-label="Select {{ $record->title }}" @dragstart.stop.prevent="" /></td>
                             <td class="px-3 py-4"><div class="flex items-center gap-3">
                                 @if($record->media)<img src="{{ $record->media->url() }}" alt="" class="h-12 w-16 rounded-lg object-cover">@endif
-                                <div><div class="font-medium text-gray-800 dark:text-white">{{ $record->title }}</div><div class="mt-1 text-xs text-gray-500">{{ $record->subtitle }}</div></div>
+                                <div class="font-medium text-gray-800 dark:text-white">{{ $record->title }}</div>
                             </div></td>
                             <td class="px-3 py-4"><div class="flex items-center justify-end gap-3">
                                 <time datetime="{{ $record->created_at?->toDateString() }}" class="whitespace-nowrap text-sm text-gray-500">{{ $record->created_at?->format('M d, Y') }}</time>

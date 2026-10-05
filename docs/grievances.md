@@ -12,6 +12,8 @@ The secret is encrypted in `site_settings`. The password field is always blank; 
 
 The page requires JavaScript. It loads Google's script only when an enabled grievance form is submitted and obtains a fresh token with action `grievance_submit`. The server verifies success, action, hostname, timestamp and score before any upload or database write. The score threshold defaults to 0.5 and is configured in `config/settings.php`; verification has a five-second timeout. Missing keys, unreadable secrets, rejected tokens and unavailable Google verification all fail closed. CSRF protection and three POST attempts per minute apply.
 
+The fields remain visible when keys are missing or unreadable, with an availability message and a disabled submission button. Configure both keys to enable submission; direct POST requests still fail closed until verification is available.
+
 See Google's [v3 integration guide](https://developers.google.com/recaptcha/docs/v3) and [server verification guide](https://developers.google.com/recaptcha/docs/verify).
 
 ## Storage and admin access

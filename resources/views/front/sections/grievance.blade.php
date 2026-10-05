@@ -7,9 +7,9 @@
             @if(session('grievance_success'))<p role="status" class="mb-6 rounded-lg border border-primary/20 bg-primary/5 p-4 text-primary">{{ session('grievance_success') }}</p>@endif
             @if($errors->any())<div role="alert" class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
             @if(! $recaptchaConfigured)
-                <p role="status" class="rounded-lg border border-primary/20 bg-primary/5 p-5 text-text_color">The grievance form is temporarily unavailable. Please try again later.</p>
-            @else
-                <form method="POST" action="{{ route('public.grievances.store', $page->id) }}" enctype="multipart/form-data" data-grievance-form data-site-key="{{ $settings['recaptcha_site_key'] }}" class="rounded-xl border border-primary/15 bg-white p-5 shadow-sm md:p-8">
+                <p role="status" class="mb-6 rounded-lg border border-primary/20 bg-primary/5 p-5 text-text_color">Submission is temporarily unavailable. The form will accept submissions when security verification is configured.</p>
+            @endif
+                <form method="POST" action="{{ route('public.grievances.store', $page->id) }}" enctype="multipart/form-data" @if($recaptchaConfigured) data-grievance-form data-site-key="{{ $settings['recaptcha_site_key'] }}" @endif class="rounded-xl border border-primary/15 bg-white p-5 shadow-sm md:p-8">
                     @csrf
                     <input type="hidden" name="lang" value="{{ app()->getLocale() }}">
                     <input type="hidden" name="recaptcha_token" value="">
@@ -36,9 +36,8 @@
                     </div>
                     <p data-grievance-error role="alert" class="mt-4 text-sm text-red-700" hidden></p>
                     <noscript><p class="mt-4 text-red-700">Enable JavaScript to verify and submit this form.</p></noscript>
-                    <button type="submit" class="mt-6 inline-flex rounded-lg bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60">Submit grievance</button>
+                    <button type="submit" @disabled(! $recaptchaConfigured) class="mt-6 inline-flex rounded-lg bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">Submit grievance</button>
                 </form>
-            @endif
         </div>
     </div>
 </section>

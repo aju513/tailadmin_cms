@@ -68,6 +68,7 @@
                     </div>
 
                     <!-- Contact Officer -->
+                    @if($settings['contact_officer_name'] || $settings['contact_officer_phone'])
                     <div
                         class="header__menu-contact mr-2 hidden items-center justify-end gap-2 overflow-hidden lg:flex">
 
@@ -82,18 +83,19 @@
                         <div class="w-32 text-left">
                             <span
                                 class="block text-[11px] leading-3 text-text_color">
-                                Contact Officer
+                                {{ $settings['contact_officer_name'] ?: 'Contact person' }}
                             </span>
 
                             <a
                                 class="mt-1 flex items-center justify-start gap-2 text-sm font-semibold leading-3 text-primary transition-all duration-500 hover:text-secondary"
                                 href="{{ route('public.contact') }}">
-                                {{ $settings['contact_officer_phone'] ?: $settings['phone'] ?: 'Contact us' }}
+                                {{ $settings['contact_officer_phone'] ?: 'Contact us' }}
                             </a>
                         </div>
 
                     </div>
 
+                    @endif
                     <!-- TMIS -->
                     <a
                         href="{{ $settings['tmis_url'] }}"
@@ -108,15 +110,15 @@
                         </span>
                     </a>
 
-                    <div class="language-switcher" data-language-switcher>
-                        <button type="button" class="language-switcher__toggle" aria-label="Choose language" aria-expanded="false" aria-haspopup="true">
+                    <div class="notranslate language-switcher" data-language-switcher>
+                        <button type="button" class="notranslate language-switcher__toggle" aria-label="Choose language" aria-expanded="false" aria-haspopup="true">
                             <img src="/front/images/svg/flags/united-kingdom.svg" alt="" width="38" height="27" data-current-language-flag />
                         </button>
-                        <div class="language-switcher__menu" hidden>
-                            <button type="button" class="language-switcher__option is-selected" data-language-option data-language="en" data-flag="/front/images/svg/flags/united-kingdom.svg" aria-label="English" aria-pressed="true">
+                        <div class="notranslate language-switcher__menu" hidden>
+                            <button type="button" class="notranslate language-switcher__option is-selected" data-language-option data-language="en" data-flag="/front/images/svg/flags/united-kingdom.svg" aria-label="English" aria-pressed="true">
                                 <img src="/front/images/svg/flags/united-kingdom.svg" alt="" width="38" height="27" />
                             </button>
-                            <button type="button" class="language-switcher__option" data-language-option data-language="ne" data-flag="/front/images/svg/flags/nepal.svg" aria-label="नेपाली" aria-pressed="false">
+                            <button type="button" class="notranslate language-switcher__option" data-language-option data-language="ne" data-flag="/front/images/svg/flags/nepal.svg" aria-label="नेपाली" aria-pressed="false">
                                 <img src="/front/images/svg/flags/nepal.svg" alt="" width="38" height="27" />
                             </button>
                         </div>
@@ -261,27 +263,27 @@
 
                 <div class="flex h-7.5 items-center">
 
-                    <div class="language-switcher language-switcher--mobile" data-language-switcher>
-                        <button type="button" class="language-switcher__toggle" aria-label="Choose language" aria-expanded="false" aria-haspopup="true">
+                    <div class="notranslate language-switcher language-switcher--mobile" data-language-switcher>
+                        <button type="button" class="notranslate language-switcher__toggle" aria-label="Choose language" aria-expanded="false" aria-haspopup="true">
                             <img src="/front/images/svg/flags/united-kingdom.svg" alt="" width="32" height="23" data-current-language-flag />
                         </button>
-                        <div class="language-switcher__menu" hidden>
-                            <button type="button" class="language-switcher__option is-selected" data-language-option data-language="en" data-flag="/front/images/svg/flags/united-kingdom.svg" aria-label="English" aria-pressed="true">
+                        <div class="notranslate language-switcher__menu" hidden>
+                            <button type="button" class="notranslate language-switcher__option is-selected" data-language-option data-language="en" data-flag="/front/images/svg/flags/united-kingdom.svg" aria-label="English" aria-pressed="true">
                                 <img src="/front/images/svg/flags/united-kingdom.svg" alt="" width="38" height="27" />
                             </button>
-                            <button type="button" class="language-switcher__option" data-language-option data-language="ne" data-flag="/front/images/svg/flags/nepal.svg" aria-label="नेपाली" aria-pressed="false">
+                            <button type="button" class="notranslate language-switcher__option" data-language-option data-language="ne" data-flag="/front/images/svg/flags/nepal.svg" aria-label="नेपाली" aria-pressed="false">
                                 <img src="/front/images/svg/flags/nepal.svg" alt="" width="38" height="27" />
                             </button>
                         </div>
                     </div>
 
-                    <span
-                        id="open-search" role="button" tabindex="0" data-search-url="{{ route('public.search') }}"
+                    <a
+                        id="open-search" href="{{ route('public.search') }}" aria-label="Search the website"
                         class="flex w-full items-center gap-3 px-4">
 
                         <span class="icon-search text-xl text-secondary"></span>
 
-                    </span>
+                    </a>
 
                     <div
                         class="menu-button flex items-center gap-2.25 text-secondary"

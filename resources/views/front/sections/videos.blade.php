@@ -21,7 +21,7 @@
                             </div>
                         </div>
                         <div class="play-btn">
-                            <a href="{{ $video->video_url }}" data-fancybox="homepage-video" aria-label="Play {{ $video->title }}">
+                            <a href="{{ $embeds->url($video->video_url) }}" data-fancybox="homepage-video" data-type="iframe" data-caption="{{ e($video->title) }}" aria-label="Play {{ $video->title }}">
                                 <span class="flex items-center justify-center w-20 h-20 rounded-full circular-animate">
                                     <img class="homepage__video-play-icon" src="/front/images/svg/play.svg" alt="" width="32" height="32" loading="lazy" />
                                 </span>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="homepage__moments-item-content">
                         <h3 class="homepage__moments-item-title">
-                            <a class="homepage__card-title-link" href="{{ $video->video_url }}" data-fancybox="homepage-video">{{ $video->title }}</a>
+                            <a class="homepage__card-title-link" href="{{ $embeds->url($video->video_url) }}" data-fancybox="homepage-video" data-type="iframe" data-caption="{{ e($video->title) }}">{{ $video->title }}</a>
                         </h3>
                         <p class="homepage__moments-item-meta">{{ Str::limit(strip_tags($video->description), 140) }}</p>
                     </div>

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'translation' => ['mode' => env('FRONTEND_TRANSLATION_MODE', 'gtranslate')],
     'assets' => [
         'entrypoints' => ['resources/front/css/app.css', 'resources/front/js/app.js'],
         'build_directory' => 'build/front',

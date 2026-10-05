@@ -79,7 +79,7 @@ class FrontendRepository implements FrontendRepositoryInterface
         if ($type === 'team' && ! empty($filters['team_category_id'])) {
             $query->where('category_id', $filters['team_category_id']);
         }
-        if (in_array($type, ['news', 'notices', 'resources']) && ! empty($filters['search'])) {
+        if (in_array($type, ['news', 'notices', 'resources', 'gallery', 'videos']) && ! empty($filters['search'])) {
             $query->where('title', 'like', '%'.$filters['search'].'%');
         }
 
@@ -117,16 +117,27 @@ class FrontendRepository implements FrontendRepositoryInterface
         return \App\Models\TeamCategory::query()->where('status', true)->whereHas('members', fn ($q) => $q->where('is_active', true))->orderBy('sort_order')->pluck('name', 'id');
     }
 
-    public function search(string $term): array
+    public function search(string $term, array $filters = []): array
     {
         if ($term === '') {
             return [];
         }
         $results = [];
-        foreach (['pages', 'news', 'notices', 'resources', 'halls', 'gallery', 'videos'] as $type) {
+        foreach (['pages', 'news', 'notices', 'resources', 'halls', 'gallery', 'videos', 'team'] as $type) {
             $query = $this->query($type);
-            $column = in_array($type, ['pages', 'halls']) ? 'title->'.app()->getLocale() : 'title';
-            $results[$type] = $query->where($column, 'like', '%'.$term.'%')->limit(10)->get();
+            $columns = match ($type) {
+                'pages', 'halls' => ['title->en', 'title->ne', 'summary->en', 'summary->ne', 'body->en', 'body->ne'],
+                'news' => ['title', 'summary', 'body'],
+                'team' => ['name', 'designation', 'bio'],
+                default => ['title', 'description'],
+            };
+            $query->where(function (Builder $query) use ($columns, $term): void {
+                foreach ($columns as $column) {
+                    $query->orWhere($column, 'like', '%'.$term.'%');
+                }
+            });
+            $pageName = $type.'_page';
+            $results[$type] = $this->ordered($query, $type)->paginate(12, ['*'], $pageName, $filters[$pageName] ?? 1)->withQueryString();
         }
 
         return $results;

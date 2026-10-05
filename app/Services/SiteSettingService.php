@@ -12,9 +12,9 @@ class SiteSettingService
 {
     public const KEYS = ['site_name', 'office_name', 'logo_url', 'phone', 'email', 'address', 'footer_text', 'meta_description', 'hero_title', 'hero_description', 'about_title', 'about_description', 'training_url', 'office_hours', 'map_url', 'facebook_url', 'youtube_url', 'linkedin_url'];
 
-    public const DESIGN_KEYS = ['province_name', 'about_url', 'tmis_url', 'instagram_url', 'x_url', 'contact_officer_phone', 'contact_officer_photo_url', 'homepage_services'];
+    public const DESIGN_KEYS = ['province_name', 'about_url', 'tmis_url', 'instagram_url', 'x_url', 'contact_officer_phone', 'contact_officer_photo_url', 'homepage_services', 'website_url', 'contact_officer_name', 'social_links'];
 
-    public const ARRAY_KEYS = ['homepage_services'];
+    public const ARRAY_KEYS = ['homepage_services', 'social_links'];
 
     public function __construct(private readonly SiteSettingRepositoryInterface $settings) {}
 
@@ -25,8 +25,14 @@ class SiteSettingService
             $values[$key] = $values[$key] ?: $default;
         }
         foreach (self::ARRAY_KEYS as $key) {
+            if ($key === 'social_links' && ! isset($values[$key])) {
+                $values[$key] = json_encode(collect(['facebook', 'youtube', 'linkedin', 'instagram', 'x'])->filter(fn ($platform) => filled($values[$platform.'_url']))->map(fn ($platform) => ['label' => $platform === 'x' ? 'X' : ucfirst($platform), 'url' => $values[$platform.'_url']])->values()->all());
+            }
             $values[$key] = isset($values[$key]) ? (json_decode($values[$key], true) ?: []) : config('frontend.'.$key, []);
         }
+
+        $values['office_name'] = $values['site_name'];
+        $values['social_links'] = is_array($values['social_links']) ? $values['social_links'] : [];
 
         unset($values['recaptcha_secret_key']);
         $values['recaptcha_site_key'] ??= null;

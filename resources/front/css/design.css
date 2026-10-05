@@ -1969,7 +1969,6 @@ input[type="text"].date-picker {
   @apply mt-0.5 text-[9px] text-primary;
 }
 .header .header__menu .dropdown {
-  margin-top: -4px;
   transform-origin: top center;
   border-radius: 0 0 5px 5px;
   animation: growDown 250ms ease-in-out forwards;
@@ -3012,11 +3011,15 @@ input[type="text"].date-picker {
   }
 
   .homepage__banner-caption {
-    @apply absolute left-6 top-7 z-10 max-w-[75%] rounded-md bg-black/40 px-3 py-2 text-xs font-semibold text-white backdrop-blur-sm sm:left-10 sm:top-10 sm:text-sm;
+    @apply absolute left-6 top-7 z-10 max-w-[75%] rounded-md bg-black/40 px-3 py-2 text-xs font-semibold break-words text-white backdrop-blur-sm sm:left-10 sm:top-10 sm:text-sm;
   }
 
   .homepage__banner-pagination {
-    @apply z-10;
+    @apply bottom-4! z-10;
+
+    @media (min-width: 1024px) {
+      @apply bottom-16!;
+    }
   }
 
   .homepage__banner-pagination .swiper-pagination-bullet {
@@ -3044,11 +3047,11 @@ input[type="text"].date-picker {
   }
 
   .homepage__banner-copy h1 {
-    @apply mb-5 max-w-xl font-heading text-4xl font-bold leading-[1.08] text-text_color sm:text-5xl xl:text-6xl;
+    @apply mb-5 max-w-xl font-heading text-4xl font-bold leading-[1.08] break-words text-text_color sm:text-5xl xl:text-6xl;
   }
 
   .homepage__banner-description {
-    @apply mb-8 max-w-lg text-base leading-7 text-text_color sm:text-lg;
+    @apply mb-8 max-w-lg text-base leading-7 break-words text-text_color sm:text-lg;
   }
 
   .homepage__banner-actions {
@@ -3141,6 +3144,15 @@ input[type="text"].date-picker {
   }
 }
 /* homepage bestselling */
+.homepage__banner.homepage__banner--empty {
+  height: auto;
+
+  .homepage__notice-bar {
+    position: relative;
+    inset: auto;
+  }
+}
+
 .homepage__bestselling .container-fluid {
   @apply max-w-full mx-auto rounded-none bg-[#dff5ff] px-0! py-10 max-lg:pb-0! before:content-none lg:py-15 2xl:max-w-[calc(100%-120px)] 2xl:rounded-[40px] 2xl:px-7.5;
 }
