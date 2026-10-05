@@ -1,9 +1,11 @@
 @extends('admin.layouts.app')
 
 @section('content')
+@php($canReorder = auth()->user()->can('homepage-slides.edit'))
 <div x-data="pageManager(@js($slides->mapWithKeys(fn ($record) => [(string) $record->id => $record->status->value])->all()), 'records')">
     <x-common.page-breadcrumb pageTitle="Homepage Slides">
         <x-slot:actions>
+            <div class="flex min-w-0 flex-wrap items-center gap-2">
             @can('homepage-slides.edit')
                 <form method="POST" action="{{ route('admin.homepage-slides.bulk-status') }}" @submit.prevent="changeStatus($el.action, 'PATCH', [...selected], $event.submitter?.value)" class="flex items-center gap-2">
                     @csrf @method('PATCH')
@@ -22,15 +24,17 @@
                     <button type="submit" :disabled="selected.length === 0 || statusBusy" class="inline-flex items-center gap-1.5 rounded-lg bg-error-50 px-3 py-2.5 text-sm font-medium text-error-600 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-error-500/10"><x-common.menu-icon name="delete" class="h-4 w-4" />Bulk delete</button>
                 </form>
             @endcan
+            </div>
         </x-slot:actions>
     </x-common.page-breadcrumb>
     <x-common.table-status-feedback />
 
-    <x-common.component-card title="Homepage slide manager" desc="Use the selection controls for bulk actions.">
+    <x-common.component-card title="Homepage slide manager" desc="Drag rows to change their order. Use the selection controls for bulk actions.">
+        <div x-data="recordOrdering(@js(route('admin.homepage-slides.order')), @js($canReorder), { label: 'Home slide' })">
+        <p x-show="message" x-text="message" role="status" aria-live="polite" class="mb-4 text-sm" :class="failed ? 'text-error-500' : 'text-success-600'" x-cloak></p>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                 <thead><tr class="text-left text-xs uppercase text-gray-500">
-                    <th scope="col" aria-label="Reorder" class="w-10 px-2 py-3"></th>
                     <th scope="col" class="w-16 px-2 py-3 text-center">Status</th>
                     <th scope="col" class="w-12 px-2 py-3 text-center">
                         <x-common.table-select-all aria-label="Select all slides on this page" />
@@ -38,12 +42,11 @@
                     <th scope="col" class="px-3 py-3">Title</th>
                     <th scope="col" class="px-3 py-3 text-right">Created date / Actions</th>
                 </tr></thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                <tbody x-ref="rows" class="divide-y divide-gray-100 dark:divide-gray-800">
                     @forelse($slides as $record)
-                        <tr @can('homepage-slides.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.homepage-slides.edit', $record) }}'" @endcan class="@can('homepage-slides.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan bg-white transition dark:bg-transparent">
-                            <td class="w-10 px-2 py-4 text-center text-gray-400"><i class="bi bi-arrows-move" aria-hidden="true"></i></td>
+                        <tr data-record-id="{{ $record->id }}" :draggable="canReorder && !saving" @dragstart="start($event)" @dragover="over($event)" @drop="drop($event)" @dragend="end()" @can('homepage-slides.edit') onclick="if (!event.target.closest('a,button,form,input,select,textarea,label')) window.location.href='{{ route('admin.homepage-slides.edit', $record) }}'" @endcan class="@can('homepage-slides.edit') cursor-pointer hover:bg-brand-50/40 dark:hover:bg-brand-500/5 @else hover:bg-gray-50 dark:hover:bg-white/[0.02] @endcan bg-white transition dark:bg-transparent">
                             <td class="w-16 px-2 py-4 text-center" @mousedown.stop><x-common.table-status :id="$record->id" :status="$record->status->value" :label="$record->title" permission="homepage-slides.edit" :url="route('admin.homepage-slides.bulk-status')" selection-key="records" active-value="published" inactive-value="draft" /></td>
-                            <td class="w-12 px-2 py-4 text-center"><x-common.table-checkbox value="{{ $record->id }}" x-model="selected" aria-label="Select {{ $record->title }}" /></td>
+                            <td class="w-12 px-2 py-4 text-center"><x-common.table-checkbox value="{{ $record->id }}" x-model="selected" aria-label="Select {{ $record->title }}" @dragstart.stop.prevent="" /></td>
                             <td class="px-3 py-4"><div class="flex items-center gap-3">
                                 @if($record->media)<img src="{{ $record->media->url() }}" alt="" class="h-12 w-16 rounded-lg object-cover">@endif
                                 <div><div class="font-medium text-gray-800 dark:text-white">{{ $record->title }}</div><div class="mt-1 text-xs text-gray-500">{{ $record->subtitle }}</div></div>
@@ -55,10 +58,11 @@
                             </div></td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-500">No homepage-slides found.</td></tr>
+                        <tr><td colspan="4" class="px-4 py-10 text-center text-sm text-gray-500">No homepage-slides found.</td></tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
         </div>
         <div class="mt-5">{{ $slides->links() }}</div>
     </x-common.component-card>

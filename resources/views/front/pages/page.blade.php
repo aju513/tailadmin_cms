@@ -7,6 +7,8 @@
     @include('front.catalogues.'.$kind)
 @elseif($kind === 'contact')
     @include('front.sections.contact')
+@elseif($kind === 'grievance')
+    @include('front.sections.grievance')
 @elseif($kind === 'sitemap')
     @include('front.sections.sitemap')
 @else

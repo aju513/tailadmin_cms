@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\ContentStatus;
 use App\Models\ResourceDocument;
 use App\Repositories\Contracts\ResourceDocumentRepositoryInterface;
+use App\Services\Frontend\FrontendCache;
+use App\Services\Frontend\SafeHtml;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
@@ -18,7 +20,7 @@ use Throwable;
 
 class ResourceDocumentService
 {
-    public function __construct(private readonly ResourceDocumentRepositoryInterface $records, private readonly MediaAssetService $media, private readonly ResourceCategoryService $categories) {}
+    public function __construct(private readonly ResourceDocumentRepositoryInterface $records, private readonly MediaAssetService $media, private readonly ResourceCategoryService $categories, private readonly SafeHtml $html, private readonly FrontendCache $cache) {}
 
     public function index(array $filters): LengthAwarePaginator
     {
@@ -82,6 +84,8 @@ class ResourceDocumentService
                 if ($data['slug'] === '' || $this->records->slugExists($data['slug'], $record)) {
                     throw ValidationException::withMessages(['slug' => 'Enter a unique URL slug using letters or numbers.']);
                 }
+                $data['sort_order'] = $record?->sort_order ?? $this->records->nextSortOrder();
+                $data['description'] = $this->html->clean($data['description'] ?? null);
 
                 $attachment = Arr::pull($data, 'attachment');
                 if ($attachment instanceof UploadedFile) {
@@ -166,8 +170,28 @@ class ResourceDocumentService
         });
     }
 
-    public function reorder(array $ids): void
+    public function reorder(array $ids, array $originalOrder, Authenticatable $actor): void
     {
-        DB::transaction(fn () => $this->records->reorder($ids));
+        Gate::forUser($actor)->authorize('resources.edit');
+        DB::transaction(function () use ($ids, $originalOrder, $actor): void {
+            $ids = array_map('intval', $ids);
+            $originalOrder = array_map('intval', $originalOrder);
+            $submitted = $ids;
+            $expected = $originalOrder;
+            sort($submitted);
+            sort($expected);
+            if ($submitted !== $expected) {
+                throw ValidationException::withMessages(['resources' => 'The resource list changed. Reload before reordering.']);
+            }
+            $allIds = $this->records->lockOrderedIds();
+            $offset = array_search($originalOrder[0], $allIds, true);
+            if ($offset === false || array_slice($allIds, $offset, count($originalOrder)) !== $originalOrder) {
+                throw ValidationException::withMessages(['resources' => 'The resource order changed. Reload before reordering.']);
+            }
+            array_splice($allIds, $offset, count($originalOrder), $ids);
+            $this->records->reorder($allIds);
+            activity('content')->causedBy($actor)->event('resources.reordered')->withProperties(['resource_ids' => $ids])->log('Resource order updated');
+        });
+        $this->cache->clear();
     }
 }

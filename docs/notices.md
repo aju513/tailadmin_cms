@@ -2,6 +2,10 @@
 
 ## Creating sections and assigning notices
 
+The Notice form suggests a URL slug from the title as you type, using the same editor behavior as News. Custom slug edits and existing notice URLs are preserved when the title changes. Blank slugs continue to use server-side generation when saving.
+
+The SEO title also fills in from the notice title and follows title changes until manually customized. Existing custom SEO titles and edits restored after validation are preserved.
+
 Use Pages to create a parent Notice Board and child sections such as Tenders or Vacancies. Set Page Type to Notices for every selectable section, and use Parent Page to define its hierarchy. No separate Notice Category administration is needed.
 
 Add/Edit Notice has a required Notice Section selector. Both the board and its children are selectable, hierarchical labels include the page path, and draft pages are labelled Unpublished. Notice editors do not need Pages management permissions to choose a section. If no sections exist, saving is disabled and the form explains how to create a Notices page; the creation link requires pages.create. Each notice belongs to one section, stored as notices.notice_page_id.
@@ -10,11 +14,19 @@ Manage Notices shows the assigned section or Unassigned below the title. Its sec
 
 ## Existing data and public compatibility
 
-This is an admin-only rollout. Existing notices have no section assigned until an editor chooses one; no sections or mappings are generated automatically. Their legacy notice_category_id is preserved when editing, including inactive-category visibility restrictions.
+Public notice lists include a title search, publication date, optional deadline, and the shared numbered pagination controls. Notice details also show the deadline when one exists. Search works on both `/notices` and CMS pages of type Notices, preserving the page's category scope and public visibility rules. Pagination retains the search and other filters; submitting or clearing a search starts at the first page. CMS pages continue to use `notices_page` and the standalone catalogue uses `page`.
+
+Each notice title link extends across its entire table row, including notices without attachments. Clicking anywhere in a row opens the notice detail page. Native keyboard navigation and opening links in another tab are supported, with a visible row outline on keyboard focus. The file-view action remains independently clickable.
+
+Notice details use an eight-column content area and a four-column recent notices sidebar on desktop, stacking on mobile. The sidebar shows up to five other publicly visible notices ordered by creation date. Drafts, scheduled notices and notices in inactive categories are excluded.
+
+The reusable `x-front.file-reader` displays PDFs and images directly and embeds Word/Excel attachments through Microsoft Office Web Viewer. Office previews require an anonymously accessible public file URL and internet access; localhost files cannot be fetched by Microsoft. Below the viewer, a Download file button saves the attachment using its original filename, and an Open file in new tab link provides a fallback. Notices without attachments show a file-unavailable state without these actions. Resources keep their existing detail template.
+
+Section assignment remains an admin-only rollout. Existing notices have no section assigned until an editor chooses one; no sections or mappings are generated automatically. Their legacy notice_category_id is preserved when editing, including inactive-category visibility restrictions.
 
 New notices retain an internal category so unchanged public queries can discover them: use the active General Notices category (slug general), otherwise create/reuse an active compatibility category named General Notices with slug notice-sections-default. Previously inactive categories are not reactivated. Notice category input is no longer accepted from admin forms.
 
-Public URLs, category filters, legacy Page/category connections, publication scheduling, detail visibility, templates, and public listing queries remain unchanged. Section-based public tables and parent/child aggregation are a separate frontend phase; assigning a section does not yet change public placement.
+Public URLs, category filters, legacy Page/category connections, publication scheduling and detail visibility remain compatible. Section-based public tables and parent/child aggregation are a separate frontend phase; assigning a section does not yet change public placement.
 
 Notice Category admin routes, forms, sidebar links, and management permissions are retired. The underlying category model/table, legacy repository, and read-only options service remain for public compatibility. No notice or category content is deleted.
 

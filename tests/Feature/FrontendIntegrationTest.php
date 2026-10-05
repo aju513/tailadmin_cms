@@ -42,16 +42,15 @@ test('contact failures never show a false delivery confirmation', function (): v
     Mail::assertNothingSent();
 });
 
-test('design settings require authorization and validate reporting figures', function (): void {
+test('design settings require authorization and cannot overwrite dedicated capacity reports', function (): void {
     $this->artisan('admin:permissions-sync')->assertSuccessful();
     $admin = User::findOrFail(1);
     $ordinary = User::factory()->create(['status' => 'active']);
     $this->actingAs($ordinary)->put(route('admin.settings.update'), ['site_name' => 'Institute'])->assertForbidden();
     $report = ['year' => '2081/82', 'development' => ['training_programs' => -1], 'collaboration' => ['participants' => 20]];
-    $this->actingAs($admin)->put(route('admin.settings.update'), ['site_name' => 'Institute', 'capacity_reports' => [$report]])->assertSessionHasErrors('capacity_reports.0.development.training_programs');
-    $report['development']['training_programs'] = 4;
-    $this->actingAs($admin)->put(route('admin.settings.update'), ['site_name' => 'Institute', 'capacity_reports' => [$report]])->assertSessionHasNoErrors();
-    expect(app(\App\Services\SiteSettingService::class)->all()['capacity_reports'][0]['development']['training_programs'])->toBe(4);
+    $this->actingAs($admin)->put(route('admin.settings.update'), ['site_name' => 'Institute', 'capacity_reports' => [$report]])->assertSessionHasErrors('capacity_reports');
+    $this->actingAs($admin)->put(route('admin.settings.update'), ['site_name' => 'Institute'])->assertSessionHasNoErrors();
+    $this->assertDatabaseMissing('site_settings', ['key' => 'capacity_reports']);
 });
 
 test('sitemaps exclude private publications and split public catalogues', function (): void {

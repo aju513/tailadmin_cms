@@ -2,6 +2,11 @@
 
 return [
     [
+        'key' => 'grievances', 'label' => 'Grievances', 'icon' => 'pages',
+        'route' => 'admin.grievances.index', 'active_routes' => ['admin.grievances.*'],
+        'permission' => 'grievances.manage', 'order' => 26,
+    ],
+    [
         'key' => 'dashboard',
         'label' => 'Dashboard',
         'icon' => 'dashboard',
@@ -17,6 +22,15 @@ return [
         'children' => [
             ['key' => 'homepage', 'label' => 'Homepage', 'icon' => 'pages', 'route' => 'admin.homepage.edit', 'permission' => 'homepage.manage', 'order' => 10],
             ['key' => 'pages-manage', 'label' => 'Manage Pages', 'icon' => 'pages', 'route' => 'admin.pages.index', 'active_routes' => ['admin.pages.*'], 'permission' => 'pages.manage', 'order' => 20],
+        ],
+    ],
+    [
+        'key' => 'reports',
+        'label' => 'Reports',
+        'icon' => 'dashboard',
+        'order' => 21,
+        'children' => [
+            ['key' => 'capacity-reports', 'label' => 'Capacity Reports', 'icon' => 'pages', 'route' => 'admin.capacity-reports.index', 'active_routes' => ['admin.capacity-reports.*'], 'permission' => 'capacity-reports.manage', 'order' => 10],
         ],
     ],
     [
@@ -57,8 +71,10 @@ return [
         'icon' => 'users',
         'order' => 25,
         'children' => [
-            ['key' => 'team-members', 'label' => 'Team Members', 'icon' => 'users', 'route' => 'admin.team-members.index', 'permission' => 'team-members.manage', 'order' => 10],
-            ['key' => 'team-categories', 'label' => 'Team Categories', 'icon' => 'pages', 'route' => 'admin.team-categories.index', 'permission' => 'team-categories.manage', 'order' => 20],
+            ['key' => 'team-create', 'label' => 'Add Team', 'icon' => 'create', 'route' => 'admin.team-members.create', 'permission' => 'team-members.create', 'order' => 10],
+            ['key' => 'team-manage', 'label' => 'Manage Team', 'icon' => 'users', 'route' => 'admin.team-members.index', 'active_routes' => ['admin.team-members.index', 'admin.team-members.edit'], 'permission' => 'team-members.manage', 'order' => 20],
+            ['key' => 'team-category-create', 'label' => 'Add Team Category', 'icon' => 'create', 'route' => 'admin.team-categories.create', 'permission' => 'team-categories.create', 'order' => 30],
+            ['key' => 'team-category-manage', 'label' => 'Manage Team Category', 'icon' => 'pages', 'route' => 'admin.team-categories.index', 'active_routes' => ['admin.team-categories.index', 'admin.team-categories.edit'], 'permission' => 'team-categories.manage', 'order' => 40],
         ],
     ],
     [
@@ -88,11 +104,12 @@ return [
         'icon' => 'media',
         'order' => 40,
         'children' => [
-            ['key' => 'homepage-slides', 'label' => 'Home Slides', 'icon' => 'slides', 'route' => 'admin.homepage-slides.index', 'permission' => 'homepage-slides.manage', 'order' => 10],
-            ['key' => 'videos-create', 'label' => 'Add Video', 'icon' => 'create', 'route' => 'admin.videos.create', 'permission' => 'videos.create', 'order' => 20],
-            ['key' => 'videos', 'label' => 'Manage Videos', 'icon' => 'media', 'route' => 'admin.videos.index', 'active_routes' => ['admin.videos.index', 'admin.videos.edit'], 'permission' => 'videos.manage', 'order' => 25],
+            ['key' => 'videos-create', 'label' => 'Add Video', 'icon' => 'create', 'route' => 'admin.videos.create', 'permission' => 'videos.create', 'order' => 10],
+            ['key' => 'videos', 'label' => 'Manage Video', 'icon' => 'media', 'route' => 'admin.videos.index', 'active_routes' => ['admin.videos.index', 'admin.videos.edit'], 'permission' => 'videos.manage', 'order' => 20],
             ['key' => 'gallery-create', 'label' => 'Add Gallery', 'icon' => 'create', 'route' => 'admin.gallery.create', 'permission' => 'gallery.create', 'order' => 30],
-            ['key' => 'gallery', 'label' => 'Manage Galleries', 'icon' => 'media', 'route' => 'admin.gallery.index', 'active_routes' => ['admin.gallery.index', 'admin.gallery.edit'], 'permission' => 'gallery.manage', 'order' => 35],
+            ['key' => 'gallery', 'label' => 'Manage Gallery', 'icon' => 'media', 'route' => 'admin.gallery.index', 'active_routes' => ['admin.gallery.index', 'admin.gallery.edit'], 'permission' => 'gallery.manage', 'order' => 40],
+            ['key' => 'homepage-slides-create', 'label' => 'Add Home Slide', 'icon' => 'create', 'route' => 'admin.homepage-slides.create', 'permission' => 'homepage-slides.create', 'order' => 50],
+            ['key' => 'homepage-slides', 'label' => 'Manage Home Slide', 'icon' => 'slides', 'route' => 'admin.homepage-slides.index', 'active_routes' => ['admin.homepage-slides.index', 'admin.homepage-slides.edit'], 'permission' => 'homepage-slides.manage', 'order' => 60],
         ],
     ],
     [

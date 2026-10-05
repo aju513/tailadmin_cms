@@ -97,7 +97,7 @@ class ResourceDocumentController extends Controller
 
     public function order(OrderResourceDocumentRequest $request): \Illuminate\Http\JsonResponse
     {
-        $this->service->reorder($request->validated('resources'));
+        $this->service->reorder($request->validated('resources'), $request->validated('original_order'), $request->user());
 
         return response()->json(['message' => 'Resource order updated.']);
     }

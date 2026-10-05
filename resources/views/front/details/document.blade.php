@@ -4,7 +4,11 @@
         <div class="container">
             <p class="resource-detail-page__category"><?= htmlspecialchars($item->category?->name ?? '', ENT_QUOTES, 'UTF-8') ?></p>
             <h1><?= htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8') ?></h1>
-            <p class="resource-detail-page__intro">{{ strip_tags($item->description ?? '') }}</p>
+            @if($kind === 'resources')
+                <article class="resource-detail-page__intro">{!! $safeHtml->clean($item->description) !!}</article>
+            @else
+                <p class="resource-detail-page__intro">{{ strip_tags($item->description ?? '') }}</p>
+            @endif
             <p class="mt-4 text-sm text-text_color">
                 <span class="font-semibold">Published:</span> <?= htmlspecialchars($item->published_at?->format('d M, Y') ?? '', ENT_QUOTES, 'UTF-8') ?>
                 <span class="mx-2 text-primary/40" aria-hidden="true">|</span>

@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\GalleryAlbum\CreateGalleryAlbumRequest;
 use App\Http\Requests\Admin\GalleryAlbum\DeleteGalleryAlbumRequest;
 use App\Http\Requests\Admin\GalleryAlbum\EditGalleryAlbumRequest;
 use App\Http\Requests\Admin\GalleryAlbum\IndexGalleryAlbumRequest;
+use App\Http\Requests\Admin\GalleryAlbum\OrderGalleryAlbumRequest;
 use App\Http\Requests\Admin\GalleryAlbum\StoreGalleryAlbumRequest;
 use App\Http\Requests\Admin\GalleryAlbum\UpdateGalleryAlbumRequest;
 use App\Models\GalleryAlbum;
@@ -27,6 +28,13 @@ class GalleryAlbumController extends Controller
     public function create(CreateGalleryAlbumRequest $request): View
     {
         return view('admin.pages.gallery.create', ['record' => $this->service->newRecord(), 'title' => 'Add Gallery']);
+    }
+
+    public function order(OrderGalleryAlbumRequest $request): JsonResponse
+    {
+        $this->service->reorder($request->validated('records'), $request->validated('original_order'), $request->user());
+
+        return response()->json(['message' => 'Gallery order updated.']);
     }
 
     public function store(StoreGalleryAlbumRequest $request): RedirectResponse

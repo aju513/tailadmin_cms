@@ -3,4 +3,4 @@
 @php($image=$images->attributes($media))
 @if($image)
     <img src="{{ $image['src'] }}" @if($image['srcset']) srcset="{{ $image['srcset'] }}" sizes="{{ $sizes }}" @endif alt="{{ $media->alt_text ?: $alt }}" width="{{ $width }}" height="{{ $height }}" loading="{{ $priority ? 'eager' : 'lazy' }}" @if($priority) fetchpriority="high" @endif decoding="async" {{ $attributes }}>
-@else<img src="{{ asset($fallback) }}" alt="{{ $alt }}" width="{{ $width }}" height="{{ $height }}" loading="{{ $priority ? 'eager' : 'lazy' }}" decoding="async" {{ $attributes }}>@endif
+@else<img src="{{ asset($fallback) }}" alt="{{ $alt }}" width="{{ $width }}" height="{{ $height }}" loading="{{ $priority ? 'eager' : 'lazy' }}" decoding="async" {{ $attributes->class(['logo-placeholder' => $fallback === 'front/images/placeholder-logo.svg']) }}>@endif

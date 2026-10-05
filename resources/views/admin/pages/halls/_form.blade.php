@@ -1,3 +1,10 @@
+@php
+    $slugState = [
+        'title' => config('settings.nepali') ? old('translations.en.title', $hall->getTranslation('title', 'en', false)) : old('title', $hall->getTranslation('title', 'en', false)),
+        'slug' => old('slug', $hall->slug),
+        'existing' => $hall->exists,
+    ];
+@endphp
 <div x-data="{
     activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}',
     activeShared: '{{ $errors->hasAny(['gallery_images', 'gallery_images.*', 'remove_gallery_ids.*']) ? 'gallery' : ($errors->hasAny(['social_media_image', 'social_media_image_alt_text']) ? 'social' : ($errors->hasAny(['thumbnail', 'thumbnail_alt_text']) ? 'thumbnail' : 'banner')) }}',
@@ -22,13 +29,13 @@
         </div>
     </div>
 
-    <div class="grid gap-6 md:grid-cols-2">
+    <div x-data="slugEditor(@js($slugState))" class="grid gap-6 md:grid-cols-2">
         @if (config('settings.nepali'))
-            <x-form.input name="translations[en][title]" label="Hall title (English)" :value="old('translations.en.title', $hall->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" required />
+            <x-form.input name="translations[en][title]" label="Hall title (English)" :value="old('translations.en.title', $hall->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" x-bind:value="title" @input="updateTitle($event.target.value)" required />
         @else
-            <x-form.input name="title" label="Hall title" :value="old('title', $hall->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" required />
+            <x-form.input name="title" label="Hall title" :value="old('title', $hall->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" x-bind:value="title" @input="updateTitle($event.target.value)" required />
         @endif
-        <x-form.input name="slug" label="URL slug" :value="old('slug', $hall->slug)" help="Generated from the title if left blank." />
+        <x-form.input name="slug" label="URL slug" :value="old('slug', $hall->slug)" x-bind:value="slug" @input="updateSlug($event.target.value)" maxlength="255" />
         @if (config('settings.nepali'))
             <x-form.input name="translations[ne][title]" label="Hall title (Nepali)" :value="old('translations.ne.title', $hall->getTranslation('title', 'ne', false))" :error="$errors->first('translations.ne.title')" />
         @endif

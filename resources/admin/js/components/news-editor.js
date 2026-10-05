@@ -1,17 +1,6 @@
-export function newsSlug(title) {
-    const letters = { 'ß': 'ss', 'æ': 'ae', 'œ': 'oe', 'ø': 'o', 'ł': 'l', 'đ': 'd' };
+import { slugify as newsSlug } from './slug-editor.js';
 
-    return String(title)
-        .toLowerCase()
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[ßæœøłđ]/g, letter => letters[letter])
-        .replace(/_/g, '-')
-        .replace(/@/g, '-at-')
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/[\s-]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-}
+export { newsSlug };
 
 export function newsEditor(initial = {}) {
     const title = String(initial.title ?? '');

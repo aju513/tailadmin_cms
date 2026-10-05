@@ -3,10 +3,35 @@
 return [
     'nepali' => env('SETTINGS_NEPALI', false),
 
+    'recaptcha' => ['minimum_score' => 0.5, 'timeout_seconds' => 5],
+
     'homepage' => ['gallery_limit' => 30],
+
+    // Fiscal-year choices shared by the Capacity Reports editor and its filters.
+    'fiscal_years' => ['2083/84', '2082/83', '2081/82', '2080/81', '2079/80', '2078/79', '2077/78', '2076/77'],
+
+    'capacity_reports' => [
+        'max_rows' => 40,
+        'max_value' => 1000000000,
+        'groups' => [
+            'development' => ['title' => 'Capacity Development Contribution', 'description' => 'Key figures from training and capacity development programs'],
+            'collaboration' => ['title' => 'Contribution Through Collaboration', 'description' => 'Key figures from working with government agencies and local governments'],
+        ],
+        'metrics' => [
+            'training_programs' => 'Total training programs',
+            'participants' => 'Total participants',
+            'in_service_programs' => 'In-service training programs',
+            'in_service_participants' => 'In-service participants',
+            'materials' => 'Training materials developed',
+            'dialogues' => 'Issue-focused dialogues',
+            'research' => 'Research studies',
+            'consultancy' => 'Consultancy services',
+        ],
+    ],
 
     // File sizes are in KB. Image profiles inherit these defaults.
     'uploads' => [
+        'grievance_attachment' => ['type' => 'file', 'max_size_kb' => 5120, 'mimes' => ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx']],
         'image' => [
             'type' => 'image',
             'max_size_kb' => 5120,

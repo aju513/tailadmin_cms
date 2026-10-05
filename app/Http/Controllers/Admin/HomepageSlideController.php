@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\HomepageSlide\CreateHomepageSlideRequest;
 use App\Http\Requests\Admin\HomepageSlide\DeleteHomepageSlideRequest;
+use App\Http\Requests\Admin\HomepageSlide\EditHomepageSlideRequest;
+use App\Http\Requests\Admin\HomepageSlide\IndexHomepageSlideRequest;
+use App\Http\Requests\Admin\HomepageSlide\OrderHomepageSlideRequest;
 use App\Http\Requests\Admin\HomepageSlide\StoreHomepageSlideRequest;
 use App\Http\Requests\Admin\HomepageSlide\UpdateHomepageSlideRequest;
 use App\Models\HomepageSlide;
-use App\Repositories\Contracts\HomepageSlideRepositoryInterface;
 use App\Services\HomepageSlideService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,16 +18,16 @@ use Illuminate\View\View;
 
 class HomepageSlideController extends Controller
 {
-    public function __construct(private readonly HomepageSlideRepositoryInterface $slides, private readonly HomepageSlideService $service) {}
+    public function __construct(private readonly HomepageSlideService $service) {}
 
-    public function index(): View
+    public function index(IndexHomepageSlideRequest $request): View
     {
-        return view('admin.pages.homepage-slides.index', ['slides' => $this->slides->paginateForIndex(), 'title' => 'Homepage Slides']);
+        return view('admin.pages.homepage-slides.index', ['slides' => $this->service->index(), 'title' => 'Homepage Slides']);
     }
 
-    public function create(): View
+    public function create(CreateHomepageSlideRequest $request): View
     {
-        return view('admin.pages.homepage-slides.create', ['slide' => new HomepageSlide(['status' => ContentStatus::Draft]), 'title' => 'Create Homepage Slide']);
+        return view('admin.pages.homepage-slides.create', ['slide' => $this->service->newRecord(), 'title' => 'Create Homepage Slide']);
     }
 
     public function store(StoreHomepageSlideRequest $request): RedirectResponse
@@ -35,9 +37,16 @@ class HomepageSlideController extends Controller
         return redirect()->route('admin.homepage-slides.index')->with('success', 'Homepage slide created.');
     }
 
-    public function edit(HomepageSlide $homepageSlide): View
+    public function edit(EditHomepageSlideRequest $request, HomepageSlide $homepageSlide): View
     {
-        return view('admin.pages.homepage-slides.edit', ['slide' => $homepageSlide, 'title' => 'Edit Homepage Slide']);
+        return view('admin.pages.homepage-slides.edit', ['slide' => $this->service->details($homepageSlide), 'title' => 'Edit Homepage Slide']);
+    }
+
+    public function order(OrderHomepageSlideRequest $request): JsonResponse
+    {
+        $this->service->reorder($request->validated('records'), $request->validated('original_order'), $request->user());
+
+        return response()->json(['message' => 'Home slide order updated.']);
     }
 
     public function update(UpdateHomepageSlideRequest $request, HomepageSlide $homepageSlide): RedirectResponse

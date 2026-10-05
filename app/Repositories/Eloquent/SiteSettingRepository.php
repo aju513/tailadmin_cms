@@ -16,4 +16,9 @@ class SiteSettingRepository implements SiteSettingRepositoryInterface
     {
         return SiteSetting::query()->updateOrCreate(['key' => $key], ['value' => $value, 'type' => $type]);
     }
+
+    public function value(string $key): ?string
+    {
+        return SiteSetting::query()->where('key', $key)->value('value');
+    }
 }

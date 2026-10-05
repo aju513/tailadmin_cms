@@ -18,7 +18,6 @@ abstract class SaveVideoRequest extends FormRequest
             'cover' => UploadProfile::rules('images.video_cover'),
             'remove_cover' => ['sometimes', 'boolean'],
             'status' => ['required', Rule::enum(ContentStatus::class)],
-            'sort_order' => ['required', 'integer', 'min:0', 'max:2147483647'],
             'video_url' => ['required', 'url:http,https', 'max:2048'],
         ];
     }

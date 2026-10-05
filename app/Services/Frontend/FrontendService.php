@@ -6,12 +6,14 @@ use App\Enums\PageType;
 use App\Repositories\Contracts\FrontendRepositoryInterface;
 use App\Repositories\Contracts\HomepageContentRepositoryInterface;
 use App\Repositories\Contracts\NewsRepositoryInterface;
+use App\Services\CapacityReportService;
 use App\Services\NoticeService;
 use App\Services\ResourceDocumentService;
+use App\Services\SiteSettingService;
 
 class FrontendService
 {
-    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache, private readonly HomepageContentRepositoryInterface $homepage) {}
+    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache, private readonly HomepageContentRepositoryInterface $homepage, private readonly CapacityReportService $capacityReports, private readonly PublicTrainingService $trainings) {}
 
     private function setLocale(array $filters): void
     {
@@ -26,7 +28,12 @@ class FrontendService
     {
         $this->setLocale($filters);
         $data = [...$data, ...$this->layout->data()];
+        if (($data['kind'] ?? null) === 'grievance') {
+            $data['recaptchaConfigured'] = app(SiteSettingService::class)->recaptchaConfigured();
+        }
         if (($data['kind'] ?? null) === 'home') {
+            $data['trainingCatalogue'] = $this->trainings->homepage();
+            $data['capacityReports'] = $this->cache->remember('capacity-reports', fn () => $this->capacityReports->publicReports());
             $data['homepageImages'] = $data['homepageContent']
                 ? $data['homepageContent']->galleryImages->pluck('mediaAsset')->filter()->values()
                 : $data['galleries']->map(fn ($gallery) => $gallery->photos->first()?->media)->filter()->values();
@@ -58,13 +65,13 @@ class FrontendService
         $this->setLocale($filters);
         $page = $this->content->page($path);
         $kind = match ($page->page_type) {
-            PageType::News => 'news',PageType::Notices => 'notices',PageType::Resource => 'resources',PageType::Team => 'team',PageType::Hall => 'halls',PageType::Gallery => 'gallery',PageType::Videos => 'videos',PageType::ContactUs => 'contact',PageType::Sitemap => 'sitemap',default => 'article'
+            PageType::Grievance => 'grievance',PageType::News => 'news',PageType::Notices => 'notices',PageType::Resource => 'resources',PageType::Team => 'team',PageType::Hall => 'halls',PageType::Gallery => 'gallery',PageType::Videos => 'videos',PageType::ContactUs => 'contact',PageType::Sitemap => 'sitemap',default => 'article'
         };
         $data = ['kind' => $kind, 'page' => $page, 'heading' => $page->title];
         if ($kind === 'resources') {
             $data['items'] = $this->resources->forPage($page);
         } elseif ($kind === 'notices') {
-            $data['items'] = $this->notices->forPage($page);
+            $data['items'] = $this->notices->forPage($page, $filters);
         } elseif (in_array($kind, ['news', 'team', 'halls', 'gallery', 'videos'])) {
             $data['items'] = $kind === 'news' ? $this->news->paginatePublished($filters) : $this->content->listing($kind, $filters);
         } elseif ($kind === 'sitemap') {
@@ -111,7 +118,7 @@ class FrontendService
             throw $exception;
         }
 
-        return $this->prepare(['kind' => $kind, 'item' => $item, 'relatedNews' => $kind === 'news' ? $this->news->latestPublished($item, 3) : collect()], $filters);
+        return $this->prepare(['kind' => $kind, 'item' => $item, 'relatedNews' => $kind === 'news' ? $this->news->latestPublished($item, 3) : collect(), 'recentNotices' => $kind === 'notices' ? $this->notices->recentPublished($item) : collect()], $filters);
     }
 
     public function search(array $filters): array

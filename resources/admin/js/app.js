@@ -5,6 +5,10 @@ import { multiselect } from './components/multiselect';
 import { newsEditor } from './components/news-editor';
 import { homepageEditor } from './components/homepage-editor';
 import { stickyFormActions } from './components/sticky-form-actions';
+import { capacityReportEditor } from './components/capacity-report-editor';
+import { resourceOrdering } from './components/resource-ordering';
+import { recordOrdering } from './components/record-ordering';
+import { slugEditor } from './components/slug-editor';
 import ApexCharts from 'apexcharts';
 
 // flatpickr
@@ -21,6 +25,10 @@ window.multiselect = multiselect;
 Alpine.data('newsEditor', newsEditor);
 Alpine.data('homepageEditor', homepageEditor);
 Alpine.data('stickyFormActions', stickyFormActions);
+Alpine.data('capacityReportEditor', capacityReportEditor);
+Alpine.data('resourceOrdering', resourceOrdering);
+Alpine.data('recordOrdering', recordOrdering);
+Alpine.data('slugEditor', slugEditor);
 window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
 window.FullCalendar = Calendar;

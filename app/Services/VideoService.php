@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\ContentStatus;
 use App\Models\Video;
 use App\Repositories\Contracts\VideoRepositoryInterface;
+use App\Services\Frontend\FrontendCache;
+use App\Support\RecordOrder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\UploadedFile;
@@ -17,7 +19,7 @@ use Throwable;
 
 class VideoService
 {
-    public function __construct(private readonly VideoRepositoryInterface $records, private readonly MediaAssetService $media) {}
+    public function __construct(private readonly VideoRepositoryInterface $records, private readonly MediaAssetService $media, private readonly FrontendCache $cache) {}
 
     public function index(array $filters): LengthAwarePaginator
     {
@@ -46,6 +48,7 @@ class VideoService
                 if ($status === ContentStatus::Published || $record?->status === ContentStatus::Published) {
                     Gate::forUser($actor)->authorize('videos.publish');
                 }
+                $data['sort_order'] = $record?->sort_order ?? $this->records->nextSortOrder();
                 $baseSlug = Str::limit(Str::slug($data['title']) ?: 'video', 240, '');
                 $data['slug'] = $record?->slug ?: $baseSlug;
                 if (! $record) {
@@ -95,6 +98,18 @@ class VideoService
             activity('content')->causedBy($actor)->performedOn($record)->event('videos.deleted')->log('Video deleted');
             $this->records->delete($record);
         });
+    }
+
+    public function reorder(array $ids, array $originalOrder, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('videos.edit');
+        DB::transaction(function () use ($ids, $originalOrder, $actor): void {
+            $ordered = RecordOrder::replace($ids, $originalOrder, $this->records->lockOrderedIds());
+            $this->records->reorder($ordered);
+            activity('content')->causedBy($actor)->event('videos.reordered')
+                ->withProperties(['record_ids' => array_map('intval', $ids)])->log('Video order updated');
+        });
+        $this->cache->clear();
     }
 
     public function bulkStatus(array $ids, \App\Enums\ContentStatus $status, Authenticatable $actor): void

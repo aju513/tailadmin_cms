@@ -4,15 +4,17 @@ namespace App\Services;
 
 use App\Repositories\Contracts\SiteSettingRepositoryInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class SiteSettingService
 {
     public const KEYS = ['site_name', 'office_name', 'logo_url', 'phone', 'email', 'address', 'footer_text', 'meta_description', 'hero_title', 'hero_description', 'about_title', 'about_description', 'training_url', 'office_hours', 'map_url', 'facebook_url', 'youtube_url', 'linkedin_url'];
 
-    public const DESIGN_KEYS = ['province_name', 'about_url', 'tmis_url', 'instagram_url', 'x_url', 'contact_officer_phone', 'contact_officer_photo_url', 'homepage_services', 'capacity_reports'];
+    public const DESIGN_KEYS = ['province_name', 'about_url', 'tmis_url', 'instagram_url', 'x_url', 'contact_officer_phone', 'contact_officer_photo_url', 'homepage_services'];
 
-    public const ARRAY_KEYS = ['homepage_services', 'capacity_reports'];
+    public const ARRAY_KEYS = ['homepage_services'];
 
     public function __construct(private readonly SiteSettingRepositoryInterface $settings) {}
 
@@ -26,6 +28,9 @@ class SiteSettingService
             $values[$key] = isset($values[$key]) ? (json_decode($values[$key], true) ?: []) : config('frontend.'.$key, []);
         }
 
+        unset($values['recaptcha_secret_key']);
+        $values['recaptcha_site_key'] ??= null;
+
         return $values;
     }
 
@@ -35,6 +40,12 @@ class SiteSettingService
             $data['about_description'] = app(\App\Services\Frontend\SafeHtml::class)->clean($data['about_description']);
         }
         DB::transaction(function () use ($data, $actor): void {
+            if (array_key_exists('recaptcha_site_key', $data)) {
+                $this->settings->upsert('recaptcha_site_key', $data['recaptcha_site_key']);
+            }
+            if (filled($data['recaptcha_secret_key'] ?? null)) {
+                $this->settings->upsert('recaptcha_secret_key', Crypt::encryptString($data['recaptcha_secret_key']), 'encrypted');
+            }
             foreach ([...self::KEYS, ...self::DESIGN_KEYS] as $key) {
                 if (array_key_exists($key, $data)) {
                     $json = in_array($key, self::ARRAY_KEYS, true);
@@ -43,5 +54,26 @@ class SiteSettingService
             }
             activity('content')->causedBy($actor)->event('settings.updated')->withProperties(['keys' => array_keys($data)])->log('Site settings updated');
         });
+    }
+
+    public function recaptcha(): array
+    {
+        $secret = null;
+        if ($encrypted = $this->settings->value('recaptcha_secret_key')) {
+            try {
+                $secret = Crypt::decryptString($encrypted);
+            } catch (DecryptException $exception) {
+                // An unreadable key must never bypass verification.
+            }
+        }
+
+        return ['site_key' => $this->settings->value('recaptcha_site_key'), 'secret_key' => $secret];
+    }
+
+    public function recaptchaConfigured(): bool
+    {
+        $keys = $this->recaptcha();
+
+        return filled($keys['site_key']) && filled($keys['secret_key']);
     }
 }

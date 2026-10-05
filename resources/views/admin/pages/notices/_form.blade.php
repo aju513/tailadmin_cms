@@ -1,7 +1,16 @@
-<div class="space-y-6">
+@php
+    $editorState = [
+        'title' => old('title', $item->title),
+        'slug' => old('slug', $item->slug),
+        'seoTitle' => old('meta_title', $item->meta_title),
+        'originalTitle' => $item->title,
+        'existing' => $item->exists,
+    ];
+@endphp
+<div x-data="newsEditor(@js($editorState))" class="space-y-6">
     <div class="grid gap-6 md:grid-cols-2">
-        <x-form.input name="title" label="Notice title" :value="old('title', $item->title)" required />
-        <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" help="Leave blank to generate from the title." />
+        <x-form.input name="title" label="Notice title" :value="old('title', $item->title)" x-bind:value="title" @input="updateTitle($event.target.value)" required />
+        <x-form.input name="slug" label="URL slug" :value="old('slug', $item->slug)" x-bind:value="slug" @input="updateSlug($event.target.value)" help="Generated from the title as you type. You can edit it." />
         <div>
             <x-form.select name="notice_page_id" label="Notice Section" :options="$sections" :value="$item->notice_page_id" placeholder="Select a section…" required help="Choose the Notice Board or one of its child sections." />
             @if(empty($sections))
@@ -27,7 +36,7 @@
     </div>
     <div class="space-y-5 border-t border-gray-200 pt-6 dark:border-gray-800">
         <h2 class="text-base font-semibold text-gray-800 dark:text-white">SEO Details</h2>
-        <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $item->meta_title)" />
+        <x-form.input name="meta_title" label="SEO title" :value="old('meta_title', $item->meta_title ?: $item->title)" x-bind:value="seoTitle" @input="updateSeoTitle($event.target.value)" help="Generated from the notice title. You can edit it for search engines." />
         <x-form.textarea name="meta_description" label="SEO description" :value="old('meta_description', $item->meta_description)" />
     </div>
 </div>

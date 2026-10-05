@@ -1,0 +1,11 @@
+# परिचय / Introduction
+
+## Nepali
+
+सुशासनका लागि प्रान्तीय केन्द्र (PCGG- प्रदेश सुशासन केन्द्र) प्रारम्भमा PLGSP द्वारा समर्थित OCMCM को निकट मार्गदर्शनमा आउटपुट 7, 8,9,10,11,13 र 14 अन्तर्गत गतिविधिहरू प्रदान गर्न जिम्मेवार छ; जो मुख्यतया संस्थागत र मानव विकासमा केन्द्रित छन् नागरिकहरूलाई गुणस्तरीय सेवाहरू प्रदान गर्न PG र LGs लाई मद्दत गर्ने उद्देश्यले। यसै सन्दर्भमा प्रदेश सरकारले सुशासन ऐन २०७७ पारित गरी सञ्चालन निर्देशन जारी गरेको छ । यस कानुनी मार्गचित्रको आधारमा, प्रदेश सुशासन केन्द्र (PCGG) सेप्टेम्बर 2020 मा स्थापना भएको छ। PCGG को मुख्य उद्देश्य विभिन्न प्रकारका गतिविधिहरू सञ्चालन गर्नु हो जसले प्रत्यक्ष रूपमा एलजीहरूलाई संस्थागत र क्षमता अभिवृद्धिमा निर्वाचित प्रतिनिधिहरू र निजामती कर्मचारीहरूलाई सहयोग पुर्‍याउँछ। नेपालको संविधानले परिकल्पना गरे बमोजिम उनीहरूले छिटो गुणस्तरीय सेवाहरू देखाउन र नागरिकलाई सन्तुष्ट पार्न सक्षम हुन सक्छन्।
+
+## English
+
+The Provincial Center for Good Governance (PCGG- Province Good Governance Center) is initially close to OCMCM by PLGSP to provide guidance outputs 7, 8,9,10,11,13 and 14 internal activities; which mainly aims to support PGs and LGs to provide high quality services to citizens as institutions and human development centers. In this context, the provincial government has passed the Good Governance Act 2077 and issued operating instructions. Based on this legal roadmap, the Provincial Center for Good Governance (PCGG) has been established in September 2020. The main objective of the PCGG is to undertake a variety of activities that directly support LGs in institutionalizing and capacity building elected representatives and civil servants. As envisioned by the Constitution of Nepal, they can quickly provide quality services and satisfy the citizens.
+
+Source: [`../raw/introduction.json`](../raw/introduction.json).

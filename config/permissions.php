@@ -2,6 +2,11 @@
 
 return [
 
+    'grievances' => [
+        'grievances.manage' => ['view_title' => 'Manage grievances', 'description' => 'Allows searching and listing grievance submissions.'],
+        'grievances.show' => ['view_title' => 'View grievances', 'description' => 'Allows viewing grievance details and downloading private attachments.'],
+    ],
+
     'resources' => [
         'resources.manage' => ['view_title' => 'Manage resources', 'description' => 'Allows manage operations for resources.'],
         'resources.create' => ['view_title' => 'Create resources', 'description' => 'Allows create operations for resources.'],
@@ -46,6 +51,12 @@ return [
     'homepage' => [
         'homepage.manage' => ['view_title' => 'View homepage editor', 'description' => 'Allows viewing the homepage content, gallery, and SEO editor.'],
         'homepage.edit' => ['view_title' => 'Edit homepage content', 'description' => 'Allows saving live homepage text, gallery images, and SEO details.'],
+    ],
+    'capacity-reports' => [
+        'capacity-reports.manage' => ['view_title' => 'Manage capacity reports', 'description' => 'Allows viewing and filtering fiscal-year contribution reports.'],
+        'capacity-reports.create' => ['view_title' => 'Create capacity reports', 'description' => 'Allows adding fiscal-year contribution figures.'],
+        'capacity-reports.edit' => ['view_title' => 'Edit capacity reports', 'description' => 'Allows changing contribution keys and values for a fiscal year.'],
+        'capacity-reports.delete' => ['view_title' => 'Delete capacity reports', 'description' => 'Allows removing fiscal-year contribution reports.'],
     ],
     'pages' => [
         'pages.manage' => ['view_title' => 'Manage pages', 'description' => 'Allows access to the page index, filters, and pagination.'],

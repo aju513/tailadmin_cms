@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Front\ContactController;
 use App\Http\Controllers\Front\ContentController;
+use App\Http\Controllers\Front\GrievanceController;
 use App\Http\Controllers\Front\SitemapController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,7 @@ Route::get('/', [ContentController::class, 'home'])->name('public.home');
 Route::get('/search', [ContentController::class, 'search'])->name('public.search');
 Route::get('/contact', [ContentController::class, 'contact'])->name('public.contact');
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:3,1')->name('public.contact.send');
+Route::post('/grievances/{pageId}', [GrievanceController::class, 'store'])->whereNumber('pageId')->middleware('throttle:3,1')->name('public.grievances.store');
 Route::get('/sitemap', [ContentController::class, 'sitemap'])->name('public.sitemap');
 Route::get('/news', [ContentController::class, 'news'])->name('public.news.index');
 foreach (['category', 'tag', 'author'] as $taxonomy) {

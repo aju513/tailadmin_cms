@@ -1,6 +1,7 @@
 import Swiper from 'swiper';
 import { Navigation, Pagination, Autoplay, EffectFade, A11y } from 'swiper/modules';
 import '../vendor/fancybox.js';
+import './grievance-form.js';
 
 // Keep the supplied design's selectors and interactions.
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -39,6 +39,7 @@
                                     <div class="placeholder__img">
                                         <a href="<?= $hallBooking ?>">
                                             <img
+                                                @class(['logo-placeholder' => $hall['image'] === asset('front/images/placeholder-logo.svg')])
                                                 src="<?= $hallImage ?>"
                                                 width="600"
                                                 height="450"

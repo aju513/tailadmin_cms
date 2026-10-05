@@ -10,9 +10,11 @@ interface NoticeRepositoryInterface
 {
     public function paginateAdmin(array $filters): LengthAwarePaginator;
 
-    public function paginatePublished(?int $categoryId = null, string $pageName = 'page'): LengthAwarePaginator;
+    public function paginatePublished(?int $categoryId = null, string $pageName = 'page', ?string $search = null): LengthAwarePaginator;
 
     public function publishedBySlug(string $slug): Notice;
+
+    public function latestPublished(Notice $except, int $limit = 5): Collection;
 
     public function lock(Notice $notice): Notice;
 

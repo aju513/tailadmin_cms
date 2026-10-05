@@ -6,9 +6,17 @@
 @include('front.sections.trainings')
 @include('front.sections.about')
 @include('front.sections.capacity-report')
-@include('front.sections.resources')
-@include('front.sections.team')
+@if($latestResources->isNotEmpty())
+    @include('front.sections.resources')
+@endif
+@if($team->isNotEmpty())
+    @include('front.sections.team')
+@endif
 @include('front.sections.halls')
-@include('front.sections.videos')
-@include('front.sections.news')
+@if($videos->contains(fn ($video) => $embeds->url($video->video_url)))
+    @include('front.sections.videos')
+@endif
+@if($latestNews->isNotEmpty())
+    @include('front.sections.news')
+@endif
 @endsection

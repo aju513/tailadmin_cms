@@ -29,4 +29,8 @@ interface ResourceDocumentRepositoryInterface
     public function findByIds(array $ids): Collection;
 
     public function reorder(array $ids): void;
+
+    public function nextSortOrder(): int;
+
+    public function lockOrderedIds(): array;
 }

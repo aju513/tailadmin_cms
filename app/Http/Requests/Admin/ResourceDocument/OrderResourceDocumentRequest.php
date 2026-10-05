@@ -13,6 +13,11 @@ class OrderResourceDocumentRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['resources' => ['required', 'array', 'min:1'], 'resources.*' => ['required', 'integer', 'distinct', 'exists:resource_documents,id']];
+        return [
+            'resources' => ['required', 'array', 'list', 'min:1', 'max:1000'],
+            'resources.*' => ['required', 'integer', 'distinct', 'exists:resource_documents,id'],
+            'original_order' => ['required', 'array', 'list', 'min:1', 'max:1000'],
+            'original_order.*' => ['required', 'integer', 'distinct', 'exists:resource_documents,id'],
+        ];
     }
 }

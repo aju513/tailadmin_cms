@@ -32,7 +32,7 @@
                         <div class="homepage__about-image">
                             <div class="placeholder__img-wrapper">
                                 <div class="placeholder__img">
-                                    <img id="homepage-about-main-image" src="{{ $homepageImages->first()?->url() ?: asset('front/images/placeholder-logo.svg') }}" alt="{{ $homepageImages->first()?->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" width="600" height="475" loading="lazy" decoding="async">
+                                    <img id="homepage-about-main-image" @class(['logo-placeholder' => $homepageImages->isEmpty()]) src="{{ $homepageImages->first()?->url() ?: asset('front/images/placeholder-logo.svg') }}" alt="{{ $homepageImages->first()?->alt_text ?: ($homepageContent?->title ?? $settings['about_title']) }}" width="600" height="475" loading="lazy" decoding="async">
                                 </div>
                             </div>
                         </div>

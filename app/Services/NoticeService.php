@@ -46,7 +46,7 @@ class NoticeService
     {
         $categoryId = filled($filters['notice_category_id'] ?? null) ? (int) $filters['notice_category_id'] : null;
 
-        return $this->records->paginatePublished($categoryId);
+        return $this->records->paginatePublished($categoryId, 'page', $filters['search'] ?? null);
     }
 
     public function publicDetails(string $slug): Notice
@@ -54,10 +54,15 @@ class NoticeService
         return $this->records->publishedBySlug($slug);
     }
 
-    public function forPage(\App\Models\Page $page): ?LengthAwarePaginator
+    public function recentPublished(Notice $except): \Illuminate\Support\Collection
+    {
+        return $this->records->latestPublished($except);
+    }
+
+    public function forPage(\App\Models\Page $page, array $filters = []): ?LengthAwarePaginator
     {
         return $page->page_type === \App\Enums\PageType::Notices
-            ? $this->records->paginatePublished($page->notice_category_id, 'notices_page')
+            ? $this->records->paginatePublished($page->notice_category_id, 'notices_page', $filters['search'] ?? null)
             : null;
     }
 

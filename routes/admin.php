@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\CapacityReportController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GrievanceController;
 use App\Http\Controllers\Admin\HallController;
 use App\Http\Controllers\Admin\HomepageController;
 use App\Http\Controllers\Admin\HomepageSlideController;
@@ -25,6 +27,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::put('/password/change', [PasswordController::class, 'update'])->name('password.update');
     Route::get('/', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
 
+    Route::get('/grievances', [GrievanceController::class, 'index'])->middleware('can:grievances.manage')->name('grievances.index');
+    Route::get('/grievances/{grievanceId}/attachment', [GrievanceController::class, 'download'])->whereNumber('grievanceId')->middleware('can:grievances.show')->name('grievances.download');
+    Route::get('/grievances/{grievanceId}', [GrievanceController::class, 'show'])->whereNumber('grievanceId')->middleware('can:grievances.show')->name('grievances.show');
+
     Route::get('/halls', [HallController::class, 'index'])->middleware('can:halls.manage')->name('halls.index');
     Route::get('/halls/create', [HallController::class, 'create'])->middleware('can:halls.create')->name('halls.create');
     Route::post('/halls', [HallController::class, 'store'])->middleware('can:halls.create')->name('halls.store');
@@ -39,6 +45,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
 
     Route::get('/homepage', [HomepageController::class, 'edit'])->middleware('can:homepage.manage')->name('homepage.edit');
     Route::put('/homepage', [HomepageController::class, 'update'])->middleware('can:homepage.edit')->name('homepage.update');
+
+    Route::get('/capacity-reports', [CapacityReportController::class, 'index'])->middleware('can:capacity-reports.manage')->name('capacity-reports.index');
+    Route::get('/capacity-reports/create', [CapacityReportController::class, 'create'])->middleware('can:capacity-reports.create')->name('capacity-reports.create');
+    Route::post('/capacity-reports', [CapacityReportController::class, 'store'])->middleware('can:capacity-reports.create')->name('capacity-reports.store');
+    Route::get('/capacity-reports/{capacityReport}/edit', [CapacityReportController::class, 'edit'])->middleware('can:capacity-reports.edit')->name('capacity-reports.edit');
+    Route::put('/capacity-reports/{capacityReport}', [CapacityReportController::class, 'update'])->middleware('can:capacity-reports.edit')->name('capacity-reports.update');
+    Route::delete('/capacity-reports/{capacityReport}', [CapacityReportController::class, 'destroy'])->middleware('can:capacity-reports.delete')->name('capacity-reports.destroy');
 
     Route::get('/pages', [PageController::class, 'index'])->middleware('can:pages.manage')->name('pages.index');
     Route::get('/pages/create', [PageController::class, 'create'])->middleware('can:pages.create')->name('pages.create');
@@ -99,6 +112,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::post('/gallery', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'store'])->middleware('can:gallery.create')->name('gallery.store');
     Route::patch('/gallery/bulk-status', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'bulkStatus'])->middleware('can:gallery.publish')->name('gallery.bulk-status');
     Route::delete('/gallery/bulk', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'bulkDestroy'])->middleware('can:gallery.delete')->name('gallery.bulk-destroy');
+    Route::post('/gallery/order', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'order'])->middleware('can:gallery.edit')->name('gallery.order');
     Route::get('/gallery/{galleryAlbum}/edit', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'edit'])->middleware('can:gallery.edit')->name('gallery.edit');
     Route::put('/gallery/{galleryAlbum}', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'update'])->middleware('can:gallery.edit')->name('gallery.update');
     Route::delete('/gallery/{galleryAlbum}', [\App\Http\Controllers\Admin\GalleryAlbumController::class, 'destroy'])->middleware('can:gallery.delete')->name('gallery.destroy');
@@ -107,6 +121,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::post('/videos', [\App\Http\Controllers\Admin\VideoController::class, 'store'])->middleware('can:videos.create')->name('videos.store');
     Route::patch('/videos/bulk-status', [\App\Http\Controllers\Admin\VideoController::class, 'bulkStatus'])->middleware('can:videos.publish')->name('videos.bulk-status');
     Route::delete('/videos/bulk', [\App\Http\Controllers\Admin\VideoController::class, 'bulkDestroy'])->middleware('can:videos.delete')->name('videos.bulk-destroy');
+    Route::post('/videos/order', [\App\Http\Controllers\Admin\VideoController::class, 'order'])->middleware('can:videos.edit')->name('videos.order');
     Route::get('/videos/{video}/edit', [\App\Http\Controllers\Admin\VideoController::class, 'edit'])->middleware('can:videos.edit')->name('videos.edit');
     Route::put('/videos/{video}', [\App\Http\Controllers\Admin\VideoController::class, 'update'])->middleware('can:videos.edit')->name('videos.update');
     Route::delete('/videos/{video}', [\App\Http\Controllers\Admin\VideoController::class, 'destroy'])->middleware('can:videos.delete')->name('videos.destroy');
@@ -148,6 +163,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::post('/homepage-slides', [HomepageSlideController::class, 'store'])->middleware('can:homepage-slides.create')->name('homepage-slides.store');
     Route::patch('/homepage-slides/bulk-status', [HomepageSlideController::class, 'bulkStatus'])->middleware('can:homepage-slides.edit')->name('homepage-slides.bulk-status');
     Route::delete('/homepage-slides/bulk', [HomepageSlideController::class, 'bulkDestroy'])->middleware('can:homepage-slides.delete')->name('homepage-slides.bulk-destroy');
+    Route::post('/homepage-slides/order', [HomepageSlideController::class, 'order'])->middleware('can:homepage-slides.edit')->name('homepage-slides.order');
     Route::get('/homepage-slides/{homepageSlide}/edit', [HomepageSlideController::class, 'edit'])->middleware('can:homepage-slides.edit')->name('homepage-slides.edit');
     Route::put('/homepage-slides/{homepageSlide}', [HomepageSlideController::class, 'update'])->middleware('can:homepage-slides.edit')->name('homepage-slides.update');
     Route::delete('/homepage-slides/{homepageSlide}', [HomepageSlideController::class, 'destroy'])->middleware('can:homepage-slides.delete')->name('homepage-slides.destroy');

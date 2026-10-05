@@ -22,4 +22,10 @@ interface VideoRepositoryInterface
     public function delete(Video $record): void;
 
     public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection;
+
+    public function nextSortOrder(): int;
+
+    public function lockOrderedIds(): array;
+
+    public function reorder(array $ids): void;
 }

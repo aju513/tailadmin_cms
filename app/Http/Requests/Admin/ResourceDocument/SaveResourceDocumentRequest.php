@@ -21,7 +21,6 @@ abstract class SaveResourceDocumentRequest extends FormRequest
             'resource_category_id' => ['required', 'integer', 'exists:resource_categories,id'],
             'attachment' => UploadProfile::rules('uploads.document', Rule::requiredIf(! $record?->file_media_id)),
             'status' => ['required', Rule::enum(ContentStatus::class)],
-            'sort_order' => ['required', 'integer', 'min:0', 'max:2147483647'],
             'published_at' => ['nullable', 'date'],
         ];
     }

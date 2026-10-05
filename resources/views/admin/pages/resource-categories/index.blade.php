@@ -12,6 +12,6 @@
     </x-slot:actions>
 </x-common.page-breadcrumb>
     <x-common.table-status-feedback />
-@include('admin.pages.categories._manager', ['module' => 'resource-categories'])
+@include('admin.pages.categories._manager', ['module' => 'resource-categories', 'showSlug' => false])
 </div>
 @endsection

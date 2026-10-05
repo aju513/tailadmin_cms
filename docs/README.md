@@ -12,6 +12,8 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Grievance pages](grievances.md): public grievance forms, private attachments, admin review and reCAPTCHA v3 settings.
+
 - [Admin and frontend folder structure](folder-structure.md): routes, views, assets, header/footer configuration and separate builds.
 
 - [Lumbini public frontend](frontend.md): design integration, module pages, SEO/schema, XML sitemaps, performance and setup.
@@ -35,3 +37,4 @@ The bootstrap credential is intentionally predictable and must never remain unch
 - [Testing and operations](testing-operations.md): verification, deployment, and maintenance commands.
 - [Content management](content-management.md): pages, media, menus, settings, homepage slides, categories, tags, and authors.
 - [Homepage content](homepage.md): welcome text, gallery images, SEO, translation tabs, permissions, and public integration.
+- [Capacity Reports](capacity-reports.md): fiscal-year contribution cards, editable key/value figures, configuration, and legacy import.

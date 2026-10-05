@@ -1,3 +1,10 @@
+@php
+    $slugState = [
+        'title' => config('settings.nepali') ? old('translations.en.title', $page->getTranslation('title', 'en', false)) : old('title', $page->getTranslation('title', 'en', false)),
+        'slug' => old('slug', $page->slug),
+        'existing' => $page->exists,
+    ];
+@endphp
 <div x-data="{
     activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}',
     activeShared: '{{ $errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner' }}',
@@ -22,14 +29,14 @@
         </div>
     </div>
 
-    <div class="grid gap-6 md:grid-cols-2">
+    <div x-data="slugEditor(@js($slugState))" class="grid gap-6 md:grid-cols-2">
         @if(config('settings.nepali'))
-            <x-form.input name="translations[en][title]" label="Page title (English)" :value="old('translations.en.title', $page->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" required data-page-title />
+            <x-form.input name="translations[en][title]" label="Page title (English)" :value="old('translations.en.title', $page->getTranslation('title', 'en', false))" :error="$errors->first('translations.en.title')" x-bind:value="title" @input="updateTitle($event.target.value)" required data-page-title />
         @else
-            <x-form.input name="title" label="Page title" :value="old('title', $page->getTranslation('title', 'en', false))" required data-page-title />
+            <x-form.input name="title" label="Page title" :value="old('title', $page->getTranslation('title', 'en', false))" x-bind:value="title" @input="updateTitle($event.target.value)" required data-page-title />
         @endif
         <div>
-            <x-form.input name="slug" label="URL slug" :value="old('slug', $page->slug)" :error="$errors->first('slug')" />
+            <x-form.input name="slug" label="URL slug" :value="old('slug', $page->slug)" :error="$errors->first('slug')" x-bind:value="slug" @input="updateSlug($event.target.value)" maxlength="255" />
         </div>
     </div>
 

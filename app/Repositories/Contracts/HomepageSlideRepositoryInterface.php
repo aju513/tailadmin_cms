@@ -18,4 +18,14 @@ interface HomepageSlideRepositoryInterface
     public function delete(HomepageSlide $slide): void;
 
     public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection;
+
+    public function details(HomepageSlide $slide): HomepageSlide;
+
+    public function lock(HomepageSlide $slide): HomepageSlide;
+
+    public function nextSortOrder(): int;
+
+    public function lockOrderedIds(): array;
+
+    public function reorder(array $ids): void;
 }

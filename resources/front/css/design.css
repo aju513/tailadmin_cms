@@ -334,6 +334,26 @@ form input[type="number"].border-none {
     }
   }
 }
+img.logo-placeholder {
+  @apply bg-dim_bg p-6;
+  object-fit: scale-down !important;
+  object-position: center !important;
+}
+.placeholder__img-wrapper:has(img.logo-placeholder) {
+  &::before {
+    background: none !important;
+  }
+  &::after {
+    background-image: none;
+  }
+  .placeholder__img,
+  .placeholder__img > a {
+    @apply block size-full;
+  }
+  img.logo-placeholder {
+    @apply absolute inset-0 block size-full;
+  }
+}
 .bg-secondary-effect.arrow-move-effect {
   &:hover .text-text_color {
     @apply text-white;
@@ -2457,6 +2477,51 @@ input[type="text"].date-picker {
     }
   }
 
+  .training-list__description {
+    @apply relative z-10 mt-3 text-sm leading-6 break-words text-white/80;
+
+    :is(p, ul, ol, li, blockquote, h2, h3, h4, h5, h6, th, td) {
+      color: inherit;
+      font-size: inherit;
+    }
+
+    p {
+      @apply mb-3;
+    }
+
+    :is(ul, ol) {
+      @apply my-3 space-y-1 pl-5;
+    }
+
+    ul {
+      @apply list-disc;
+    }
+
+    ol {
+      @apply list-decimal;
+    }
+
+    li {
+      @apply mb-0 pl-0;
+    }
+
+    li::before {
+      content: none;
+    }
+
+    blockquote {
+      @apply my-3 rounded-none border-l-2 border-white/30 bg-transparent px-3 py-0;
+    }
+
+    a {
+      @apply text-white underline underline-offset-2;
+    }
+
+    > :last-child {
+      @apply mb-0;
+    }
+  }
+
   .training-list__meta {
     @apply relative z-10 mt-auto space-y-3 pt-10;
   }
@@ -3088,8 +3153,7 @@ input[type="text"].date-picker {
     &::after {
       content: "";
       @apply pointer-events-none absolute bottom-0 -left-4.25  z-0 h-40 w-full;
-      background: url("../images/svg/whyus-bg.svg") bottom center / 100% auto
-        no-repeat;
+
     }
   }
   .container {
@@ -3242,8 +3306,14 @@ input[type="text"].date-picker {
   @apply border-r border-[#dce9f8];
 }
 
+.capacity-report__metric:only-child {
+  grid-column: 1 / -1;
+  border-right: 0;
+}
+
 .capacity-report__metric span {
   @apply min-w-0 flex-1 text-sm leading-5 sm:text-base;
+  overflow-wrap: anywhere;
 }
 
 .capacity-report__metric strong {

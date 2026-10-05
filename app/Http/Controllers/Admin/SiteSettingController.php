@@ -14,7 +14,7 @@ class SiteSettingController extends Controller
 
     public function edit(): View
     {
-        return view('admin.pages.settings.edit', ['settings' => $this->settings->all(), 'title' => 'Site Settings']);
+        return view('admin.pages.settings.edit', ['settings' => $this->settings->all(), 'recaptchaConfigured' => $this->settings->recaptchaConfigured(), 'title' => 'Site Settings']);
     }
 
     public function update(UpdateSiteSettingsRequest $request): RedirectResponse

@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Video\CreateVideoRequest;
 use App\Http\Requests\Admin\Video\DeleteVideoRequest;
 use App\Http\Requests\Admin\Video\EditVideoRequest;
 use App\Http\Requests\Admin\Video\IndexVideoRequest;
+use App\Http\Requests\Admin\Video\OrderVideoRequest;
 use App\Http\Requests\Admin\Video\StoreVideoRequest;
 use App\Http\Requests\Admin\Video\UpdateVideoRequest;
 use App\Models\Video;
@@ -27,6 +28,13 @@ class VideoController extends Controller
     public function create(CreateVideoRequest $request): View
     {
         return view('admin.pages.videos.create', ['record' => $this->service->newRecord(), 'title' => 'Add Video']);
+    }
+
+    public function order(OrderVideoRequest $request): JsonResponse
+    {
+        $this->service->reorder($request->validated('records'), $request->validated('original_order'), $request->user());
+
+        return response()->json(['message' => 'Video order updated.']);
     }
 
     public function store(StoreVideoRequest $request): RedirectResponse

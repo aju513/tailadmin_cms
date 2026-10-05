@@ -10,6 +10,7 @@ enum PageType: string
     case Resource = 'resource';
     case Team = 'team';
     case ContactUs = 'contact_us';
+    case Grievance = 'grievance';
     case Sitemap = 'sitemap';
     case Hall = 'hall';
     case Faqs = 'faqs';
@@ -25,6 +26,7 @@ enum PageType: string
             self::Resource => 'Resource',
             self::Team => 'Team',
             self::ContactUs => 'Contact Us',
+            self::Grievance => 'Grievance Form',
             self::Sitemap => 'Sitemap',
             self::Hall => 'Hall',
             self::Faqs => 'FAQs',

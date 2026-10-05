@@ -20,6 +20,13 @@
         <x-form.input name="about_url" label="About page URL" type="url" :value="$settings['about_url']" />
     </div></x-common.component-card>
     @include('admin.pages.settings.design-fields')
+    <x-common.component-card title="reCAPTCHA v3" desc="Protect public grievance submissions with Google reCAPTCHA v3.">
+        <div class="grid gap-6 md:grid-cols-2">
+            <x-form.input name="recaptcha_site_key" label="Site key" :value="$settings['recaptcha_site_key']" maxlength="255" help="Register the public website domain in the Google reCAPTCHA console." />
+            <x-form.input name="recaptcha_secret_key" label="Secret key" type="password" :value="''" maxlength="255" autocomplete="new-password" :help="$recaptchaConfigured ? 'A secret key is saved. Leave blank to keep it, or enter a replacement.' : 'Enter the matching secret key. It is encrypted and never displayed.'" />
+        </div>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Grievance submissions become available when both keys are configured. Use score-based reCAPTCHA v3 keys.</p>
+    </x-common.component-card>
     <x-common.component-card title="Links and SEO" desc="Set real links for training, office directions, and social profiles."><div class="grid gap-6 md:grid-cols-2">
         @foreach(['training_url'=>'Training listing URL','tmis_url'=>'TMIS login URL','map_url'=>'Office map URL','facebook_url'=>'Facebook URL','youtube_url'=>'YouTube URL','linkedin_url'=>'LinkedIn URL','instagram_url'=>'Instagram URL','x_url'=>'X URL'] as $key=>$label)<x-form.input :name="$key" :label="$label" :value="$settings[$key]" type="url" />@endforeach
         <div class="md:col-span-2"><x-form.textarea name="meta_description" label="Default meta description" :value="$settings['meta_description']" maxlength="320" /></div>

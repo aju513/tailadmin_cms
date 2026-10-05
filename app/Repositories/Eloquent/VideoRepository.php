@@ -52,4 +52,21 @@ class VideoRepository implements VideoRepositoryInterface
     {
         return Video::query()->whereIn('id', $ids)->orderBy('id')->lockForUpdate()->get();
     }
+
+    public function nextSortOrder(): int
+    {
+        return ((int) Video::query()->max('sort_order')) + 1;
+    }
+
+    public function lockOrderedIds(): array
+    {
+        return Video::query()->orderBy('sort_order')->orderByDesc('id')->lockForUpdate()->pluck('id')->map(fn ($id) => (int) $id)->all();
+    }
+
+    public function reorder(array $ids): void
+    {
+        foreach ($ids as $position => $id) {
+            Video::query()->whereKey($id)->update(['sort_order' => $position]);
+        }
+    }
 }

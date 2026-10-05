@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\ContentStatus;
 use App\Models\GalleryAlbum;
 use App\Repositories\Contracts\GalleryAlbumRepositoryInterface;
+use App\Services\Frontend\FrontendCache;
+use App\Support\RecordOrder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
@@ -17,7 +19,7 @@ use Throwable;
 
 class GalleryAlbumService
 {
-    public function __construct(private readonly GalleryAlbumRepositoryInterface $records, private readonly MediaAssetService $media) {}
+    public function __construct(private readonly GalleryAlbumRepositoryInterface $records, private readonly MediaAssetService $media, private readonly FrontendCache $cache) {}
 
     public function index(array $filters): LengthAwarePaginator
     {
@@ -46,6 +48,7 @@ class GalleryAlbumService
                 if ($status === ContentStatus::Published || $record?->status === ContentStatus::Published) {
                     Gate::forUser($actor)->authorize('gallery.publish');
                 }
+                $data['sort_order'] = $record?->sort_order ?? $this->records->nextSortOrder();
                 $data['slug'] = Str::slug(($data['slug'] ?? null) ?: ($record?->slug ?: $data['title']));
                 if ($data['slug'] === '' || $this->records->slugExists($data['slug'], $record)) {
                     throw ValidationException::withMessages(['slug' => 'Enter a unique URL slug using letters or numbers.']);
@@ -97,6 +100,18 @@ class GalleryAlbumService
             activity('content')->causedBy($actor)->performedOn($record)->event('gallery.deleted')->log('Gallery deleted');
             $this->records->delete($record);
         });
+    }
+
+    public function reorder(array $ids, array $originalOrder, Authenticatable $actor): void
+    {
+        Gate::forUser($actor)->authorize('gallery.edit');
+        DB::transaction(function () use ($ids, $originalOrder, $actor): void {
+            $ordered = RecordOrder::replace($ids, $originalOrder, $this->records->lockOrderedIds());
+            $this->records->reorder($ordered);
+            activity('content')->causedBy($actor)->event('gallery.reordered')
+                ->withProperties(['record_ids' => array_map('intval', $ids)])->log('Gallery order updated');
+        });
+        $this->cache->clear();
     }
 
     public function bulkStatus(array $ids, \App\Enums\ContentStatus $status, Authenticatable $actor): void

@@ -80,4 +80,14 @@ class ResourceDocumentRepository implements ResourceDocumentRepositoryInterface
             ResourceDocument::query()->whereKey($id)->update(['sort_order' => $position]);
         }
     }
+
+    public function nextSortOrder(): int
+    {
+        return ((int) ResourceDocument::query()->max('sort_order')) + 1;
+    }
+
+    public function lockOrderedIds(): array
+    {
+        return ResourceDocument::query()->orderBy('sort_order')->orderByDesc('id')->lockForUpdate()->pluck('id')->map(fn ($id) => (int) $id)->all();
+    }
 }

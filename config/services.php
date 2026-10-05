@@ -2,6 +2,15 @@
 
 return [
 
+    'tims' => [
+        'enabled' => env('TIMS_API_ENABLED', true),
+        'base_url' => env('TIMS_BASE_URL', 'https://tmis.pcgg.lumbini.gov.np'),
+        'homepage_limit' => 6,
+        'timeout_seconds' => 3,
+        'cache_seconds' => 300,
+        'failure_cache_seconds' => 60,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

@@ -28,4 +28,10 @@ interface GalleryAlbumRepositoryInterface
     public function addPhoto(GalleryAlbum $record, int $mediaId): void;
 
     public function lockByIds(array $ids): \Illuminate\Database\Eloquent\Collection;
+
+    public function nextSortOrder(): int;
+
+    public function lockOrderedIds(): array;
+
+    public function reorder(array $ids): void;
 }
