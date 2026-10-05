@@ -30,6 +30,12 @@ News taxonomy data is retained for existing public content, but its management a
 
 News is managed at `/admin/news` and published at `/news` and `/news/{slug}`. Category, tag, and author listing routes use `/news/category/{slug}`, `/news/tag/{slug}`, and `/news/author/{slug}`. The public listing provides search, reusable news item cards, and pagination. News cards and article pages show the image, title, publication date, story, sharing controls, and recent articles without displaying author, category, or tag metadata. The homepage shows the three latest published articles.
 
+### Local PCGG demo news
+
+On 2026-10-05, three fictional PCGG Lumbini articles were stored directly in the configured local CMS database through `NewsService`, with existing News FormRequest validation and server permission checks. The published sample topics are local government capacity building, digital public services, and inclusive local development planning. Every headline starts with `Demo:`; summaries and article bodies identify the content as fictional and the photos as AI-generated illustrations. No actual event, official launch, or policy announcement is claimed.
+
+Each article has its own related image attached as its thumbnail, banner, and social image. The built-in image generation tool produced the photos. Originals are retained in `storage/app/news-demo/` as `local-government.png`, `digital-services.png`, and `inclusive-planning.png`; `prompts.json` contains the complete generation prompt set, and `report.json` records the database IDs and slugs. CMS copies are stored on the local public disk under `cms/`. The local creation script skips existing demo slugs. These records are local content, not a migration or an automatic deployment seed.
+
 The admin News index displays article titles, featured labels, status and selection controls, creation dates, and permission-controlled Edit and Delete actions. Clicking an editable row opens the editor.
 
 The sidebar has a nested News group with Add News and Manage News. News category, tag, and author admin routes, menu entries, permissions, selectors, filters, and detail fields have been removed. Existing taxonomy data and public category/tag/author URLs remain available for previously configured content. System and Users Management remain hidden.

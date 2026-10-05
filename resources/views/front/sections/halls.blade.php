@@ -12,7 +12,7 @@
                    
                     </div>
                     <div class="homepage__hall-booking-image -mr-[300px] hidden lg:block">
-                        <x-front.image :media="$halls->first()?->bannerMedia ?? $halls->first()?->thumbnailMedia" alt="Training hall" width="1200" height="600" fallback="front/images/dynamic/book-a-hall.jpg" />
+                        <x-front.image alt="Training hall" width="1200" height="600" fallback="front/images/dynamic/book-a-hall.jpg" />
                     </div>
             </div>
  

@@ -28,44 +28,7 @@
 
                 <div class="flex items-center gap-3">
 
-                    <!-- Search -->
-                    <div class="websearch-wrap">
-                        <span
-                            class="search-btn hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full p-3 transition-all duration-500 lg:flex hover:bg-primary/90">
-                            <span
-                                class="icon-search text-2xl text-primary transition-all duration-500 hover:text-white">
-                            </span>
-                        </span>
-
-                        <div class="search-box-wrapper relative mr-5">
-                            <div class="search-box-elements hidden">
-
-                                <a
-                                    href="#"
-                                    class="search-close package flex h-8 w-8 items-center justify-center">
-                                    <span class="icon-close text-xs text-white"></span>
-                                </a>
-
-                                <form method="GET" action="{{ route('public.search') }}">
-                                    <div class="relative">
-                                        <input
-                                            type="text"
-                                            id="default-search" name="q" maxlength="100"
-                                            class="block h-13.75 w-full rounded-lg border border-gray-300 bg-white px-4 py-2"
-                                            placeholder="Search"
-                                            required />
-
-                                        <button
-                                            type="submit"
-                                            class="absolute bottom-3.5 inset-e-2.5 rounded-lg bg-white text-sm font-medium">
-                                            <span class="icon-search text-xl text-secondary"></span>
-                                        </button>
-                                    </div>
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
+                    @include('front.components.header-search', ['searchId' => 'default-search'])
 
                     <!-- Contact Officer -->
                     @if($settings['contact_officer_name'] || $settings['contact_officer_phone'])
@@ -183,53 +146,7 @@
 </nav>
 
 
-                <!-- Sticky Search -->
-                <div class="websearch-wrap">
-
-                    <span
-                        class="search-btn hidden h-10 w-10 cursor-pointer items-center justify-center rounded-full p-3 transition-all duration-500 lg:flex hover:bg-secondary">
-
-                        <span
-                            class="icon-search text-2xl text-secondary transition-all duration-500 hover:text-white">
-                        </span>
-
-                    </span>
-
-                    <div class="search-box-wrapper relative mr-5">
-
-                        <div class="search-box-elements hidden">
-
-                            <a
-                                href="#"
-                                class="search-close package flex h-8 w-8 items-center justify-center">
-                                <span class="icon-close text-xs text-white"></span>
-                            </a>
-
-                            <form method="GET" action="{{ route('public.search') }}">
-                                <div class="relative">
-
-                                    <input
-                                        type="text"
-                                        id="sticky-search" name="q" maxlength="100"
-                                        class="block h-13.75 w-full rounded-lg border border-gray-300 bg-white! px-4 py-2"
-                                        placeholder="Search"
-                                        required />
-
-                                    <button
-                                        type="submit"
-                                        class="absolute bottom-3.5 inset-e-2.5 rounded-lg bg-white text-sm font-medium">
-
-                                        <span class="icon-search text-xl text-secondary"></span>
-
-                                    </button>
-
-                                </div>
-                            </form>
-
-                        </div>
-                    </div>
-
-                </div>
+                @include('front.components.header-search', ['searchId' => 'sticky-search'])
 
             </div>
         </div>

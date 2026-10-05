@@ -50,8 +50,7 @@
 
             <!-- Logo (mobile only) -->
             <a href="/" class="xl:hidden">
-                <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
-                <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+                <img src="{{ asset('front/images/placeholder-logo.svg') }}" alt="{{ config('app.name') }}" width="32" height="32" />
             </a>
 
             <!-- Application Menu Toggle (mobile only) -->

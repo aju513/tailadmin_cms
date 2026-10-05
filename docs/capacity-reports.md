@@ -34,4 +34,10 @@ php artisan frontend:cache-clear
 npm run build
 ```
 
-No sample statistics are inserted. Feature tests cover permissions, validation, fiscal-year uniqueness/configuration, editable rows, legacy import, filtering, cache refresh, escaping, deletion, and transaction rollback. JavaScript tests cover row identity, movement, limits, removal, and focus behavior.
+Migrations and normal deployment setup do not insert sample statistics. Feature tests cover permissions, validation, fiscal-year uniqueness/configuration, editable rows, legacy import, filtering, cache refresh, escaping, deletion, and transaction rollback. JavaScript tests cover row identity, movement, limits, removal, and focus behavior.
+
+## Local demo reports
+
+On 2026-10-05, three sample reports for `2083/84`, `2082/83`, and `2081/82` were stored directly in the configured local CMS database through the authorized `CapacityReportService` workflow and existing FormRequest validation. Each year has eight filled metrics in both contribution cards. All metric labels start with `Demo:` to identify the fictional figures on the homepage and in the editor. These numbers are for previewing the website and are not official PCGG statistics.
+
+The sample reports are immediately visible on the homepage and editable under Reports → Capacity Reports. The local creation script skips fiscal years with existing reports. Its saved figures and database IDs are recorded in `storage/app/capacity-demo-report.json`. No application schema, permission, route, or default seed was changed.

@@ -4,7 +4,7 @@
 <div class="relative flex min-h-screen items-center justify-center bg-white px-4 py-12 dark:bg-gray-900">
     <div class="w-full max-w-md">
         <div class="mb-8 text-center">
-            <img src="/images/logo/logo-icon.svg" class="mx-auto mb-4" width="44" height="44" alt="{{ config('app.name') }}">
+            <img src="{{ asset('front/images/placeholder-logo.svg') }}" class="mx-auto mb-4" width="44" height="44" alt="{{ config('app.name') }}">
             <h1 class="text-title-sm font-semibold text-gray-800 dark:text-white/90">Admin sign in</h1>
             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Enter your account credentials to continue.</p>
         </div>

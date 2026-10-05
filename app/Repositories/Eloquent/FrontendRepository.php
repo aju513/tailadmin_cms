@@ -131,11 +131,14 @@ class FrontendRepository implements FrontendRepositoryInterface
                 'team' => ['name', 'designation', 'bio'],
                 default => ['title', 'description'],
             };
-            $query->where(function (Builder $query) use ($columns, $term): void {
-                foreach ($columns as $column) {
-                    $query->orWhere($column, 'like', '%'.$term.'%');
-                }
-            });
+            foreach (preg_split('/\s+/u', $term, -1, PREG_SPLIT_NO_EMPTY) as $word) {
+                $pattern = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $word).'%';
+                $query->where(function (Builder $query) use ($columns, $pattern): void {
+                    foreach ($columns as $column) {
+                        $query->orWhereRaw($query->getQuery()->getGrammar()->wrap($column)." LIKE ? ESCAPE '!'", [$pattern]);
+                    }
+                });
+            }
             $pageName = $type.'_page';
             $results[$type] = $this->ordered($query, $type)->paginate(12, ['*'], $pageName, $filters[$pageName] ?? 1)->withQueryString();
         }

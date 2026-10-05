@@ -125,7 +125,7 @@ class FrontendService
     public function search(array $filters): array
     {
         $this->setLocale($filters);
-        $term = trim($filters['q'] ?? $filters['search'] ?? '');
+        $term = preg_replace('/^\s+|\s+$/u', '', $filters['q'] ?? $filters['search'] ?? '');
 
         return $this->prepare(['kind' => 'search', 'heading' => 'Search', 'term' => $term, 'results' => $this->content->search($term, $filters)], $filters);
     }

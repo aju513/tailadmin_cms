@@ -53,6 +53,8 @@ Saved bilingual CMS values are preserved. Set `FRONTEND_TRANSLATION_MODE=manual`
 
 ## Homepage banner
 
+The homepage “Professional Spaces for Trainings & Events” section uses the original `public/front/images/dynamic/book-a-hall.jpg` artwork. Its image stays fixed when halls are added or edited; hall catalogue and detail pages continue to use each hall's saved media.
+
 The homepage loads up to twelve published Home Slides with attached media through the existing frontend service and repository. Each slide supplies only its image and escaped caption title. The left side retains the original heading and description from Site Settings with configuration fallbacks, plus the original Apply Roaster and Explore Trainings buttons and destinations. Changing slides does not change this copy or these buttons. Subtitle and Link URL are absent from Home Slide forms and public banner data; legacy database values are retained but ignored. The original split banner layout is retained, and pagination sits above the desktop notice bar. Autoplay pauses while hovering or focusing within the banner. A single slide has no autoplay or pagination; an empty catalogue omits the hero and keeps the notice bar without stock images. Admin saves, publication changes and deletions use the existing cache observer; index reordering invalidates the frontend cache immediately.
 
 ## Public training integration
@@ -68,6 +70,8 @@ Successful responses are cached independently of CMS homepage data for five minu
 After changing deployment environment values, refresh cached configuration with `php artisan config:cache`. No API key or browser CORS setup is needed.
 
 ## SEO and sitemaps
+
+Public search uses the normal/sticky header buttons and the mobile search link. Header popups have labelled native controls, focus the query field when opened, and close on Escape, Close, outside click, or keyboard focus leaving the popup. Search icons are centered in fixed-width buttons with reserved input padding. The results page retains the query and language. Every whitespace-separated search word must match a searchable field in a published record; words can occur in different fields. `%` and `_` are searched literally, and blank queries show a prompt. Existing publication, scheduling, and category visibility rules apply across all searched modules.
 
 Set `APP_URL` to the actual HTTPS production origin before caching configuration. Canonical and sitemap URLs use this setting instead of a request host.
 

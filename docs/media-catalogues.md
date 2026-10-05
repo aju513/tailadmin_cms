@@ -40,6 +40,14 @@ Each POST to the named admin module's `.order` route submits `records` and `orig
 
 New records append automatically. Editing preserves the stored position even if a request includes `sort_order`. Gallery image ordering continues to follow the stored upload order. These changes use existing columns and permissions and need no migration or permission additions.
 
+## PCGG gallery content import
+
+On 2026-10-05, the live public gallery API at `https://pcgg.lumbini.gov.np/api/public/icms/gallery/albums` was scanned and imported into the configured local CMS database through the existing authorized `GalleryAlbumService` workflow. All seven album titles were retained in Nepali and in source order. Four albums contain one downloadable image each and are published. The remaining three albums were saved as drafts: two have no photos and the General Photos album has one entry without a source image URL.
+
+The four original images are stored on the local public disk under `cms/`, so the gallery does not depend on expiring remote image links. Source IDs are preserved in unique `pcgg-gallery-{source-id}` slugs. The collection manifest, import report, and downloaded originals are retained under `storage/app/gallery-import/`. Temporary collection/import scripts are under `storage/app/`; rerunning the importer skips existing source slugs. These are local content artifacts, not a migration or automatic deployment seed. No existing gallery records were replaced.
+
+The local Windows `public/storage` junction was corrected to this workspace's `storage/app/public`; it previously pointed to an older project location. Verification confirmed the public listing and all four published album pages return HTTP 200, render their Fancybox groups, and reference readable local image files.
+
 ## Setup
 
 Run these commands after pulling the change:

@@ -35,6 +35,22 @@ Each operational entity should own its structured data. Pages remain the shared 
 
 ## Phase 1: Hall catalogue — implemented
 
+### Local demo content
+
+On 2026-10-05, three fictional halls were added to the configured local database through the authorized `HallService` workflow, using the existing Hall FormRequest validation rules:
+
+| Demo hall | Seats | Sample NPR rate per day |
+| --- | --- | --- |
+| Lotus Conference Hall | 100 | 15,000 |
+| Bamboo Training Hall | 40 | 8,000 |
+| Horizon Auditorium | 250 | 30,000 |
+
+All three are published and available in `/halls` and Halls → Manage Halls. They have English/Nepali titles, sample descriptions, facilities, floor areas, building names, and a reserved `example.com` contact address. The descriptions identify the venues, rates, and images as fictional demo content. No real booking data was added.
+
+Each hall uses its own AI-generated interior photo for the thumbnail, banner, social image, and one gallery image. The built-in image generation tool produced the photos; originals and the complete prompt set are retained in `storage/app/hall-demo/` as `lotus.png`, `bamboo.png`, `horizon.png`, and `prompts.json`. CMS copies are stored on the public disk under `cms/`. The local creation script skips existing demo slugs and its report is saved alongside the originals. These local records are not an automatic deployment seed.
+
+Verification confirmed all three appear in the public listing, their detail pages return HTTP 200, their gallery links have Fancybox groups, and all primary/gallery image files are readable through `public/storage`.
+
 ### Admin screens and navigation
 
 - Nested **Halls → Add Hall / Manage Halls** between Team and Menus.

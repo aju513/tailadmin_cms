@@ -3,6 +3,7 @@ import { Navigation, Pagination, Autoplay, EffectFade, A11y } from 'swiper/modul
 import './media-viewer.js';
 import './language-switcher.js';
 import './grievance-form.js';
+import { initWebsiteSearch } from './website-search.js';
 
 // Keep the supplied design's selectors and interactions.
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -114,11 +115,7 @@ document.querySelectorAll('button.nested-dropdown-wrap').forEach((toggle) => {
         toggle.querySelector('.icon')?.classList.toggle('rotate-180', open);
     });
 });
-document.querySelectorAll('.websearch-wrap').forEach((wrapper) => {
-    const box = wrapper.querySelector('.search-box-elements');
-    wrapper.querySelector('.search-btn')?.addEventListener('click', () => { box?.classList.toggle('hidden'); if (!box?.classList.contains('hidden')) box?.querySelector('input')?.focus(); });
-    wrapper.querySelector('.search-close')?.addEventListener('click', (event) => { event.preventDefault(); box?.classList.add('hidden'); });
-});
+initWebsiteSearch();
 
 const shareToggle = document.getElementById('newsShareToggle');
 const shareMenu = document.getElementById('newsShareMenu');
@@ -155,7 +152,6 @@ document.addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
     closeDropdowns();
-    document.querySelectorAll('.search-box-elements').forEach((box) => box.classList.add('hidden'));
     document.querySelectorAll('.language-switcher__menu').forEach((menu) => { menu.hidden = true; });
     if (menuToggle?.getAttribute('aria-expanded') === 'true') menuToggle.click();
 });
