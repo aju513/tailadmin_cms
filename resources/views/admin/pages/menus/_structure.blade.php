@@ -4,6 +4,9 @@
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ $menu->isImportantLinks() ? 'External links' : 'Menu structure' }}</h3>
             <p class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400">{{ $menu->isImportantLinks() ? 'Drag the handles to change the link order.' : 'Drag the handles to reorder items at the same level.' }}</p>
         </div>
+        @unless($menu->isImportantLinks())
+            <x-form.toggle :name="'show_submenus_'.$menu->id" label="Show submenu" :checked="true" @change="showSubmenus = $event.target.checked" />
+        @endunless
         <form method="POST" action="{{ route('admin.menus.bulk-destroy') }}" onsubmit="return confirm('Remove the selected items from this menu?')" class="flex shrink-0 items-center gap-3">
             @csrf
             @method('DELETE')

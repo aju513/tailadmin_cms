@@ -1,6 +1,7 @@
 <script>
 window.menuManager = (orderUrl, menuId, initialPanel = 'pages') => ({
     activePanel: initialPanel,
+    showSubmenus: true,
     selected: [],
     dragging: null,
     message: '',

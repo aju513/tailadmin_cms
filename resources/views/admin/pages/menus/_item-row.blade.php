@@ -2,6 +2,7 @@
     data-menu-item-id="{{ $item->id }}"
     data-parent-id="{{ $item->parent_id }}"
     data-depth="{{ $depth }}"
+    @if($depth > 0) x-show="showSubmenus" @endif
     draggable="false"
     @dragstart="start($event)"
     @dragover="over($event)"
@@ -16,7 +17,7 @@
         <div class="flex items-center gap-1">
             <span data-serial class="w-6 shrink-0 text-center text-xs tabular-nums text-gray-400"></span>
             <button type="button" data-drag-handle @mousedown="$el.closest('tr').draggable = true; $el.closest('tr').dataset.dragEnabled = 'true'" class="inline-flex h-8 w-8 shrink-0 cursor-grab items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 active:cursor-grabbing dark:hover:bg-gray-800 dark:hover:text-gray-300" title="Drag to reorder" aria-label="Drag {{ $item->label }} to reorder">
-                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="7" cy="4" r="1.25"/><circle cx="13" cy="4" r="1.25"/><circle cx="7" cy="10" r="1.25"/><circle cx="13" cy="10" r="1.25"/><circle cx="7" cy="16" r="1.25"/><circle cx="13" cy="16" r="1.25"/></svg>
+                <i class="bi bi-arrows-move" aria-hidden="true"></i>
             </button>
         </div>
     </td>
