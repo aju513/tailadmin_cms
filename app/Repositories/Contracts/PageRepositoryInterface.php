@@ -14,6 +14,8 @@ interface PageRepositoryInterface
 
     public function noticeSections(): Collection;
 
+    public function publicNoticeSectionIds(Page $page): array;
+
     public function hasNoticeAssignments(array $pageIds): bool;
 
     public function paginateForIndex(array $filters): LengthAwarePaginator;

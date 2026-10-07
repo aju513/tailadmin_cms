@@ -28,7 +28,7 @@
 
                 <div class="resource-panels">
                     <?php foreach ($resourceCategories as $category => $label): ?>
-                        <?php $visibleResources = array_filter($resources, static fn($item) => $category === 'all' || $item['category'] === $category); ?>
+                        <?php $visibleResources = array_filter($resources, static fn($item) => $category === 'all' || $item['category'] === (string) $category); ?>
                         <section id="resources-panel-<?= $category ?>" role="tabpanel" aria-labelledby="resources-tab-<?= $category ?>" data-resource-panel="<?= $category ?>"<?= $category === 'all' ? '' : ' hidden' ?>>
                             <p class="mb-5 text-lg font-bold text-text_color">Showing <span class="text-secondary"><?= count($visibleResources) ?></span> <?= count($visibleResources) === 1 ? 'resource' : 'resources' ?></p>
                             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

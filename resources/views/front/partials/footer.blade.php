@@ -17,7 +17,7 @@
                                     @foreach(['address' => 'icon-location', 'email' => 'icon-envelope', 'phone' => 'icon-phone', 'website_url' => 'icon-arrow-up-right', 'office_hours' => 'icon-clock'] as $key => $icon)
                                         @if(filled($settings[$key]))
                                             <div class="mb-3 flex items-start gap-3 footer__contact-item last:mb-0">
-                                                <span class="text-sm text-white {{ $icon }}" aria-hidden="true"></span>
+                                                <div class="footer__contact-item-image"><span class="text-sm text-white {{ $icon }}" aria-hidden="true"></span></div>
                                                 <div class="footer__contact-item-content min-w-0 break-words text-[15px] text-white">
                                                     @if($key === 'email')
                                                         <a href="mailto:{{ $settings[$key] }}">{{ $settings[$key] }}</a>
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-span-12 lg:col-span-3">
+                <div class="col-span-12 lg:col-span-5">
                     <div class="footer__links">
                         <div class="text-primary uppercase font-heading text-xl font-bold mb-5">Important Links</div>
                         <ul class="columns-1 gap-y-5 gap-5 flex-wrap">
@@ -49,7 +49,7 @@
 </ul>
                     </div>
                 </div>
-                <div class="col-span-12 lg:col-span-6">
+                <div class="col-span-12 lg:col-span-4">
                     <div class="footer__links">
                         <div class="text-primary uppercase font-heading text-xl font-bold mb-5">Quick Links</div>
                         <ul class="columns-2 gap-y-5 gap-5 flex-wrap">

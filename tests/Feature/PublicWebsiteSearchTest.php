@@ -36,11 +36,11 @@ test('search treats SQL wildcard characters as literal text and handles empty un
 
 test('header and search results expose labelled native search controls', function (): void {
     $this->get(route('public.search', ['q' => 'No matching record']))->assertOk()
-        ->assertSee('aria-controls="default-search-panel"', false)
-        ->assertSee('aria-controls="sticky-search-panel"', false)
-        ->assertSee('id="default-search-panel" class="search-box-elements" hidden', false)
-        ->assertSee('id="default-search" type="search" name="q"', false)
+        ->assertSee('aria-controls="site-search-dialog"', false)
+        ->assertSee('<dialog id="site-search-dialog"', false)
+        ->assertSee('aria-labelledby="site-search-title"', false)
+        ->assertSee('id="site-search-input" type="search" name="q"', false)
         ->assertSee('aria-label="Submit search"', false)
-        ->assertSee('class="website-search-submit"', false)
+        ->assertSee('class="site-search-form" role="search"', false)
         ->assertSee('No results found.');
 });

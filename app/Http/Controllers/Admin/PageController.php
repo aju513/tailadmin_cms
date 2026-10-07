@@ -32,7 +32,7 @@ class PageController extends Controller
 
     public function create(): View
     {
-        return view('admin.pages.pages.create', ['page' => new Page(['status' => ContentStatus::Draft, 'page_type' => PageType::Article]), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect(), 'title' => 'Create Page']);
+        return view('admin.pages.pages.create', ['page' => new Page(['status' => ContentStatus::Draft, 'page_type' => PageType::Article]), 'pageTypes' => PageType::cases(), 'resourceCategories' => $this->service->resourceCategoryOptions(), 'parents' => $this->pages->allForParentSelect(), 'title' => 'Create Page']);
     }
 
     public function store(StorePageRequest $request): RedirectResponse
@@ -49,7 +49,7 @@ class PageController extends Controller
 
     public function edit(Page $page): View
     {
-        return view('admin.pages.pages.edit', ['page' => $page->load('bannerMedia', 'socialMedia'), 'pageTypes' => PageType::cases(), 'parents' => $this->pages->allForParentSelect($page), 'title' => 'Edit Page']);
+        return view('admin.pages.pages.edit', ['page' => $page->load('bannerMedia', 'socialMedia'), 'pageTypes' => PageType::cases(), 'resourceCategories' => $this->service->resourceCategoryOptions(), 'parents' => $this->pages->allForParentSelect($page), 'title' => 'Edit Page']);
     }
 
     public function update(UpdatePageRequest $request, Page $page): RedirectResponse

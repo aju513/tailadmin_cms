@@ -28,8 +28,8 @@
             <p class="text-sm text-white!">{{ $training['department'] }}</p>
         @endif
     </div>
-    <a href="{{ $training['url'] }}" target="_blank" rel="noopener noreferrer" class="btn-primary hav-icon training-list__link bg-white! text-[#164491]!">
-        <span class="font-medium hover:underline!">View Details</span>
-        <span class="btn-primary__icon icon-arrow-up-right bg-[#10336F]/80!" aria-hidden="true"></span>
+    <a href="{{ $training['url'] }}" target="_blank" rel="noopener noreferrer" class="btn-venue btn-venue--compact mt-8">
+        <span class="btn-venue__text">View Details</span>
+        <span class="btn-venue__icon icon-arrow-up-right" aria-hidden="true"></span>
     </a>
 </article>

@@ -6,6 +6,7 @@
     ];
 @endphp
 <div x-data="{
+    pageType: @js(old('page_type', $page->page_type?->value ?? 'article')),
     activeLanguage: '{{ $errors->has('translations.ne.*') ? 'ne' : 'en' }}',
     activeShared: '{{ $errors->hasAny(['social_media_image', 'social_media_alt_text']) ? 'social' : 'banner' }}',
     stickyActions: false,
@@ -47,9 +48,18 @@
                 <option value="{{ $parent->id }}" @selected((string) old('parent_id', $page->parent_id) === (string) $parent->id)>{{ str_repeat('-- ', substr_count($parent->path, '/')) }}{{ $parent->title }}</option>
             @endforeach
         </x-form.select>
-        <x-form.select name="page_type" label="Page type" required>
+        <x-form.select name="page_type" label="Page type" x-model="pageType" required>
             @foreach($pageTypes as $pageType)
                 <option value="{{ $pageType->value }}" @selected(old('page_type', $page->page_type?->value ?? 'article') === $pageType->value)>{{ $pageType->label() }}</option>
+            @endforeach
+        </x-form.select>
+    </div>
+
+    <div x-show="pageType === 'resource'" @if(old('page_type', $page->page_type?->value) !== 'resource') x-cloak @endif>
+        <x-form.select name="resource_category_id" label="Resource category" help="Select a category to limit this page's documents, or show all categories.">
+            <option value="">All categories</option>
+            @foreach($resourceCategories as $categoryId => $categoryName)
+                <option value="{{ $categoryId }}" @selected((string) old('resource_category_id', $page->resource_category_id) === (string) $categoryId)>{{ $categoryName }}</option>
             @endforeach
         </x-form.select>
     </div>

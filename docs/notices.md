@@ -22,11 +22,11 @@ Notice details use an eight-column content area and a four-column recent notices
 
 The reusable `x-front.file-reader` displays PDFs and images directly and embeds Word/Excel attachments through Microsoft Office Web Viewer. Office previews require an anonymously accessible public file URL and internet access; localhost files cannot be fetched by Microsoft. Below the viewer, a Download file button saves the attachment using its original filename, and an Open file in new tab link provides a fallback. Notices without attachments show a file-unavailable state without these actions. Resources keep their existing detail template.
 
-Section assignment remains an admin-only rollout. Existing notices have no section assigned until an editor chooses one; no sections or mappings are generated automatically. Their legacy notice_category_id is preserved when editing, including inactive-category visibility restrictions.
+Section assignment also scopes public Notices pages. Pages without a legacy category selection show notices assigned to themselves and their published descendant Notices sections. Draft/scheduled sections and descendants beneath them are excluded. Search and pagination retain this scope. The standalone `/notices` catalogue remains global unless a CMS page occupies that URL. Existing notices have no section assigned until an editor chooses one; no sections or mappings are generated automatically. Their legacy notice_category_id is preserved when editing, including inactive-category visibility restrictions.
 
 New notices retain an internal category so unchanged public queries can discover them: use the active General Notices category (slug general), otherwise create/reuse an active compatibility category named General Notices with slug notice-sections-default. Previously inactive categories are not reactivated. Notice category input is no longer accepted from admin forms.
 
-Public URLs, category filters, legacy Page/category connections, publication scheduling and detail visibility remain compatible. Section-based public tables and parent/child aggregation are a separate frontend phase; assigning a section does not yet change public placement.
+Public URLs, category filters, legacy Page/category connections, publication scheduling and detail visibility remain compatible. Legacy category-selected Pages retain their category-based scope when edited. Notice detail sidebars show other notices in the same assigned section, or the same category for unassigned legacy notices.
 
 Notice Category admin routes, forms, sidebar links, and management permissions are retired. The underlying category model/table, legacy repository, and read-only options service remain for public compatibility. No notice or category content is deleted.
 
@@ -40,7 +40,7 @@ When assigning a child Notices page, its Notices-page ancestors are additionally
 
 ## Architecture and operations
 
-FormRequests validate section IDs against Page Type Notices. Controllers call NoticeService; services own authorization, transactions, assignment checks and activity logging, while repositories own options, filtering, locks, compatibility-category persistence and menu queries. The selected page is rechecked under a row lock during saving. Public category-based reads are not migrated here.
+FormRequests validate section IDs against Page Type Notices. Controllers call NoticeService; services own authorization, transactions, assignment checks and activity logging, while repositories own options, filtering, locks, compatibility-category persistence and menu queries. The selected page is rechecked under a row lock during saving. Public section/category reads remain in repository methods; services choose the appropriate scope.
 
 Existing notice create/edit/delete/publish permissions and menus.manage are reused; no new permission is needed. Existing Pages permissions govern creating and editing section pages.
 

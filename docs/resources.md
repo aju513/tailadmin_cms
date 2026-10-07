@@ -6,7 +6,7 @@ Resources are structured downloadable documents, managed separately from Pages. 
 
 1. Create a resource category, for example Legal Documents or Training Materials.
 2. Add a resource with title, category, optional stable slug, CKEditor description, PDF/Word/Excel attachment (up to 10 MB), a Published toggle, and publication date. Title and URL each occupy half the desktop row. The date picker and Published toggle sit below URL, and Description uses the full card width. Fields stack on mobile.
-3. Create or edit a Page with Page Type: Resource.
+3. Create or edit a Page with Page Type: Resource and select its Resource category (or All categories).
 4. Publish the page and the documents. Assign the page to the existing public menu.
 
 The page retains its own title, introduction/body, banner, URL, SEO, and navigation placement. Its matching resources appear below that content automatically. One document can appear on multiple pages that select its category or All categories, without duplicated uploads.
@@ -15,7 +15,7 @@ The page retains its own title, introduction/body, banner, URL, SEO, and navigat
 
 resource_categories stores name, unique slug, full-width CKEditor description, Published status, internal order, and audit actors. Category forms omit slug and display-order fields, and the category index omits slug text. The service generates category slugs from the name on create and preserves existing slugs when editing. Reorder categories in the index by dragging rows or using arrow buttons. resource_documents stores title, unique slug, sanitized rich-text description, category, MediaAsset attachment, internal order, draft/published state, publication timestamp, and audit actors. Resource forms also omit display order: new documents append to the ordered set, and edits preserve their position. Resource forms generate editable URL suggestions while typing the title. Manual URLs and existing saved URLs remain stable through title changes and validation reloads. Clearing the URL resumes generation on the next title change; blank URLs on create still generate when saved.
 
-Existing `pages.resource_category_id` values are retained for compatibility with previously configured public pages, but new Page forms no longer expose category selection. Saving a page clears the legacy resource category assignment.
+Resource Pages expose a category selector. Create/update requests validate the selected category, and the Page service locks and preserves it on save. Choosing All categories clears the selection; changing to another Page Type also clears it. Updates that omit the field retain the saved selection. Only documents matching that category appear on the public page, including at `/resources`.
 
 Public listings are ordered by display order, then latest publication date and ID; they contain 12 documents per page and preserve the page's language query. Only published resources in active categories whose publication timestamp has arrived and whose media record exists are listed. Detail and download endpoints apply the same publication checks and return 404 for drafts/future publication. Missing files return 404 on download.
 

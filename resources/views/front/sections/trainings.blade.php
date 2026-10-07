@@ -1,11 +1,11 @@
 @if($trainingCatalogue['enabled'])
-<section class="homepage__traininglist hav-title-btn bg-dim_bg common-box" aria-labelledby="ongoing-trainings-title">
+<section class="homepage__traininglist hav-title-btn common-box" aria-labelledby="ongoing-trainings-title">
     <div class="container-fluid">
         <div class="container max-md:!px-0">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <h2 id="ongoing-trainings-title" class="section-title">Ongoing Trainings</h2>
                 <div class="section-title-btn">
-                    <a href="{{ $trainingCatalogue['url'] }}" target="_blank" rel="noopener noreferrer" class="btn-outline-secondary hav-icon px-4 py-1.5 rounded-lg group">
+                    <a href="{{ $trainingCatalogue['url'] }}" target="_blank" rel="noopener noreferrer" class="btn-outline-secondary hav-icon px-4 rounded-lg group">
                         View All Trainings
                         <span class="inline-block ml-1 text-base transition-transform duration-500 ease-in-out icon-arrow-up-right group-hover:translate-x-1" aria-hidden="true"></span>
                     </a>

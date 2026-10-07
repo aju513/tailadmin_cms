@@ -3,55 +3,46 @@ import assert from 'node:assert/strict';
 import { initWebsiteSearch } from '../../resources/front/js/website-search.js';
 
 function fixture() {
-    const doc = { listeners: {}, addEventListener(type, callback) { this.listeners[type] = callback; } };
-    function element() {
-        return { listeners: {}, attributes: {}, addEventListener(type, callback) { this.listeners[type] = callback; },
-            setAttribute(name, value) { this.attributes[name] = value; }, focus() { doc.activeElement = this; } };
-    }
-    const controls = [0, 1].map(() => {
-        const trigger = element(), input = element(), close = element(), panel = element(), wrapper = element();
-        panel.hidden = true;
-        panel.querySelector = () => input;
-        wrapper.querySelector = selector => ({ '.search-btn': trigger, '.search-box-elements': panel, '.search-close': close })[selector];
-        wrapper.contains = target => [trigger, input, close, panel, wrapper].includes(target);
-        return { trigger, input, close, panel, wrapper };
-    });
-    doc.querySelectorAll = () => controls.map(control => control.wrapper);
+    const doc = { body: { style: { overflow: 'auto' } } };
+    const element = () => ({ listeners: {}, addEventListener(type, callback) { this.listeners[type] = callback; }, focus() { doc.activeElement = this; } });
+    const input = element(), close = element(), dialog = element();
+    const triggers = [element(), element()];
+    dialog.open = false;
+    dialog.showModal = () => { dialog.open = true; };
+    dialog.close = () => { dialog.open = false; dialog.listeners.close(); };
+    dialog.querySelector = selector => selector === '.site-search-close' ? close : input;
+    doc.getElementById = () => dialog;
+    doc.querySelectorAll = () => triggers;
     initWebsiteSearch(doc);
-    return { doc, controls };
+    return { doc, dialog, input, close, triggers };
 }
 
-test('opening a header search focuses its input and closes the other header search', () => {
-    const { doc, controls: [normal, sticky] } = fixture();
-    normal.trigger.listeners.click();
-    assert.equal(normal.panel.hidden, false);
-    assert.equal(normal.trigger.attributes['aria-expanded'], 'true');
-    assert.equal(doc.activeElement, normal.input);
-    sticky.trigger.listeners.click();
-    assert.equal(normal.panel.hidden, true);
-    assert.equal(normal.trigger.attributes['aria-expanded'], 'false');
-    assert.equal(doc.activeElement, sticky.input);
-    sticky.trigger.listeners.click();
-    assert.equal(sticky.panel.hidden, true);
+test('desktop and mobile triggers open the same modal, focus search, and lock scrolling', () => {
+    const { doc, dialog, input, close, triggers } = fixture();
+    for (const trigger of triggers) {
+        trigger.listeners.click();
+        assert.equal(dialog.open, true);
+        assert.equal(doc.activeElement, input);
+        assert.equal(doc.body.style.overflow, 'hidden');
+        close.listeners.click();
+        assert.equal(dialog.open, false);
+        assert.equal(doc.activeElement, trigger);
+        assert.equal(doc.body.style.overflow, 'auto');
+    }
 });
 
-test('Escape and Close restore focus; outside clicks and leaving the search dismiss it', () => {
-    const { doc, controls: [normal] } = fixture();
-    normal.trigger.listeners.click();
-    doc.listeners.keydown({ key: 'Escape' });
-    assert.equal(normal.panel.hidden, true);
-    assert.equal(doc.activeElement, normal.trigger);
-    normal.trigger.listeners.click();
-    normal.close.listeners.click();
-    assert.equal(doc.activeElement, normal.trigger);
-    normal.trigger.listeners.click();
-    doc.listeners.click({ target: normal.input });
-    assert.equal(normal.panel.hidden, false);
-    doc.listeners.click({ target: {} });
-    assert.equal(normal.panel.hidden, true);
-    normal.trigger.listeners.click();
-    normal.wrapper.listeners.focusout({ relatedTarget: normal.close });
-    assert.equal(normal.panel.hidden, false);
-    normal.wrapper.listeners.focusout({ relatedTarget: {} });
-    assert.equal(normal.panel.hidden, true);
+test('backdrop and native dismissal restore the opener and original scroll state', () => {
+    const { doc, dialog, input, triggers } = fixture();
+    triggers[0].listeners.click();
+    triggers[1].listeners.click();
+    dialog.listeners.click({ target: input });
+    assert.equal(dialog.open, true);
+    dialog.listeners.click({ target: dialog });
+    assert.equal(dialog.open, false);
+    assert.equal(doc.activeElement, triggers[0]);
+    assert.equal(doc.body.style.overflow, 'auto');
+    triggers[1].listeners.click();
+    dialog.close();
+    assert.equal(doc.activeElement, triggers[1]);
+    assert.equal(doc.body.style.overflow, 'auto');
 });

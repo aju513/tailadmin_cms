@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="container ">
             <div class="grid grid-cols-12 gap-5 items-start">
-                <div class="col-span-12 lg:col-span-7">
+                <div class="col-span-12 lg:col-span-6">
                     <div class="welcome-content">
 
                         <div class="section-title-wrap">
@@ -27,7 +27,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-span-12 lg:col-span-5">
+                <div class="col-span-12 lg:col-span-6">
                     <div class="homepage__about-media">
                         <div class="homepage__about-image">
                             <div class="placeholder__img-wrapper">

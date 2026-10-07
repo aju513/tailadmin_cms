@@ -25,6 +25,15 @@ class PageRepository implements PageRepositoryInterface
         return $this->orderedForIndex([])->filter(fn (Page $page) => $page->page_type === \App\Enums\PageType::Notices)->values();
     }
 
+    public function publicNoticeSectionIds(Page $page): array
+    {
+        $descendants = $this->descendants($page);
+        $hiddenPaths = $descendants->filter(fn ($section) => $section->status !== ContentStatus::Published || $section->published_at?->isFuture())->pluck('path');
+
+        return $descendants->filter(fn ($section) => $section->page_type === \App\Enums\PageType::Notices
+            && ! $hiddenPaths->contains(fn ($path) => $section->path === $path || str_starts_with($section->path, $path.'/')))->pluck('id')->prepend($page->id)->all();
+    }
+
     public function hasNoticeAssignments(array $pageIds): bool
     {
         return \App\Models\Notice::query()->whereIn('notice_page_id', $pageIds)->exists();

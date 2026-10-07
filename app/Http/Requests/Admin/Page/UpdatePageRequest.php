@@ -38,6 +38,7 @@ class UpdatePageRequest extends FormRequest
             'translations.ne.summary' => ['nullable', 'string', 'max:10000'],
             'translations.ne.body' => ['nullable', 'string'],
             'page_type' => ['required', Rule::enum(PageType::class)],
+            'resource_category_id' => ['exclude_unless:page_type,resource', 'nullable', 'integer', 'exists:resource_categories,id'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash:ascii'],
             'parent_id' => ['nullable', 'integer', 'exists:pages,id'],
             'status' => ['required', Rule::enum(ContentStatus::class)],

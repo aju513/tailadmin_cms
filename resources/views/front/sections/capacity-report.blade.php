@@ -6,8 +6,8 @@
     }
 @endphp
 <section class="homepage__capacity-report common-box" aria-labelledby="capacity-report-title">
-    <div class="container-fluid">
-        <div class="sm:container sm:!px-0">
+    <div class="container">
+        <div>
             <div class="capacity-report__top">
                 <div class="capacity-report__intro">
                     <h2 id="capacity-report-title" class="capacity-report__title text-text_color!">Our Contribution to Capacity Development</h2>

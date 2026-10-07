@@ -61,9 +61,15 @@ class NoticeService
 
     public function forPage(\App\Models\Page $page, array $filters = []): ?LengthAwarePaginator
     {
-        return $page->page_type === \App\Enums\PageType::Notices
-            ? $this->records->paginatePublished($page->notice_category_id, 'notices_page', $filters['search'] ?? null)
-            : null;
+        if ($page->page_type !== \App\Enums\PageType::Notices) {
+            return null;
+        }
+        $sectionIds = null;
+        if (! $page->notice_category_id) {
+            $sectionIds = $this->pages->publicNoticeSectionIds($page);
+        }
+
+        return $this->records->paginatePublished($page->notice_category_id, 'notices_page', $filters['search'] ?? null, $sectionIds);
     }
 
     public function newRecord(): Notice

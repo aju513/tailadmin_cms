@@ -27,9 +27,10 @@ class NoticeRepository implements NoticeRepositoryInterface
             ->whereHas('category', fn ($query) => $query->where('is_active', true));
     }
 
-    public function paginatePublished(?int $categoryId = null, string $pageName = 'page', ?string $search = null): LengthAwarePaginator
+    public function paginatePublished(?int $categoryId = null, string $pageName = 'page', ?string $search = null, ?array $sectionIds = null): LengthAwarePaginator
     {
         return $this->publishedQuery()->when($categoryId, fn ($query) => $query->where('notice_category_id', $categoryId))
+            ->when($sectionIds !== null, fn ($query) => $query->whereIn('notice_page_id', $sectionIds))
             ->when(filled($search), fn ($query) => $query->where('title', 'like', '%'.$search.'%'))
             ->orderBy('sort_order')->latest('published_at')->latest('id')->paginate(15, ['*'], $pageName)->withQueryString();
     }
@@ -42,6 +43,7 @@ class NoticeRepository implements NoticeRepositoryInterface
     public function latestPublished(Notice $except, int $limit = 5): Collection
     {
         return $this->publishedQuery()->whereKeyNot($except->id)
+            ->when($except->notice_page_id, fn ($query) => $query->where('notice_page_id', $except->notice_page_id), fn ($query) => $query->where('notice_category_id', $except->notice_category_id))
             ->latest('created_at')->latest('id')->limit($limit)->get();
     }
 

@@ -20,6 +20,7 @@
                             src="{{ $settings['logo_url'] ?: asset(config('frontend.branding.logo')) }}"
                             alt="{{ $settings['site_name'] }}" />
                         <span class="site-brand__copy">
+                            <span class="site-brand__province">{{ $settings['province_name'] }}</span>
                              <span class="site-brand__name">{{ $settings['site_name'] }}</span>
                             <span class="site-brand__location">{{ $settings['address'] }}</span>
                         </span>
@@ -28,7 +29,6 @@
 
                 <div class="flex items-center gap-3">
 
-                    @include('front.components.header-search', ['searchId' => 'default-search'])
 
                     <!-- Contact Officer -->
                     @if($settings['contact_officer_name'] || $settings['contact_officer_phone'])
@@ -146,7 +146,7 @@
 </nav>
 
 
-                @include('front.components.header-search', ['searchId' => 'sticky-search'])
+                @include('front.components.header-search')
 
             </div>
         </div>
@@ -194,13 +194,13 @@
                         </div>
                     </div>
 
-                    <a
-                        id="open-search" href="{{ route('public.search') }}" aria-label="Search the website"
+                    <button
+                        id="open-search" type="button" data-site-search-open aria-label="Search the website" aria-haspopup="dialog" aria-controls="site-search-dialog"
                         class="flex w-full items-center gap-3 px-4">
 
                         <span class="icon-search text-xl text-secondary"></span>
 
-                    </a>
+                    </button>
 
                     <div
                         class="menu-button flex items-center gap-2.25 text-secondary"
@@ -235,3 +235,5 @@
 
 </header>
 <div class="header-height" aria-hidden="true"></div>
+
+@include('front.components.search-dialog')

@@ -1,6 +1,7 @@
 import Swiper from 'swiper';
 import { Navigation, Pagination, Autoplay, EffectFade, A11y } from 'swiper/modules';
 import './media-viewer.js';
+import './scroll-reveal.js';
 import './language-switcher.js';
 import './grievance-form.js';
 import { initWebsiteSearch } from './website-search.js';

@@ -1,4 +1,4 @@
-<div class="homepage__team common-box pb-0">
+<div class="homepage__team common-box pt-0">
 
     <div class="container-fluid">
         <div class="container hav-title-btn">
@@ -18,8 +18,8 @@
                     <p class="team-card__position">
 {{ $member->designation }}
 </p>
-                    <h3 class="team-card__name text-primary!">
-<a href="{{ route('public.team.show',$member->id) }}" class="text-primary!">{{ $member->name }}</a>
+                    <h3 class="team-card__name">
+<a href="{{ route('public.team.show',$member->id) }}" >{{ $member->name }}</a>
 </h3>
 
 
