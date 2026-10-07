@@ -3594,17 +3594,17 @@ input[type="text"].date-picker {
 }
 
 .team-grid {
-  @apply grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4;
+  @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4;
 }
 
 .team-card {
-  @apply flex h-full min-w-0 flex-col overflow-hidden rounded-xl bg-white p-2 text-left;
+  @apply flex h-full min-w-0 flex-col overflow-hidden rounded-xl bg-white p-5 text-left;
   box-shadow: 0 8px 30px rgb(0 87 184 / 4%);
 }
 
 .team-card__portrait {
   @apply block overflow-hidden rounded-lg;
-  aspect-ratio: 20 / 23;
+  aspect-ratio: 1;
 }
 
 .team-card__photo {
@@ -3613,7 +3613,7 @@ input[type="text"].date-picker {
 }
 
 .team-card__content {
-  @apply flex flex-1 flex-col items-start px-3 pb-4 pt-3.5;
+  @apply flex flex-1 flex-col items-start pt-5;
 }
 
 .team-card__position {
@@ -3622,24 +3622,17 @@ input[type="text"].date-picker {
 }
 
 .team-card__name {
-  @apply mb-4 font-heading text-xl font-extrabold leading-snug text-[#101f40];
+  @apply mb-4 font-heading text-xl font-extrabold leading-snug text-text_color;
   overflow-wrap: anywhere;
 }
 
+.team-card__name a {
+  @apply font-extrabold text-text_color hover:text-primary hover:no-underline;
+}
+
 .team-card__profile {
-  @apply mt-auto inline-flex items-center gap-4 text-sm font-bold leading-6 text-primary;
-}
-
-.team-card__profile span {
-  @apply border-b border-primary/70 pb-1;
-}
-
-.team-card__profile svg {
-  transition: transform 200ms ease;
-}
-
-.team-card__profile:hover svg {
-  transform: translateX(3px);
+  @apply mt-auto no-underline;
+  color: var(--color-tertiary);
 }
 
 .team-card a:focus-visible {
@@ -3647,12 +3640,6 @@ input[type="text"].date-picker {
   outline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .team-card__profile svg {
-    transition: none;
-    transform: none;
-  }
-}
 @media (max-width: 1023px) {
   .inner__testimonials + .footer {
     @apply mt-10!;
