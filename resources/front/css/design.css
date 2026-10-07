@@ -3396,12 +3396,6 @@ input[type="text"].date-picker {
   .container-fluid {
     @apply relative isolate overflow-visible max-w-full mx-auto rounded-none bg-tertiary px-0! py-10 lg:py-15 2xl:max-w-[calc(100%-70px)] 2xl:rounded-[40px] 2xl:px-7.5;
 
-    &::after {
-      content: "";
-      @apply pointer-events-none absolute bottom-0 -left-4.25  z-0 h-40 w-full;
-      background: url("../images/svg/whyus-bg.svg") bottom center / 100% auto
-        no-repeat;
-    }
   }
   .container {
     @apply relative z-1;
