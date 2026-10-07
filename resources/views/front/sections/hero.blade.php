@@ -11,7 +11,7 @@
                             <span class="ml-1 icon-arrow-up-right inline-block text-base transition-transform duration-500 ease-in-out group-hover:translate-x-1" aria-hidden="true"></span>
                         </a>
                         <a href="https://tmis.pcgg.lumbini.gov.np/routines?status=all" target="_blank" rel="noopener noreferrer" class="btn-primary group px-5! py-3! max-w-[200px]! hover:bg-primary!">
-                            Explore Trainings
+                            View Trainings
                             <span class="ml-1 icon-arrow-up-right inline-block text-base transition-transform duration-500 ease-in-out group-hover:translate-x-1" aria-hidden="true"></span>
                         </a>
                     </div>
