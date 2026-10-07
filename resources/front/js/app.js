@@ -1,3 +1,4 @@
+import { initHomepagePopup } from './homepage-popup.js';
 import Swiper from 'swiper';
 import { Navigation, Pagination, Autoplay, EffectFade, A11y } from 'swiper/modules';
 import './media-viewer.js';
@@ -145,3 +146,5 @@ document.addEventListener('keydown', (event) => {
     document.querySelectorAll('.language-switcher__menu').forEach((menu) => { menu.hidden = true; });
     if (menuToggle?.getAttribute('aria-expanded') === 'true') menuToggle.click();
 });
+
+initHomepagePopup();

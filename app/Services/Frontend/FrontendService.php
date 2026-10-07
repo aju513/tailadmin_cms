@@ -13,7 +13,7 @@ use App\Services\SiteSettingService;
 
 class FrontendService
 {
-    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache, private readonly HomepageContentRepositoryInterface $homepage, private readonly CapacityReportService $capacityReports, private readonly PublicTrainingService $trainings) {}
+    public function __construct(private readonly FrontendRepositoryInterface $content, private readonly FrontendLayoutService $layout, private readonly NewsRepositoryInterface $news, private readonly SeoService $seo, private readonly NoticeService $notices, private readonly ResourceDocumentService $resources, private readonly FrontendCache $cache, private readonly HomepageContentRepositoryInterface $homepage, private readonly CapacityReportService $capacityReports, private readonly PublicTrainingService $trainings, private readonly \App\Services\PopupService $popups) {}
 
     private function setLocale(array $filters): void
     {
@@ -32,6 +32,7 @@ class FrontendService
             $data['recaptchaConfigured'] = app(SiteSettingService::class)->recaptchaConfigured();
         }
         if (($data['kind'] ?? null) === 'home') {
+            $data['homepagePopup'] = $this->popups->active();
             $data['bannerSlides'] = $data['slides']->map(fn ($slide): array => ['id' => $slide->id, 'title' => $slide->title, 'media' => $slide->media]);
             $data['trainingCatalogue'] = $this->trainings->homepage();
             $data['capacityReports'] = $this->cache->remember('capacity-reports', fn () => $this->capacityReports->publicReports());

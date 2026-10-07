@@ -2,6 +2,7 @@
 @inject('safeHtml','App\Services\Frontend\SafeHtml')
 @inject('embeds','App\Services\Frontend\VideoEmbedService')
 @section('content')
+@include('front.components.homepage-popup')
 @include('front.sections.hero')
 @include('front.sections.trainings')
 @if($team->isNotEmpty())

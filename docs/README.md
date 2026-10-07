@@ -12,6 +12,8 @@ The bootstrap credential is intentionally predictable and must never remain unch
 
 ## Documentation map
 
+- [Popup Manager](popups.md): homepage announcements, priority, publishing, and permissions.
+
 - [Grievance pages](grievances.md): public grievance forms, private attachments, admin review and reCAPTCHA v3 settings.
 
 - [Admin and frontend folder structure](folder-structure.md): routes, views, assets, header/footer configuration and separate builds.

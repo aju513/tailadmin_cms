@@ -90,6 +90,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active'])->group(fu
     Route::post('/notices/{notice}/unpublish', [NoticeController::class, 'unpublish'])->middleware('can:notices.publish')->name('notices.unpublish');
     Route::delete('/notices/{notice}', [NoticeController::class, 'destroy'])->middleware('can:notices.delete')->name('notices.destroy');
 
+    Route::get('/popups', [\App\Http\Controllers\Admin\PopupController::class, 'index'])->middleware('can:popups.manage')->name('popups.index');
+    Route::get('/popups/create', [\App\Http\Controllers\Admin\PopupController::class, 'create'])->middleware('can:popups.create')->name('popups.create');
+    Route::post('/popups', [\App\Http\Controllers\Admin\PopupController::class, 'store'])->middleware('can:popups.create')->name('popups.store');
+    Route::post('/popups/order', [\App\Http\Controllers\Admin\PopupController::class, 'order'])->middleware('can:popups.edit')->name('popups.order');
+    Route::get('/popups/{popup}/edit', [\App\Http\Controllers\Admin\PopupController::class, 'edit'])->middleware('can:popups.edit')->name('popups.edit');
+    Route::put('/popups/{popup}', [\App\Http\Controllers\Admin\PopupController::class, 'update'])->middleware('can:popups.edit')->name('popups.update');
+    Route::delete('/popups/{popup}', [\App\Http\Controllers\Admin\PopupController::class, 'destroy'])->middleware('can:popups.delete')->name('popups.destroy');
+
     Route::get('/team-members', [TeamMemberController::class, 'index'])->middleware('can:team-members.manage')->name('team-members.index');
     Route::get('/team-members/create', [TeamMemberController::class, 'create'])->middleware('can:team-members.create')->name('team-members.create');
     Route::post('/team-members', [TeamMemberController::class, 'store'])->middleware('can:team-members.create')->name('team-members.store');

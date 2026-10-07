@@ -20,6 +20,7 @@
             <div class="homepage__banner-image">
                 <div class="swiper homepage-banner-swiper" role="region" aria-label="Homepage slides" aria-roledescription="carousel">
                     <div class="swiper-wrapper">
+                        
                         @foreach($bannerSlides as $slide)
                             <div class="swiper-slide homepage__banner-slide">
                                 <x-front.image :media="$slide['media']" :alt="$slide['title']" :priority="$loop->first" sizes="(min-width: 1024px) 50vw, 100vw" width="1600" height="900" />

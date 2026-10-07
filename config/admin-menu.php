@@ -1,6 +1,7 @@
 <?php
 
 return [
+    ['key' => 'popups', 'label' => 'Popup Manager', 'icon' => 'pages', 'route' => 'admin.popups.index', 'active_routes' => ['admin.popups.*'], 'permission' => 'popups.manage', 'order' => 28],
     [
         'key' => 'grievances', 'label' => 'Grievances', 'icon' => 'pages',
         'route' => 'admin.grievances.index', 'active_routes' => ['admin.grievances.*'],

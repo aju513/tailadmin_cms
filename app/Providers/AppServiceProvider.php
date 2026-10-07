@@ -47,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(\App\Repositories\Contracts\PopupRepositoryInterface::class, \App\Repositories\Eloquent\PopupRepository::class);
         $this->app->bind(\App\Repositories\Contracts\GrievanceRepositoryInterface::class, \App\Repositories\Eloquent\GrievanceRepository::class);
         $this->app->bind(\App\Repositories\Contracts\PublicTrainingRepositoryInterface::class, \App\Repositories\Http\TimsTrainingRepository::class);
         $this->app->scoped(\App\Services\Frontend\ImageService::class);
@@ -88,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
         foreach ([\App\Models\Page::class, \App\Models\News::class, \App\Models\Notice::class, \App\Models\NoticeCategory::class, \App\Models\ResourceDocument::class, \App\Models\ResourceCategory::class, \App\Models\Hall::class, \App\Models\HallGalleryImage::class, \App\Models\GalleryAlbum::class, \App\Models\GalleryPhoto::class, \App\Models\Video::class, \App\Models\TeamMember::class, \App\Models\TeamCategory::class, \App\Models\HomepageSlide::class, \App\Models\SiteSetting::class, \App\Models\Menu::class, \App\Models\MenuItem::class, \App\Models\MediaAsset::class] as $model) {
             $model::observe(\App\Observers\FrontendContentObserver::class);
         }
-        foreach ([\App\Models\HomepageContent::class, \App\Models\HomepageGalleryImage::class, \App\Models\CapacityReport::class] as $model) {
+        foreach ([\App\Models\Popup::class, \App\Models\HomepageContent::class, \App\Models\HomepageGalleryImage::class, \App\Models\CapacityReport::class] as $model) {
             $model::observe(\App\Observers\FrontendContentObserver::class);
         }
         Gate::before(function (User $user, string $ability): ?bool {

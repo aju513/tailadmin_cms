@@ -53,6 +53,7 @@ return [
     // Recommended pixel dimensions. Override max_size_kb, mimes or
     // enforce_dimensions in an individual profile when needed.
     'images' => [
+        'popup' => ['mimes' => ['jpg', 'jpeg', 'png', 'webp']],
         'homepage_slide' => ['width' => 1600, 'height' => 900],
         'homepage' => [
             'gallery' => ['width' => 1200, 'height' => 950, 'mimes' => ['jpg', 'jpeg', 'png', 'webp']],

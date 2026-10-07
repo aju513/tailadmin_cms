@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'popups' => [
+        'popups.manage' => ['view_title' => 'Manage popups', 'description' => 'Allows manage operations for popups.'],
+        'popups.create' => ['view_title' => 'Create popups', 'description' => 'Allows create operations for popups.'],
+        'popups.edit' => ['view_title' => 'Edit popups', 'description' => 'Allows edit operations for popups.'],
+        'popups.delete' => ['view_title' => 'Delete popups', 'description' => 'Allows delete operations for popups.'],
+        'popups.publish' => ['view_title' => 'Publish popups', 'description' => 'Allows publish operations for popups.'],
+    ],
 
     'grievances' => [
         'grievances.manage' => ['view_title' => 'Manage grievances', 'description' => 'Allows searching and listing grievance submissions.'],

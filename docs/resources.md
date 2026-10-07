@@ -25,6 +25,8 @@ Attachments follow the existing public shared media storage model. The download 
 
 Inactive categories hide their documents on all public listings/detail/download routes. Existing category assignments stay editable in admin. Categories cannot be deleted while referenced by documents or Pages. Foreign keys reinforce that rule, and transactions lock category selections. Move references first.
 
+Public resource listings use the homepage blue gradient cards and compact rounded View Details buttons. Content-driven card heights, smaller padding and titles, and a responsive one-, two-, or three-column grid keep the listing compact while retaining descriptions and publication details.
+
 ## Architecture and permissions
 
 New workflows follow Route -> FormRequest -> Controller -> Service -> Repository contract -> Eloquent repository -> Model. Bindings, permissions, and sidebar entries are code-owned. Services manage transactions, audit events, publication rules, upload rollback cleanup, and category deletion safeguards. Document descriptions use CKEditor and the shared SafeHtml sanitizer on save and public detail rendering. Public catalogue excerpts remain plain text. Category descriptions use CKEditor and are not rendered as raw HTML on public pages.
