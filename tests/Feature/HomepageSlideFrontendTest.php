@@ -33,7 +33,7 @@ test('homepage banner keeps original left content and buttons alongside ordered 
         ->assertDontSee('data-banner-title', false)->assertDontSee('data-banner-subtitle', false)->assertDontSee('data-banner-url', false)
         ->assertSee('src="'.$first->media->url().'"', false)->assertSee('src="'.$later->media->url().'"', false)
         ->assertSee('loading="eager"', false)->assertSee('fetchpriority="high"', false)->assertSee('loading="lazy"', false)
-        ->assertSee('Choose a home slide')->assertSee('Apply Roaster')->assertSee('Explore Trainings')
+        ->assertSee('Choose a home slide')->assertSee('Apply Roaster')->assertSee('View Trainings')
         ->assertSee('href="https://tmis.pcgg.lumbini.gov.np/routines?status=all"', false)
         ->assertDontSee('/front/images/dynamic/homepage-banner/', false);
 });
@@ -46,7 +46,7 @@ test('saved hero settings remain the static left content independently of slide 
 
     $this->view('front.sections.hero', $data)->assertSee('<h1>Configured left heading</h1>', false)
         ->assertSee('Configured left description')->assertSee('homepage__banner-caption">Image caption only', false)
-        ->assertSee('Apply Roaster')->assertSee('Explore Trainings');
+        ->assertSee('Apply Roaster')->assertSee('View Trainings');
 });
 
 test('draft home slides and slides without an attached image never appear publicly', function (): void {
@@ -69,7 +69,7 @@ test('a single slide retains both original buttons without carousel pagination',
     $slide = HomepageSlide::create(['title' => 'Single banner', 'media_id' => ($this->makeBannerImage)('banners/single.jpg')->id, 'status' => ContentStatus::Published]);
     $response = $this->get(route('public.home'))->assertOk()
         ->assertSee('homepage__banner-caption">Single banner', false)->assertSee('src="'.$slide->media->url().'"', false)
-        ->assertSee('Apply Roaster')->assertSee('Explore Trainings')->assertDontSee('Choose a home slide');
+        ->assertSee('Apply Roaster')->assertSee('View Trainings')->assertDontSee('Choose a home slide');
     $document = new DOMDocument;
     $previous = libxml_use_internal_errors(true);
     try {
@@ -108,7 +108,7 @@ test('admin ordering refreshes cached slide images and captions while original l
     $this->get(route('public.home'))->assertOk()
         ->assertSeeInOrder(['homepage__banner-caption">Move to first', 'homepage__banner-caption">Initially first'], false)
         ->assertSee('<h1>'.e(config('frontend.hero_title')).'</h1>', false)->assertSee(config('frontend.hero_description'))
-        ->assertSee('Apply Roaster')->assertSee('Explore Trainings')
+        ->assertSee('Apply Roaster')->assertSee('View Trainings')
         ->assertViewHas('bannerSlides', fn ($slides) => $slides->pluck('id')->all() === [$second->id, $first->id]);
 });
 

@@ -46,6 +46,7 @@
   --font-heading: "Plus Jakarta Sans", sans-serif;
   --font-body: "DM Sans", sans-serif;
   --header-height: 60px;
+  --site-header-height: 144px;
   scroll-behavior: smooth;
 }
 
@@ -1988,7 +1989,7 @@ input[type="text"].date-picker {
     @apply max-md:hidden bg-white py-2;
   }
   .header__menu {
-    @apply bg-[#f3f8fb] py-3;
+    @apply bg-[#f3f8fb] py-1;
     &::before {
       content: "";
       @apply w-full absolute left-0 top-0 h-full z-50 pointer-events-none;
@@ -2039,7 +2040,15 @@ input[type="text"].date-picker {
 
 .header .nav-menu > ul > li > a,
 .header .nav-menu > ul > li > .dropdown-toggle {
-  @apply font-heading text-text_color;
+  @apply whitespace-nowrap font-heading text-[13px] leading-5 text-text_color xl:text-sm;
+}
+
+.header .nav-menu > ul {
+  @apply gap-3 xl:gap-5;
+}
+
+.header .nav-menu > ul > li {
+  @apply flex min-h-10 items-center;
 }
 
 .header .nav-menu > ul > li > a:hover,
@@ -2141,7 +2150,8 @@ input[type="text"].date-picker {
   @apply mt-0.5 text-[9px] text-primary;
 }
 .header .header__menu .dropdown {
-  margin-top: -4px;
+  top: 100%;
+  margin-top: 4px;
   transform-origin: top center;
   border-radius: 0 0 5px 5px;
   animation: growDown 250ms ease-in-out forwards;
@@ -2163,10 +2173,10 @@ input[type="text"].date-picker {
   }
 }
 .header .header__menu.sticky .dropdown {
-  @apply top-10 z-120;
+  @apply z-120;
 }
 .header .header__menu.sticky .nav-menu {
-  @apply min-h-13 flex items-center;
+  @apply min-h-10 flex items-center;
 }
 .header .header__menu.sticky .flex.justify-center.gap-2 {
   @apply justify-between!;
@@ -3222,7 +3232,7 @@ input[type="text"].date-picker {
 /*  homepage */
 .homepage__banner {
   @apply relative z-55 overflow-hidden bg-white;
-  height: calc(100svh - 160px);
+  height: max(420px, calc(100svh - var(--site-header-height)));
 
   .homepage__banner-shell {
     @apply grid h-full min-h-0 grid-cols-2;
@@ -3271,7 +3281,7 @@ input[type="text"].date-picker {
   }
 
   .homepage__banner-content {
-    @apply flex items-center px-10 py-14 xl:px-20;
+    @apply flex items-center px-8 py-8 xl:px-12;
   }
 
   .homepage__banner-copy {
@@ -3287,7 +3297,7 @@ input[type="text"].date-picker {
   }
 
   .homepage__banner-copy h1 {
-    @apply mb-5 max-w-xl font-heading text-4xl font-bold leading-[1.08] break-words text-text_color sm:text-5xl xl:text-6xl;
+    @apply mb-5 max-w-xl font-heading text-4xl font-bold leading-[1.2] break-words text-text_color sm:text-5xl lg:text-4xl xl:text-5xl;
   }
 
   .homepage__banner-description {

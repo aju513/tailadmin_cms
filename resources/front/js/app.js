@@ -5,6 +5,7 @@ import './scroll-reveal.js';
 import './language-switcher.js';
 import './grievance-form.js';
 import { initWebsiteSearch } from './website-search.js';
+import { initHeaderLayout } from './header-layout.js';
 
 // Keep the supplied design's selectors and interactions.
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -57,21 +58,9 @@ document.querySelectorAll('[data-report-year]').forEach((button) => button.addEv
     document.querySelectorAll('[data-report-panel]').forEach((panel) => { panel.hidden = panel.dataset.reportPanel !== button.dataset.reportYear; });
 }));
 
-const desktopNav = document.querySelector('.header .header__menu');
-const spacer = document.querySelector('.header-height');
-const mobileNav = document.querySelector('.mob-nav');
 const mobileMenu = document.querySelector('.mob-nav .overflow > ul');
 const menuToggle = document.getElementById('menu-toggle');
-const stickyHeader = () => {
-    const desktop = innerWidth >= 1024;
-    const sticky = desktop && scrollY > 300;
-    desktopNav?.classList.toggle('sticky', sticky);
-    if (spacer) spacer.style.height = sticky ? '59px' : '0';
-    mobileNav?.classList.toggle('sticky', !desktop && scrollY > 120);
-};
-addEventListener('scroll', stickyHeader, { passive: true });
-addEventListener('resize', stickyHeader);
-stickyHeader();
+initHeaderLayout();
 menuToggle?.addEventListener('click', () => {
     const open = menuToggle.getAttribute('aria-expanded') !== 'true';
     menuToggle.setAttribute('aria-expanded', String(open));
