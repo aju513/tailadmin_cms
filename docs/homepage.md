@@ -5,6 +5,7 @@ Open **Pages → Homepage** at `/admin/homepage`. The editor uses the same bread
 ## Fields and public behavior
 
 The About section shows the service cards without a decorative background image below them.
+The Our Team section appears immediately above About Us when team members are available.
 
 Save and Close remain available in a sticky bar below the admin header when the original Save button scrolls above the visible area, matching the Pages form. Scrolling back to the original actions hides the bar. Both Save buttons submit the same homepage form and use the same permission checks.
 

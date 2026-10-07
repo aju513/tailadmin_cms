@@ -22,43 +22,13 @@
                 {{ $teamCategories->get(request('team_category_id'), 'Our Team') }}
             </h2>
 
-            <div class="grid grid-cols-12 gap-5 mb-7">@forelse($items as $member)
-<div class="col-span-12 sm:col-span-6 lg:col-span-3">
-                            <div class="team-list__item">
-                                <div class="team-list__item-image">
-                                    <div class="placeholder__img-wrapper">
-                                        <div class="w-full placeholder__img">
-                                            <a href="{{ route('public.team.show',$member->id) }}">
-                                                <x-front.image :media="$member->photoMedia" :alt="$member->name" width="600" height="600" class="rounded-[5px]" fallback="front/images/dynamic/male-placeholder.jpg" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="team-list__item-content">
-                                    <div class="mt-2 -mb-2 text-base font-bold text-text_color">
-                                        {{ $member->name }}
-                                    </div>
-                                    <span class="text-xs leading-3 text-[#797ea6]">
-                                        {{ $member->designation }}
-                                    </span>
-                                    <?php if ($member->email || $member->phone): ?>
-                                        <div class="mt-3 space-y-1 text-xs text-text_color">
-                                            <?php if ($member->email): ?>
-                                                <a class="block break-all hover:text-primary" href="mailto:{{ $member->email }}">
-                                                    {{ $member->email }}
-                                                </a>
-                                            <?php endif; ?>
-                                            <?php if ($member->phone): ?>
-                                                <a class="block hover:text-primary" href="tel:{{ $member->phone }}">
-                                                    {{ $member->phone }}
-                                                </a>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-@empty<p class="col-span-12 py-8 text-text_color">No team members published yet.</p>@endforelse</div>
+            <div class="team-grid mb-7">
+                @forelse($items as $member)
+                    <x-front.team-card :member="$member" />
+                @empty
+                    <p class="col-span-full py-8 text-text_color">No team members published yet.</p>
+                @endforelse
+            </div>
         </section>
     </div>
 </div>

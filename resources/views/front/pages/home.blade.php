@@ -4,13 +4,13 @@
 @section('content')
 @include('front.sections.hero')
 @include('front.sections.trainings')
+@if($team->isNotEmpty())
+    @include('front.sections.team')
+@endif
 @include('front.sections.about')
 @include('front.sections.capacity-report')
 @if($latestResources->isNotEmpty())
     @include('front.sections.resources')
-@endif
-@if($team->isNotEmpty())
-    @include('front.sections.team')
 @endif
 @include('front.sections.halls')
 @if($videos->contains(fn ($video) => $embeds->url($video->video_url)))
