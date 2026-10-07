@@ -1,4 +1,4 @@
-<div class="homepage__resources common-box hav-title-btn pb-0">
+<div class="homepage__resources common-box hav-title-btn pt-0">
     <div class="container">
         <div class="grid grid-cols-12 gap-x-5">
             <div class="col-span-12 lg:col-span-5">
